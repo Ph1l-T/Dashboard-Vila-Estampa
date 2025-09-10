@@ -54,9 +54,12 @@
 
     const pages = {
         curtains: () => `
+            <div class="top-bar-custom"></div>
             <main class="container">
                 <div class="page active">
-                    <h1 class="page-title">Cortinas</h1>
+                    <h1 class="page-title" style="display:flex;justify-content:center;align-items:center;">
+                        <img src="images/icons/Vila-Estampa.svg" alt="Vila Estampa" style="height:60px;max-width:90vw;" />
+                    </h1>
                     
                     <!-- Garden -->
                     <div class="curtain-section">
@@ -130,7 +133,8 @@
             </main>
         `,
         scenes: () => `
-            <main class="container">
+            <div class="top-bar-custom"></div>
+             <main class="container">
                 <div class="page active">
                     <h1 class="page-title">Cenários</h1>
                     <div style="color:#bbb;text-align:center;margin-top:40px;">Página de cenários em construção.</div>
