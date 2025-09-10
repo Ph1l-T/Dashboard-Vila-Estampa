@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vila Estampa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="icon" href="images/pwa/app-icon-192.png" type="image/png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1C1C1C">
+    <link rel="apple-touch-icon" href="images/pwa/app-icon-192.png">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Botão invisível no card para capturar clique na Home */
+        .room-card-link{position:absolute;left:0;top:0;width:100%;height:100%;z-index:10;background:transparent;border:none;cursor:pointer}
+    </style>
+    </head>
+<body>
+
+    <!-- SPA root -->
+    <div id="spa-root"></div>
+
+    <!-- Navbar fixa SPA -->
+    <nav class="navbar" id="spa-navbar">
+        <div class="nav-item" data-page="curtains">
+            <div class="nav-icon-wrapper">
+                <img src="images/icons/icon-cortinas.svg" alt="Cortinas" class="nav-icon">
+            </div>
+        </div>
+        <div class="nav-item" data-page="home">
+            <div class="nav-icon-wrapper">
+                <img src="images/icons/icon-home.svg" alt="Home" class="nav-icon">
+            </div>
+        </div>
+        <div class="nav-item" data-page="scenes">
+            <div class="nav-icon-wrapper">
+                <img src="images/icons/icon-scenes.svg" alt="Cenários" class="nav-icon">
+            </div>
+        </div>
+    </nav>
+
+    <script src="script.js"></script>
+    <script>
+    // PWA: registra service worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+        });
+    }
+    // --- SPA Core ---
+    const spaRoot = document.getElementById('spa-root');
+
+    const pages = {
+        curtains: () => `
+            <main class="container">
+                <div class="page active">
+                    <h1 class="page-title">Cortinas</h1>
+                    
+                    <!-- Garden -->
+                    <div class="curtain-section">
+                        <h2 class="section-title">Garden</h2>
+                        <div class="section-divider"></div>
+                        
+                        <div class="room-controls-list">
+                            <div class="room-control curtain-control" data-device-id="42" data-no-sync="true">
+                                <div class="room-control-label">Cortina Esquerda</div>
+                                <div class="curtain-actions">
+                                    <button class="curtain-btn open" data-device-id="42" onclick="curtainAction(this, 'open')"><img src="images/icons/icon-up.svg" alt="Abrir"></button>
+                                    <button class="curtain-btn stop" data-device-id="42" onclick="curtainAction(this, 'stop')"><img src="images/icons/icon-stop.svg" alt="Parar"></button>
+                                    <button class="curtain-btn close" data-device-id="42" onclick="curtainAction(this, 'close')"><img src="images/icons/icon-down.svg" alt="Fechar"></button>
+                                </div>
+                            </div>
+                            
+                            <div class="room-control curtain-control" data-device-id="43" data-no-sync="true">
+                                <div class="room-control-label">Cortina Direita</div>
+                                <div class="curtain-actions">
+                                    <button class="curtain-btn open" data-device-id="43" onclick="curtainAction(this, 'open')"><img src="images/icons/icon-up.svg" alt="Abrir"></button>
+                                    <button class="curtain-btn stop" data-device-id="43" onclick="curtainAction(this, 'stop')"><img src="images/icons/icon-stop.svg" alt="Parar"></button>
+                                    <button class="curtain-btn close" data-device-id="43" onclick="curtainAction(this, 'close')"><img src="images/icons/icon-down.svg" alt="Fechar"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Reunião -->
+                    <div class="curtain-section">
+                        <h2 class="section-title">Reunião</h2>
+                        <div class="section-divider"></div>
+                        
+                        <div class="room-controls-list">
+                            <div class="room-control curtain-control" data-device-id="39" data-no-sync="true">
+                                <div class="room-control-label">Cortina Interna</div>
+                                <div class="curtain-actions">
+                                    <button class="curtain-btn open" data-device-id="39" onclick="curtainAction(this, 'open')"><img src="images/icons/icon-up.svg" alt="Abrir"></button>
+                                    <button class="curtain-btn stop" data-device-id="39" onclick="curtainAction(this, 'stop')"><img src="images/icons/icon-stop.svg" alt="Parar"></button>
+                                    <button class="curtain-btn close" data-device-id="39" onclick="curtainAction(this, 'close')"><img src="images/icons/icon-down.svg" alt="Fechar"></button>
+                                </div>
+                            </div>
+                            
+                            <div class="room-control curtain-control" data-device-id="40" data-no-sync="true">
+                                <div class="room-control-label">Cortina Externa</div>
+                                <div class="curtain-actions">
+                                    <button class="curtain-btn open" data-device-id="40" onclick="curtainAction(this, 'open')"><img src="images/icons/icon-up.svg" alt="Abrir"></button>
+                                    <button class="curtain-btn stop" data-device-id="40" onclick="curtainAction(this, 'stop')"><img src="images/icons/icon-stop.svg" alt="Parar"></button>
+                                    <button class="curtain-btn close" data-device-id="40" onclick="curtainAction(this, 'close')"><img src="images/icons/icon-down.svg" alt="Fechar"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Café -->
+                    <div class="curtain-section">
+                        <h2 class="section-title">Café</h2>
+                        <div class="section-divider"></div>
+                        
+                        <div class="room-controls-list">
+                            <div class="room-control curtain-control" data-device-id="38" data-no-sync="true">
+                                <div class="room-control-label">Cortina Café</div>
+                                <div class="curtain-actions">
+                                    <button class="curtain-btn open" data-device-id="38" onclick="curtainAction(this, 'open')"><img src="images/icons/icon-up.svg" alt="Abrir"></button>
+                                    <button class="curtain-btn stop" data-device-id="38" onclick="curtainAction(this, 'stop')"><img src="images/icons/icon-stop.svg" alt="Parar"></button>
+                                    <button class="curtain-btn close" data-device-id="38" onclick="curtainAction(this, 'close')"><img src="images/icons/icon-down.svg" alt="Fechar"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        `,
+        scenes: () => `
+            <main class="container">
+                <div class="page active">
+                    <h1 class="page-title">Cenários</h1>
+                    <div style="color:#bbb;text-align:center;margin-top:40px;">Página de cenários em construção.</div>
+                </div>
+            </main>
+        `,
+        home: () => `
+            <div class="top-bar-custom"></div>
+            <main class="container">
+                <div class="page active" id="home-page">
+                    <h1 class="page-title" style="display:flex;justify-content:center;align-items:center;">
+                        <img src="images/icons/Vila-Estampa.svg" alt="Vila Estampa" style="height:60px;max-width:90vw;" />
+                    </h1>
+                    <div class="rooms-frame">
+                        <div class="rooms-list"></div>
+                    </div>
+                </div>
+            </main>
+        `,
+
+        entrada: () => `
+<div class="page active page-container" style="background-image:url('images/Images/Photo-Entrada.jpg')">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Entrada</h1>
+    </div>
+    <div class="room-controls-list">
+        <div class="room-control" data-state="off" data-device-id="17" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Jardim</div>
+        </div>
+    </div>
+</div>
+        `,
+
+        vitrine: () => `
+<div class="page active page-container" style="background-image:url('images/Images/photo-vitrine.jpg')">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Vitrine</h1>
+    </div>
+    <div class="room-controls-list">
+        <div class="room-control" data-state="off" data-device-id="36" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Barras LED</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="37" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Jardim</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="35" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Lustres</div>
+        </div>
+    </div>
+</div>
+        `,
+
+        garden: () => `
+<div class="page active page-container" style="background-image:url('images/Images/Photo-Garden.jpg')">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Garden</h1>
+    </div>
+    <div class="room-controls-list">
+        <div class="room-control" data-state="off" data-device-id="8" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Barra LED</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="7" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Lustre Garden</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="9" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Lustre Hall</div>
+        </div>
+        <div class="room-control curtain-control" data-device-id="42" data-no-sync="true">
+            <img class="room-control-icon" src="https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-shader-off.svg" alt="Cortina">
+            <div class="room-control-label">Cortina Esquerda</div>
+            <div class="curtain-actions">
+                <button class="curtain-btn open" data-device-id="42" onclick="curtainAction(this, 'open')"><img src="images/icons/icon-up.svg" alt="Abrir"></button>
+                <button class="curtain-btn stop" data-device-id="42" onclick="curtainAction(this, 'stop')"><img src="images/icons/icon-stop.svg" alt="Parar"></button>
+                <button class="curtain-btn close" data-device-id="42" onclick="curtainAction(this, 'close')"><img src="images/icons/icon-down.svg" alt="Fechar"></button>
+            </div>
+        </div>
+        <div class="room-control curtain-control" data-device-id="43" data-no-sync="true">
+            <img class="room-control-icon" src="https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-shader-off.svg" alt="Cortina">
+            <div class="room-control-label">Cortina Direita</div>
+            <div class="curtain-actions">
+                <button class="curtain-btn open" data-device-id="43" onclick="curtainAction(this, 'open')"><img src="images/icons/icon-up.svg" alt="Abrir"></button>
+                <button class="curtain-btn stop" data-device-id="43" onclick="curtainAction(this, 'stop')"><img src="images/icons/icon-stop.svg" alt="Parar"></button>
+                <button class="curtain-btn close" data-device-id="43" onclick="curtainAction(this, 'close')"><img src="images/icons/icon-down.svg" alt="Fechar"></button>
+            </div>
+        </div>
+    </div>
+</div>
+        `,
+
+        reuniao: () => `
+<div class="page active page-container" style="background-image:url('images/Images/Photo-Reuniao.jpg')">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Reunião</h1>
+    </div>
+    <div class="room-controls-list">
+        <div class="room-control" data-state="off" data-device-id="13" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Barra LED</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="11" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Spots Hall</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="12" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Lustre</div>
+        </div>
+        <div class="room-control curtain-control" data-device-id="39" data-no-sync="true">
+            <img class="room-control-icon" src="https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-shader-off.svg" alt="Cortina">
+            <div class="room-control-label">Cortina Interna</div>
+            <div class="curtain-actions">
+                <button class="curtain-btn open" data-device-id="39" onclick="curtainAction(this, 'open')"><img src="images/icons/icon-up.svg" alt="Abrir"></button>
+                <button class="curtain-btn stop" data-device-id="39" onclick="curtainAction(this, 'stop')"><img src="images/icons/icon-stop.svg" alt="Parar"></button>
+                <button class="curtain-btn close" data-device-id="39" onclick="curtainAction(this, 'close')"><img src="images/icons/icon-down.svg" alt="Fechar"></button>
+            </div>
+        </div>
+        <div class="room-control curtain-control" data-device-id="40" data-no-sync="true">
+            <img class="room-control-icon" src="https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-shader-off.svg" alt="Cortina">
+            <div class="room-control-label">Cortina Externa</div>
+            <div class="curtain-actions">
+                <button class="curtain-btn open" data-device-id="40" onclick="curtainAction(this, 'open')"><img src="images/icons/icon-up.svg" alt="Abrir"></button>
+                <button class="curtain-btn stop" data-device-id="40" onclick="curtainAction(this, 'stop')"><img src="images/icons/icon-stop.svg" alt="Parar"></button>
+                <button class="curtain-btn close" data-device-id="40" onclick="curtainAction(this, 'close')"><img src="images/icons/icon-down.svg" alt="Fechar"></button>
+            </div>
+        </div>
+    </div>
+</div>
+        `,
+
+        cafe: () => `
+<div class="page active page-container" style="background-image:url('images/Images/Photo-cafe.jpg')">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Café</h1>
+    </div>
+    <div class="room-controls-list">
+        <div class="room-control curtain-control" data-device-id="38" data-no-sync="true">
+            <img class="room-control-icon" src="https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-shader-off.svg" alt="Cortina">
+            <div class="room-control-label">Cortina Café</div>
+            <div class="curtain-actions">
+                <button class="curtain-btn open" data-device-id="38" onclick="curtainAction(this, 'open')"><img src="images/icons/icon-up.svg" alt="Abrir"></button>
+                <button class="curtain-btn stop" data-device-id="38" onclick="curtainAction(this, 'stop')"><img src="images/icons/icon-stop.svg" alt="Parar"></button>
+                <button class="curtain-btn close" data-device-id="38" onclick="curtainAction(this, 'close')"><img src="images/icons/icon-down.svg" alt="Fechar"></button>
+            </div>
+        </div>
+    </div>
+</div>
+        `,
+
+        garagem: () => `
+<div class="page active page-container">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Garagem</h1>
+    </div>
+    <div class="room-controls-list">
+        <div style="color:#bbb; text-align:center; width: 100%;">Sem botões ainda.</div>
+    </div>
+</div>
+        `
+    };
+
+    function spaNavigate(page) {
+        window.location.hash = page;
+    }
+
+    function renderSpa() {
+        let page = window.location.hash.replace('#', '') || 'home';
+        if (!pages[page]) page = 'home';
+        spaRoot.innerHTML = pages[page]();
+
+        // Constrói a lista de cômodos na Home
+        if (page === 'home') {
+            const rooms = [
+                { name: 'Entrada', route: 'entrada' },
+                { name: 'Vitrine', route: 'vitrine' },
+                { name: 'Garden', route: 'garden' },
+                { name: 'Café', route: 'cafe' },
+                { name: 'Reunião', route: 'reuniao' },
+                { name: 'Garagem', route: 'garagem' },
+            ];
+            const list = document.querySelector('.rooms-list');
+            if (list) {
+                const disabled = new Set(['garagem']);
+                const visible = rooms.filter(r => !disabled.has(r.route));
+                const photoMap = {
+                    entrada: 'images/Images/Photo-Entrada.jpg',
+                    vitrine: 'images/Images/photo-vitrine.jpg',
+                    garden: 'images/Images/Photo-Garden.jpg',
+                    cafe: 'images/Images/Photo-cafe.jpg',
+                    reuniao: 'images/Images/Photo-Reuniao.jpg'
+                };
+                list.innerHTML = visible.map(r => `
+                    <div class="room-card has-photo">
+                        ${photoMap[r.route] ? `<img src="${photoMap[r.route]}" alt="${r.name}">` : ''}
+                        <span>${r.name}</span>
+                        <button class="room-card-link" onclick="spaNavigate('${r.route}')"></button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Atualiza navbar (ativo + indicador)
+        const nav = document.getElementById('spa-navbar');
+        const items = nav.querySelectorAll('.nav-item');
+        const navPages = Array.from(items).map(i => i.getAttribute('data-page'));
+        const navPage = navPages.includes(page) ? page : 'home';
+        let activeIndex = navPages.indexOf(navPage);
+        if (activeIndex < 0) activeIndex = navPages.indexOf('home');
+        items.forEach((item, idx) => item.classList.toggle('active', idx === activeIndex));
+        const activeItem = items[activeIndex];
+        if (activeItem) {
+            const navRect = nav.getBoundingClientRect();
+            const itemRect = activeItem.getBoundingClientRect();
+            const center = itemRect.left + itemRect.width / 2 - navRect.left;
+            nav.style.setProperty('--indicator-left', `${center}px`);
+        }
+
+        // Inicializa botões dos cômodos nas páginas internas
+        if (['entrada','vitrine','garden','reuniao','garagem','cafe'].includes(page)) {
+            if (typeof initRoomPage === 'function') initRoomPage();
+        }
+    }
+
+    window.addEventListener('hashchange', renderSpa);
+    window.addEventListener('DOMContentLoaded', () => {
+        renderSpa();
+        // Navbar SPA - listeners após DOM pronto
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                const page = item.getAttribute('data-page');
+                if (page) {
+                    e.preventDefault();
+                    spaNavigate(page);
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>
