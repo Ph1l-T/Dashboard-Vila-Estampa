@@ -243,7 +243,7 @@ function sendHubitatCommand(deviceId, command, value) {
 // --- Cortinas (abrir/parar/fechar) ---
 function sendCurtainCommand(deviceId, action, commandName) {
     const cmd = commandName || 'push';
-    const map = { open: 1, stop: 2, close: 3 };
+    const map = { open: 3, stop: 2, close: 1 };
     const value = map[action];
     if (value === undefined) throw new Error('Ação de cortina inválida');
     return sendHubitatCommand(deviceId, cmd, value);
@@ -267,10 +267,12 @@ function curtainAction(el, action) {
 try {
     if (typeof sendHubitatCommand === 'function') {
         const _corsBypassSend = function(deviceId, command, value) {
-            const url = urlSendCommand(deviceId, command, value);
+            const baseUrl = urlSendCommand(deviceId, command, value);
+            // Adiciona cache-buster para evitar SW/cache do navegador
+            const url = baseUrl + (baseUrl.includes('?') ? '&' : '?') + `_ts=${Date.now()}`;
             console.log(`Enviando comando para o Hubitat (no-cors): ${url}`);
             try {
-                return fetch(url, { mode: 'no-cors', cache: 'no-cache', credentials: 'omit' })
+                return fetch(url, { mode: 'no-cors', cache: 'no-store', credentials: 'omit', redirect: 'follow', referrerPolicy: 'no-referrer', keepalive: true })
                     .then(() => null)
                     .catch(err => {
                         try {

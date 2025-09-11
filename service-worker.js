@@ -26,6 +26,18 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
+
+  const url = new URL(req.url);
+  const isSameOrigin = url.origin === self.location.origin;
+  const isHubitat = /cloud\.hubitat\.com$/i.test(url.hostname) || /\/apps\/api\//i.test(url.pathname);
+
+  // Nunca interceptar/cachear chamadas ao Hubitat ou cross-origin
+  if (!isSameOrigin || isHubitat) {
+    event.respondWith(fetch(req));
+    return;
+  }
+
+  // Cache-first apenas para assets do mesmo domínio
   event.respondWith(
     caches.match(req).then((cached) => {
       if (cached) return cached;
@@ -37,4 +49,3 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
-
