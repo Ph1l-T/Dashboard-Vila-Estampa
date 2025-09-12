@@ -2,10 +2,10 @@
 function toggleTelamovelIcon(el) {
     const img = el.querySelector('img');
     if (el.dataset.state === 'off') {
-        img.src = 'https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-telamovel-on.svg';
+        img.src = 'images/icons/icon-small-telamovel-on.svg';
         el.dataset.state = 'on';
     } else {
-        img.src = 'https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-telamovel-off.svg';
+        img.src = 'images/icons/icon-small-telamovel-off.svg';
         el.dataset.state = 'off';
     }
 }
@@ -13,10 +13,10 @@ function toggleTelamovelIcon(el) {
 function toggleSmartglassIcon(el) {
     const img = el.querySelector('img');
     if (el.dataset.state === 'off') {
-        img.src = 'https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-smartglass-on.svg';
+        img.src = 'images/icons/icon-small-smartglass-on.svg';
         el.dataset.state = 'on';
     } else {
-        img.src = 'https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-smartglass-off.svg';
+        img.src = 'images/icons/icon-small-smartglass-off.svg';
         el.dataset.state = 'off';
     }
 }
@@ -24,10 +24,10 @@ function toggleSmartglassIcon(el) {
 function toggleShaderIcon(el) {
     const img = el.querySelector('img');
     if (el.dataset.state === 'off') {
-        img.src = 'https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-shader-on.svg';
+        img.src = 'images/icons/icon-small-shader-on.svg';
         el.dataset.state = 'on';
     } else {
-        img.src = 'https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-shader-off.svg';
+        img.src = 'images/icons/icon-small-shader-off.svg';
         el.dataset.state = 'off';
     }
 }
@@ -51,10 +51,10 @@ function toggleLightIcon(el) {
 function toggleTvIcon(el) {
     const img = el.querySelector('img');
     if (el.dataset.state === 'off') {
-        img.src = 'https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-tv-on.svg';
+        img.src = 'images/icons/icon-small-tv-on.svg';
         el.dataset.state = 'on';
     } else {
-        img.src = 'https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-tv-off.svg';
+        img.src = 'images/icons/icon-small-tv-off.svg';
         el.dataset.state = 'off';
     }
 }
@@ -141,17 +141,17 @@ function toggleDevice(el, deviceType) {
     let newLabel;
 
     const icons = {
-        light: { 
-            on: 'https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-light-on.svg', 
-            off: 'https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-light-off.svg' 
+        light: {
+            on: 'images/icons/icon-small-light-on.svg',
+            off: 'images/icons/icon-small-light-off.svg'
         },
-        tv: { 
-            on: 'https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-tv-on.svg', 
-            off: 'https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-tv-off.svg' 
+        tv: {
+            on: 'images/icons/icon-small-tv-on.svg',
+            off: 'images/icons/icon-small-tv-off.svg'
         },
-        shader: { 
-            on: 'https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-shader-on.svg', 
-            off: 'https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-shader-off.svg'
+        shader: {
+            on: 'images/icons/icon-small-shader-on.svg',
+            off: 'images/icons/icon-small-shader-off.svg'
         }
     };
 
@@ -243,7 +243,7 @@ function sendHubitatCommand(deviceId, command, value) {
 // --- Cortinas (abrir/parar/fechar) ---
 function sendCurtainCommand(deviceId, action, commandName) {
     const cmd = commandName || 'push';
-    const map = { open: 3, stop: 2, close: 1 };
+    const map = { open: 1, stop: 2, close: 3 };
     const value = map[action];
     if (value === undefined) throw new Error('Ação de cortina inválida');
     return sendHubitatCommand(deviceId, cmd, value);
