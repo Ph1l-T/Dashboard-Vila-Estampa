@@ -1,0 +1,764 @@
+/* Fileira de Ã­cones nos cards de cÃ´modos */
+.room-icons-row {
+    position: absolute;
+    left: 30px;
+    top: 240px;
+    z-index: 2;
+    width: auto;
+    height: auto;
+}
+
+/* Barra superior customizada */
+.top-bar-custom {
+    position: fixed;
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 370px;
+    height: 3px;
+    background: #fff;
+    border-radius: 2px;
+    z-index: 100;
+    pointer-events: none;
+}
+
+/* Frame de rolagem dos cards na Home */
+.rooms-frame {
+    width: 100%;
+    height: calc(100vh - 115px); /* Viewport height - apenas o top offset */
+    position: absolute;
+    left: 0;
+    top: 115px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #101010;
+    box-sizing: border-box;
+}
+
+/* Ajuste para desktop - garantir que o frame scrollable tenha altura suficiente */
+@media (min-width: 768px) {
+    .rooms-frame {
+        height: calc(100vh - 115px - 33px); /* Reduzir um pouco a altura para garantir visibilidade */
+    }
+}
+
+/* Espaço no final dos ambientes (removida a barra preta) */
+.rooms-list::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 20px; /* Apenas um pequeno espaço no final */
+    margin-top: 20px;
+}
+
+/* Lista de cÃ´modos na Home */
+.rooms-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    margin-top: 0;
+}
+
+/* Responsivo: duas colunas em tablets/desktop */
+@media (min-width: 768px) {
+    .rooms-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        align-items: stretch;
+        padding: 0 16px;
+    }
+    .room-card {
+        width: 100%;
+    }
+}
+
+.room-card {
+    width: 100%;
+    height: 300px;
+    background: #222;
+    position: relative;
+    overflow: hidden;
+}
+
+.room-card img {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+}
+
+.room-card span {
+    position: absolute;
+    left: 30px;
+    top: 30px;
+    z-index: 1;
+    color: #fff;
+    font-size: 35px;
+    font-family: 'Raleway', Arial, sans-serif;
+    font-weight: 300;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.under-construction {
+    position: absolute;
+    top: 115px;
+    left: 0;
+    right: 0;
+    bottom: 90px; /* navbar height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #bbb;
+    font-size: 22px;
+    font-family: 'Raleway', sans-serif;
+    background: rgba(16,16,16,0.85);
+    z-index: 2;
+}
+
+.room-master-btn {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    width: 72px; /* larger click area */
+    height: 72px;
+    border: none;           /* remove circle/border */
+    background: transparent;/* icon only */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 11; /* above .room-card-link */
+    transition: transform .08s ease;
+}
+
+.room-master-btn:hover { transform: scale(1.04); }
+.room-master-btn:active { transform: translateY(2px) scale(0.98); }
+.room-master-btn img { width: 56px; height: 56px; filter: brightness(0) invert(1); }
+
+.room-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+}
+
+
+.page-title {
+    text-align: center;
+    color: #fff;
+    font-size: 2.2rem;
+    font-family: 'Raleway', Arial, sans-serif;
+    font-weight: 500;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5em;
+}
+
+/* Fixa o título principal no cabeçalho para não se mover ao rolar */
+.page-title.fixed-header {
+    position: fixed;
+    top: 45px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 412px;
+    z-index: 120;
+    margin: 0;
+    pointer-events: auto;
+    touch-action: none;
+    -ms-touch-action: none;
+}
+
+.page-title.fixed-header img {
+    height: 60px;
+    max-width: 80vw;
+    width: auto;
+    display: block;
+    margin: -20px auto 0 auto;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+}
+
+/* Reduce Eletrize.svg icons to 75% */
+.page-title.fixed-header img[src$="Eletrize.svg"] {
+    height: 45px;
+    transform: translate(10px, 10px);
+}
+
+
+
+/* Estilos base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    font-family: 'Raleway', Arial, sans-serif;
+    background-color: #101010;
+    color: #fff;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.container {
+    width: 100%;
+    max-width: 412px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: 97px; /* Espaço para a barra de navegação fixa (77px altura + 20px margem) */
+}
+
+/* Estilos das pÃ¡ginas */
+.page {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    background: 101010;
+    min-height: calc(100vh - 16px);
+    box-sizing: border-box;
+    padding-bottom: 97px; /* Espaço para a barra de navegação fixa (77px altura + 20px margem) */
+}
+
+.page.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Estilos da Navbar */
+.navbar {
+    width: 100%;
+    max-width: 100%;
+    height: 77px;
+    background: #1C1C1C;
+    border-radius: 0;
+    border-top: 3px solid #101010;
+    display: flex;
+    justify-content: center;
+    padding: 0 20px;
+    gap: 45px;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    transform: none;
+    margin: 0;
+    --indicator-left: 50%;
+    z-index: 1000;
+    box-sizing: border-box;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Tablet/desktop layout: ajustar espaçamento mantendo a barra fixa */
+@media (min-width: 768px) {
+    .navbar {
+        bottom: 0;              /* manter fixo na base */
+        padding: 0 30px;       /* mais padding nas laterais */
+    }
+    /* Ajustar espaço inferior para o conteúdo não sobrepor a navbar */
+    .container {
+        padding-bottom: 130px;  /* Aumentado para garantir visibilidade do último card */
+    }
+    .page {
+        padding-bottom: 130px;  /* Aumentado para garantir visibilidade do último card */
+    }
+    .controls-grid {
+        bottom: 97px;           /* evitar sobreposição na grade de páginas internas */
+    }
+}
+
+/* Bolinha branca indicadora */
+.navbar::before {
+    content: '';
+    position: absolute;
+    width: 112px;
+    height: 52px;
+    background: url('images/icons/pageselector.svg') no-repeat center center / contain;
+    z-index: 2;
+    top: -17px;
+    left: calc(var(--indicator-left, 50%) - 56px);
+    transition: left 0.45s cubic-bezier(.4,1,.5,1);
+    pointer-events: none;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    padding: 0 10px;
+    transition: transform 0.2s ease;
+}
+
+.nav-item:not(.active):hover {
+    transform: scale(1.1);
+}
+
+.nav-icon-wrapper {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-item.active {
+    position: relative;
+}
+
+.nav-item.active .nav-icon {
+    position: relative;
+    z-index: 2;
+    transform: translateY(-33px) scale(1.15);
+    transition: transform 0.3s cubic-bezier(.4,1.5,.5,1);
+}
+
+.nav-icon-wrapper {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.nav-icon {
+    width: 25px;
+    height: 25px;
+    transition: all 0.3s cubic-bezier(.4,1.5,.5,1);
+}
+
+.nav-item:not(.active) .nav-icon {
+    filter: brightness(0) saturate(100%) invert(32%) sepia(0%) saturate(0%) hue-rotate(147deg) brightness(96%) contrast(89%);
+}
+
+.nav-item.active .nav-icon {
+    filter: brightness(0) saturate(100%);
+}
+
+.nav-item:not(.active):hover .nav-icon {
+    transform: scale(1.1);
+}
+
+.nav-item:hover .nav-text {
+    color: #8A38F5;
+}
+
+/* Escritorio Page */
+.page-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+}
+
+.page-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; /* Cobrir toda a altura do container */
+    background: radial-gradient(ellipse 91.69% 175.81% at 50.00% -0.00%, rgba(0, 0, 0, 0) 0%, rgba(16, 16, 16, 0.8) 100%);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+}
+
+.page-header {
+    position: absolute;
+    top: 40px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+
+/* Estilos para a página de cortinas */
+.curtain-section {
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.section-divider {
+    width: 40px;
+    height: 3px;
+    background: #fff;
+    border-radius: 2px;
+    margin: 0 auto 20px;
+}
+
+.curtain-controls-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.page-header .page-title {
+    color: white;
+    font-size: 30px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 700;
+    text-shadow: 0px 4px 8px rgba(0, 0, 0, 0.50);
+    margin: 0;
+}
+
+.back-btn {
+    position: absolute;
+    left: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.back-btn img {
+    width: 32px;
+    height: 32px;
+}
+
+.controls-grid {
+    position: absolute;
+    top: 115px;
+    left: 21px;
+    right: 21px;
+    bottom: 90px; /* navbar height */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 131px;
+    gap: 10px;
+    z-index: 1;
+    align-items: center;
+}
+
+.control-card {
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    color: white;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 200;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.2s ease, transform 0.08s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    height: 100%;
+}
+
+.control-card:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* AparÃªncia de pressionado quando ligado */
+.control-card[data-state="on"] {
+    transform: translateY(2px);
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.35);
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.control-card.large {
+    grid-column: span 2;
+}
+
+.control-icon {
+    width: 60px;
+    height: 60px;
+}
+
+.control-label {
+    font-size: 20px;
+}
+
+.control-state {
+    font-size: 20px;
+}
+
+.control-card.dvr {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Thermostat Styles */
+.thermostat {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: default !important;
+}
+
+.thermostat-display {
+    font-size: 40px;
+    font-weight: 300;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.thermostat-buttons {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.temp-decrease,
+.temp-increase {
+    flex: 1;
+    height: 100%;
+    cursor: pointer;
+    /* For debugging, you can add a background color */
+    /* background-color: rgba(255, 0, 0, 0.1); */
+}
+
+/* Botões pequenos dos cômodos na Home: efeito pressionado quando ligados */
+.icon-toggle-light,
+.icon-toggle-tv,
+.icon-toggle-shader,
+.icon-toggle-smartglass,
+.icon-toggle-telamovel {
+    transition: transform 0.08s ease, filter 0.2s ease;
+}
+
+.icon-toggle-light[data-state='on'],
+.icon-toggle-tv[data-state='on'],
+.icon-toggle-shader[data-state='on'],
+.icon-toggle-smartglass[data-state='on'],
+.icon-toggle-telamovel[data-state='on'] {
+    transform: translateY(2px) scale(0.96);
+    filter: drop-shadow(0 2px 0 rgba(0,0,0,0.45)) brightness(1.1);
+}
+
+
+/* Placeholder rooms: hide legacy images and icon rows on Home */
+#home-page .room-card:not(.has-photo) > img { display: none !important; }
+#home-page .room-icons-row { display: none !important; }
+
+/* Room controls (inner pages): vertical list of 3 buttons */
+.room-controls-list {
+    position: absolute;
+    top: 115px;
+    left: 21px;
+    right: 21px;
+    bottom: 90px; /* navbar height */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    z-index: 1;
+}
+
+.room-control {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    height: 64px;
+    padding: 0 16px;
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    color: white;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.08s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+/* Botão especial para o Jardim na Entrada */
+#home-page ~ .page-container .room-controls-list .room-control[data-device-id="17"] {
+    height: 110px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 0 24px;
+}
+#home-page ~ .page-container .room-controls-list .room-control[data-device-id="17"] .room-control-icon {
+    width: 48px;
+    height: 48px;
+    display: block;
+    margin: 0 auto 6px auto;
+}
+#home-page ~ .page-container .room-controls-list .room-control[data-device-id="17"] .room-control-label {
+    font-size: 22px;
+    text-align: center;
+    width: 100%;
+    margin: 0;
+}
+
+.room-control:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.room-control[data-state="on"] {
+    transform: translateY(2px);
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.35);
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.room-control-icon { width: 32px; height: 32px; }
+.room-control-label { font-size: 18px; }
+
+/* Home quick toggle (long-press) */
+/* estilos do botão rápido de master on/off removidos */
+/* Curtain controls (large buttons with icons) */
+.curtain-control {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  height: auto;
+  padding: 16px;
+}
+.curtain-control .room-control-icon { display: none; }
+.curtain-control .room-control-label {
+  font-size: 20px;
+  text-align: center;
+  width: 100%;
+}
+.curtain-actions {
+  display: flex;
+  gap: 12px;
+}
+.curtain-btn {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.08);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform .08s ease;
+}
+.curtain-btn:hover { background: rgba(255,255,255,0.12); }
+.curtain-btn:active { transform: translateY(2px) scale(0.98); }
+.curtain-btn img { width: 40px; height: 40px; filter: brightness(0) invert(1); }
+@media (max-width: 360px) { .curtain-btn { width: 70px; height: 70px; } }
+
+/* Rotação dos ícones de cortina para a sala de Reunião (Cortina Interna) */
+.room-control[data-device-id="39"] .curtain-btn.open img {
+    transform: rotate(-90deg);
+}
+
+.room-control[data-device-id="39"] .curtain-btn.close img {
+    transform: rotate(45deg);
+}
+
+/* Popup styles */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    display: none; /* Hidden by default */
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.popup-dialog {
+    background: rgba(30, 30, 30, 0.9);
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+    width: 90%;
+    max-width: 320px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.popup-message {
+    font-size: 18px;
+    font-weight: 300;
+    margin-bottom: 25px;
+}
+
+.popup-buttons {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+}
+
+.popup-btn {
+    flex: 1;
+    padding: 12px 0;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.popup-btn.confirm {
+    background-color: #8A38F5;
+    color: white;
+}
+
+.popup-btn.cancel {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.popup-btn:active {
+    transform: scale(0.96);
+}
+
+.scene-control-card {
+    height: 215px;
+}
+
+/* Extra spacer below Home cards to avoid navbar overlap */
+#home-page .rooms-list::after {
+    height: 75px;
+}

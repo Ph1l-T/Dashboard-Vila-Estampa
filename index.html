@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eletrize</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="images/pwa/app-icon-192.png" type="image/png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1C1C1C">
+    <link rel="apple-touch-icon" href="images/pwa/app-icon-192.png">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Botão invisível no card para capturar clique na Home */
+        .room-card-link{position:absolute;left:0;top:0;width:100%;height:100%;z-index:10;background:transparent;border:none;cursor:pointer}
+    </style>
+    </head>
+<body>
+
+    <!-- SPA root -->
+    <div id="spa-root"></div>
+
+    <!-- Confirmation Popup -->
+    <div class="popup-overlay" id="confirmation-popup">
+        <div class="popup-dialog">
+            <p class="popup-message" id="popup-message"></p>
+            <div class="popup-buttons">
+                <button class="popup-btn cancel" id="popup-cancel">Cancelar</button>
+                <button class="popup-btn confirm" id="popup-confirm">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar fixa SPA -->
+    <nav class="navbar" id="spa-navbar">
+        <div class="nav-item" data-page="home">
+            <div class="nav-icon-wrapper">
+                <img src="images/icons/icon-home.svg" alt="Home" class="nav-icon">
+            </div>
+        </div>
+        <div class="nav-item" data-page="scenes">
+            <div class="nav-icon-wrapper">
+                <img src="images/icons/icon-scenes.svg" alt="Cenários" class="nav-icon">
+            </div>
+        </div>
+    </nav>
+
+    <script src="script.js"></script>
+    <script src="scenes.js"></script>
+    <script>
+    // PWA: registra service worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+        });
+    }
+    // --- SPA Core ---
+    const spaRoot = document.getElementById('spa-root');
+
+    // Fotos dos cards por rota (reaproveitadas como fundo das páginas internas)
+    const ROOM_PHOTOS = {
+        entrada: 'images/Images/Photo-Entrada.jpg',
+        vitrine: 'images/Images/photo-vitrine.jpg',
+        garden: 'images/Images/Photo-Garden.jpg',
+        cafe: 'images/Images/photo-sinuca.jpg',
+        reuniao: 'images/Images/Photo-Reuniao.jpg',
+        piscina: 'images/Images/photo-piscina.jpg',
+        gourmet: 'images/Images/photo-gourmet.jpg',
+        'home-ambiente': 'images/Images/photo-home.jpg',
+        recepcao: 'images/Images/Photo-Recepcao.jpg'
+    };
+
+    const pages = {
+        curtains: () => `
+            <div class="top-bar-custom"></div>
+            <main class="container">
+                <div class="page active">
+                    <h1 class="page-title fixed-header" style="display:flex;justify-content:center;align-items:center;">
+                        <img src="images/icons/Eletrize.svg" alt="Vila Estampa" />
+                    </h1>
+                    <div class="under-construction">Em construção</div>
+                    
+                    <div class="rooms-frame" style="padding: 20px;">
+                        <!-- Garden -->
+                        <div class="curtain-section">
+                            <h2 class="section-title">Garden</h2>
+                            <div class="section-divider"></div>
+                            
+                            <div class="curtain-controls-wrapper">
+                                <div class="room-control curtain-control" data-device-id="42" data-no-sync="true">
+                                    <div class="room-control-label">Cortina Esquerda</div>
+                                    <div class="curtain-actions">
+                                        <button class="curtain-btn open" data-device-id="42" onclick="curtainAction(this, 'open')"><img src="images/icons/icon-up.svg" alt="Abrir"></button>
+                                        <button class="curtain-btn stop" data-device-id="42" onclick="curtainAction(this, 'stop')"><img src="images/icons/icon-stop.svg" alt="Parar"></button>
+                                        <button class="curtain-btn close" data-device-id="42" onclick="curtainAction(this, 'close')"><img src="images/icons/icon-down.svg" alt="Fechar"></button>
+                                    </div>
+                                </div>
+                                
+                                <div class="room-control curtain-control" data-device-id="43" data-no-sync="true">
+                                    <div class="room-control-label">Cortina Direita</div>
+                                    <div class="curtain-actions">
+                                        <button class="curtain-btn open" data-device-id="43" onclick="curtainAction(this, 'open')"><img src="images/icons/icon-up.svg" alt="Abrir"></button>
+                                        <button class="curtain-btn stop" data-device-id="43" onclick="curtainAction(this, 'stop')"><img src="images/icons/icon-stop.svg" alt="Parar"></button>
+                                        <button class="curtain-btn close" data-device-id="43" onclick="curtainAction(this, 'close')"><img src="images/icons/icon-down.svg" alt="Fechar"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Reunião -->
+                        <div class="curtain-section">
+                            <h2 class="section-title">Reunião</h2>
+                            <div class="section-divider"></div>
+                            
+                            <div class="curtain-controls-wrapper">
+                                <div class="room-control curtain-control" data-device-id="39" data-no-sync="true">
+                                    <div class="room-control-label">Cortina Interna</div>
+                                    <div class="curtain-actions">
+                                        <button class="curtain-btn open" data-device-id="39" onclick="curtainAction(this, 'open')"><img src="images/icons/icon-up.svg" alt="Abrir"></button>
+                                        <button class="curtain-btn stop" data-device-id="39" onclick="curtainAction(this, 'stop')"><img src="images/icons/icon-stop.svg" alt="Parar"></button>
+                                        <button class="curtain-btn close" data-device-id="39" onclick="curtainAction(this, 'close')"><img src="images/icons/icon-down.svg" alt="Fechar"></button>
+                                    </div>
+                                </div>
+                                
+                                <div class="room-control curtain-control" data-device-id="40" data-no-sync="true">
+                                    <div class="room-control-label">Cortina Externa</div>
+                                    <div class="curtain-actions">
+                                        <button class="curtain-btn open" data-device-id="40" onclick="curtainAction(this, 'open')"><img src="images/icons/icon-up.svg" alt="Abrir"></button>
+                                        <button class="curtain-btn stop" data-device-id="40" onclick="curtainAction(this, 'stop')"><img src="images/icons/icon-stop.svg" alt="Parar"></button>
+                                        <button class="curtain-btn close" data-device-id="40" onclick="curtainAction(this, 'close')"><img src="images/icons/icon-down.svg" alt="Fechar"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Café -->
+                        <div class="curtain-section">
+                            <h2 class="section-title">Café</h2>
+                            <div class="section-divider"></div>
+                            
+                            <div class="curtain-controls-wrapper">
+                                <div class="room-control curtain-control" data-device-id="38" data-no-sync="true">
+                                    <div class="room-control-label">Cortina Café</div>
+                                    <div class="curtain-actions">
+                                        <button class="curtain-btn open" data-device-id="38" onclick="curtainAction(this, 'open')"><img src="images/icons/icon-up.svg" alt="Abrir"></button>
+                                        <button class="curtain-btn stop" data-device-id="38" onclick="curtainAction(this, 'stop')"><img src="images/icons/icon-stop.svg" alt="Parar"></button>
+                                        <button class="curtain-btn close" data-device-id="38" onclick="curtainAction(this, 'close')"><img src="images/icons/icon-down.svg" alt="Fechar"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        `,
+        scenes: () => `
+            <div class="top-bar-custom"></div>
+             <main class="container">
+                <div class="page active">
+                    <h1 class="page-title fixed-header" style="display:flex;justify-content:center;align-items:center;">
+                        <img src="images/icons/Eletrize.svg" alt="Vila Estampa" />
+                    </h1>
+                    <div class="controls-grid" style="top: 130px; grid-template-columns: 1fr; grid-auto-rows: min-content; gap: 15px;">
+                        <div class="control-card large scene-control-card" id="master-light-toggle-btn" onclick="handleMasterLightToggle()">
+                            <img class="control-icon" id="master-light-toggle-icon" src="images/icons/icon-small-light-off.svg" alt="Master Light Toggle">
+                            <div class="control-label" id="master-light-toggle-label">Ligar Tudo</div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        `,
+        home: () => `
+            <div class="top-bar-custom"></div>
+            <main class="container">
+                <div class="page active" id="home-page">
+                    <h1 class="page-title fixed-header" style="display:flex;justify-content:center;align-items:center;">
+                        <img src="images/icons/Eletrize.svg" alt="Vila Estampa" />
+                    </h1>
+                    <div class="rooms-frame">
+                        <div class="rooms-list"></div>
+                    </div>
+                </div>
+            </main>
+        `,
+
+        entrada: () => `
+<div class="top-bar-custom"></div>
+<div class="page active page-container" style="background-image:url('images/Images/Photo-Entrada.jpg')">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Escritório</h1>
+    </div>
+    <div class="room-controls-list">
+        <div class="room-control" data-state="off" data-device-id="231" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Pendente</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="232" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Trilho</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="233" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Lustre</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="234" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Balizador</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="235" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Banheiro</div>
+        </div>
+    </div>
+</div>
+        `,
+
+        vitrine: () => `
+<div class="top-bar-custom"></div>
+<div class="page active page-container" style="background-image:url('images/Images/photo-vitrine.jpg')">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Projetos</h1>
+    </div>
+    <div class="room-controls-list">
+        <div class="room-control" data-state="off" data-device-id="236" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Iluminação</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="237" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="https://cdn.jsdelivr.net/gh/Ph1l-T/My-Dashboard-Hubitat@main/images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Lustre</div>
+        </div>
+    </div>
+</div>
+        `,
+
+        garden: () => `
+<div class="top-bar-custom"></div>
+<div class="page active page-container" style="background-image:url('images/Images/Photo-Garden.jpg')">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Programação</h1>
+    </div>
+    <div class="room-controls-list">
+        <div class="room-control" data-state="off" data-device-id="238" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Lustre</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="239" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Rack</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="240" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Armário</div>
+        </div>
+    </div>
+</div>
+        `,
+
+        reuniao: () => `
+<div class="top-bar-custom"></div>
+<div class="page active page-container" style="background-image:url('images/Images/Photo-Reuniao.jpg')">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Eletrize Solar</h1>
+    </div>
+    <div class="room-controls-list">
+        <div class="room-control" data-state="off" data-device-id="248" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Iluminação</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="249" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Armário</div>
+        </div>
+        
+        <div class="room-control" data-state="off" data-device-id="250" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Jardim</div>
+        </div>
+    </div>
+</div>
+        `,
+
+        cafe: () => `
+<div class="top-bar-custom"></div>
+<div class="page active page-container" style="background-image:url('images/Images/Photo-cafe.jpg')">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Sinuca</h1>
+    </div>
+    <div class="room-controls-list">
+        <div class="room-control" data-state="off" data-device-id="241" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Spot</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="242" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Bar</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="243" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Balizadores</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="244" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Trilhos</div>
+        </div>
+    </div>
+</div>
+        `,
+
+        gourmet: () => `
+<div class="top-bar-custom"></div>
+<div class="page active page-container">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Gourmet</h1>
+    </div>
+    <div class="room-controls-list">
+        <div class="room-control" data-state="off" data-device-id="251" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Iluminação</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="252" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Abajur</div>
+        </div>
+    </div>
+</div>
+        `,
+
+        'home-ambiente': () => `
+<div class="top-bar-custom"></div>
+<div class="page active page-container">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Home</h1>
+    </div>
+    <div class="room-controls-list">
+        <div class="room-control" data-state="off" data-device-id="253" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Iluminação</div>
+        </div>
+    </div>
+</div>
+        `,
+
+        recepcao: () => `
+<div class="top-bar-custom"></div>
+<div class="page active page-container">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Recepção</h1>
+    </div>
+    <div class="room-controls-list">
+        <div class="room-control" data-state="off" data-device-id="261" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Lustre</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="262" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Lavabo</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="263" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Jardim Externo</div>
+        </div>
+    </div>
+</div>
+        `,
+
+        cinema: () => `
+<div class="top-bar-custom"></div>
+<div class="page active page-container">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Cinema</h1>
+    </div>
+    <div class="room-controls-list">
+        <div class="room-control" data-state="off" data-device-id="259" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Iluminação</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="260" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Balizadores</div>
+        </div>
+    </div>
+</div>
+        `,
+
+        piscina: () => `
+<div class="top-bar-custom"></div>
+<div class="page active page-container">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Piscina</h1>
+    </div>
+    <div class="room-controls-list">
+        <div class="room-control" data-state="off" data-device-id="246" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Iluminação</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="245" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Jardim</div>
+        </div>
+    </div>
+</div>
+        `,
+
+        externo: () => `
+<div class="top-bar-custom"></div>
+<div class="page active page-container">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Externo</h1>
+    </div>
+    <div class="room-controls-list">
+        <div class="room-control" data-state="off" data-device-id="256" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Jardim</div>
+        </div>
+        <div class="room-control" data-state="off" data-device-id="257" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Fachada</div>
+        </div>
+    </div>
+</div>
+        `,
+
+        refeitorio: () => `
+<div class="top-bar-custom"></div>
+<div class="page active page-container">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Refeitório</h1>
+    </div>
+    <div class="room-controls-list">
+        <div class="room-control" data-state="off" data-device-id="258" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Cozinha</div>
+        </div>
+        <div class="room-control" data-state="off" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Ferramentas</div>
+        </div>
+        <div class="room-control" data-state="off" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Banheiro</div>
+        </div>
+        <div class="room-control" data-state="off" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Painéis</div>
+        </div>
+    </div>
+</div>
+        `,
+
+        funcionarios: () => `
+<div class="top-bar-custom"></div>
+<div class="page active page-container">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Funcionários</h1>
+    </div>
+    <div class="room-controls-list">
+        <div class="room-control" data-state="off" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Cozinha</div>
+        </div>
+        <div class="room-control" data-state="off" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Ferramentas</div>
+        </div>
+        <div class="room-control" data-state="off" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Luz Vermelha</div>
+        </div>
+        <div class="room-control" data-state="off" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Banheiro</div>
+        </div>
+        <div class="room-control" data-state="off" onclick="toggleRoomControl(this)">
+            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+            <div class="room-control-label">Painéis</div>
+        </div>
+    </div>
+</div>
+        `,
+
+        garagem: () => `
+<div class="top-bar-custom"></div>
+<div class="page active page-container">
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
+        <h1 class="page-title">Garagem</h1>
+    </div>
+    <div class="room-controls-list">
+        <div style="color:#bbb; text-align:center; width: 100%;">Sem botões ainda.</div>
+    </div>
+</div>
+        `
+    };
+
+    function spaNavigate(page) {
+        window.location.hash = page;
+    }
+
+    function renderSpa() {
+        let page = window.location.hash.replace('#', '') || 'home';
+        if (!pages[page]) page = 'home';
+        spaRoot.innerHTML = pages[page]();
+
+        // Constrói a lista de cômodos na Home
+        if (page === 'home') {
+            const rooms = [
+                { name: 'Escritório', route: 'entrada' },
+                { name: 'Projetos', route: 'vitrine' },
+                { name: 'Programação', route: 'garden' },
+                { name: 'Sinuca', route: 'cafe' },
+                { name: 'Eletrize Solar', route: 'reuniao' },
+                { name: 'Gourmet', route: 'gourmet' },
+                { name: 'Home', route: 'home-ambiente' },
+                { name: 'Recepção', route: 'recepcao' },
+                { name: 'Cinema', route: 'cinema' },
+                { name: 'Piscina', route: 'piscina' },
+                { name: 'Externo', route: 'externo' },
+                { name: 'Refeitório', route: 'refeitorio' },
+                { name: 'Funcionários', route: 'funcionarios' },
+            ];
+            const list = document.querySelector('.rooms-list');
+            if (list) {
+                const order = ['entrada','vitrine','garden','cafe','reuniao','piscina','gourmet','home-ambiente','funcionarios','cinema','recepcao'];
+                const visible = rooms
+                    .filter(r => order.includes(r.route))
+                    .sort((a, b) => order.indexOf(a.route) - order.indexOf(b.route));
+                const photoMap = ROOM_PHOTOS;
+                const roomDevices = {
+                    'entrada': ['231','232','233','234','235'],
+                    'vitrine': ['236','237'],
+                    'garden': ['238','239','240'],
+                    'cafe': ['241','242','243','244'],
+                    'reuniao': ['248','249','250'],
+                    'gourmet': ['251','252'],
+                    'home-ambiente': ['253'],
+                    'funcionarios': ['254','255','256','257','258'],
+                    'cinema': ['259','260'],
+                    'recepcao': ['261','262','263'],
+                    'piscina': ['246','245']
+                };
+                list.innerHTML = visible.map(r => {
+                    const hasPhoto = Boolean(photoMap[r.route]);
+                    const ids = roomDevices[r.route] || [];
+                    return `
+                    <div class="room-card ${hasPhoto ? 'has-photo' : ''}">
+                        ${hasPhoto ? `<img src="${photoMap[r.route]}" alt="${r.name}">` : ''}
+                        <span>${r.name}</span>
+                        <button class="room-master-btn" data-route="${r.route}" data-device-ids="${(ids||[]).join(',')}" onclick="onHomeMasterClick(event,this)" aria-label="Master"><img class="room-master-icon" src="images/icons/icon-small-light-off.svg" alt="Master"></button>
+                        <button class="room-card-link" onclick="spaNavigate('${r.route}')"></button>
+                    </div>`;
+                }).join('');
+                if (typeof initHomeMasters === 'function') initHomeMasters();
+            }
+        }
+
+        // Define o fundo da página interna com a mesma foto do card
+        (function setPageBackground(route){
+            const url = ROOM_PHOTOS[route];
+            if (!url) return;
+            const container = document.querySelector('.page.active .page-container') || document.querySelector('.page.active.page-container');
+            if (container) {
+                container.style.backgroundImage = `url('${url}')`;
+                container.style.backgroundSize = 'cover';
+                container.style.backgroundPosition = 'center';
+            }
+        })(page);
+
+        // Atualiza navbar (ativo + indicador)
+        const nav = document.getElementById('spa-navbar');
+        const items = nav.querySelectorAll('.nav-item');
+        const navPages = Array.from(items).map(i => i.getAttribute('data-page'));
+        const navPage = navPages.includes(page) ? page : 'home';
+        let activeIndex = navPages.indexOf(navPage);
+        if (activeIndex < 0) activeIndex = navPages.indexOf('home');
+        items.forEach((item, idx) => item.classList.toggle('active', idx === activeIndex));
+        const activeItem = items[activeIndex];
+        if (activeItem) {
+            const navRect = nav.getBoundingClientRect();
+            const itemRect = activeItem.getBoundingClientRect();
+            const center = itemRect.left + itemRect.width / 2 - navRect.left;
+            nav.style.setProperty('--indicator-left', `${center}px`);
+        }
+
+        // Inicializa botões dos cômodos nas páginas internas
+        if (['entrada','vitrine','garden','reuniao','garagem','cafe','gourmet','home-ambiente','recepcao','cinema','piscina','funcionarios'].includes(page)) {
+            if (typeof initRoomPage === 'function') initRoomPage();
+        }
+
+        // Atualiza o botão master na página de cenários
+        if (page === 'scenes') {
+            initScenesPage();
+        }
+    }
+
+    // Home: Master On/Off por ambiente
+    function anyOn(deviceIds){
+        return (deviceIds||[]).some(id => (getStoredState(id) || 'off') === 'on');
+    }
+    function setMasterIcon(btn, state){
+        const img = btn.querySelector('img');
+        if (!img) return;
+        img.src = state === 'on' ? 'images/icons/icon-small-light-on.svg' : 'images/icons/icon-small-light-off.svg';
+        btn.dataset.state = state;
+    }
+    function initHomeMasters(){
+        document.querySelectorAll('.room-master-btn').forEach(btn => {
+            const ids = (btn.dataset.deviceIds || '').split(',').filter(Boolean);
+            const state = anyOn(ids) ? 'on' : 'off';
+            setMasterIcon(btn, state);
+        });
+    }
+    window.onHomeMasterClick = function(ev, btn){
+        ev.stopPropagation();
+        ev.preventDefault();
+        const ids = (btn.dataset.deviceIds || '').split(',').filter(Boolean);
+        if (!ids.length) return;
+        const shouldTurnOn = !anyOn(ids);
+        const cmd = shouldTurnOn ? 'on' : 'off';
+        ids.forEach(id => { try { setStoredState(id, cmd); sendHubitatCommand(id, cmd); } catch(_){} });
+        setMasterIcon(btn, shouldTurnOn ? 'on' : 'off');
+    };
+
+    window.addEventListener('hashchange', renderSpa);
+    window.addEventListener('DOMContentLoaded', () => {
+        renderSpa();
+        // Navbar SPA - listeners após DOM pronto
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                const page = item.getAttribute('data-page');
+                if (page) {
+                    e.preventDefault();
+                    spaNavigate(page);
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>
