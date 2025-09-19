@@ -1,4 +1,4 @@
-const CACHE_NAME = 've-cache-v3';
+const CACHE_NAME = 've-cache-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -37,7 +37,21 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first apenas para assets do mesmo domínio
+  // Network-first para navegações/HTML para evitar versões antigas
+  if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
+    event.respondWith(
+      fetch(req)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
+          return res;
+        })
+        .catch(() => caches.match(req))
+    );
+    return;
+  }
+
+  // Cache-first para assets estáticos do mesmo domínio
   event.respondWith(
     caches.match(req).then((cached) => {
       if (cached) return cached;
