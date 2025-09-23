@@ -11,7 +11,10 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1C1C1C">
     <link rel="apple-touch-icon" href="images/pwa/app-icon-192.png">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=1737455925">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <style>
         /* Botão invisível no card para capturar clique na Home */
         .room-card-link{position:absolute;left:0;top:0;width:100%;height:100%;z-index:10;background:transparent;border:none;cursor:pointer}
@@ -64,8 +67,8 @@
         </div>
     </nav>
 
-    <script src="script.js"></script>
-    <script src="scenes.js"></script>
+    <script src="script.js?v=1737455925"></script>
+    <script src="scenes.js?v=1737455925"></script>
     <script>
     // PWA: registra service worker (desativado em localhost para evitar cache no desenvolvimento)
     if ('serviceWorker' in navigator) {

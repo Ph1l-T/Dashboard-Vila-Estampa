@@ -1,9 +1,10 @@
-const CACHE_NAME = 've-cache-v4';
+const CACHE_NAME = 'eletrize-cache-v2025.01.23.001';
 const ASSETS = [
   './',
-  './index.html',
-  './styles.css',
-  './script.js',
+  './index.html?v=1737455925',
+  './styles.css?v=1737455925',
+  './script.js?v=1737455925',
+  './scenes.js?v=1737455925',
   './images/pwa/app-icon-192.png'
 ];
 
@@ -37,8 +38,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Network-first para navegações/HTML para evitar versões antigas
-  if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
+  // Network-first para HTML, CSS, JS para sempre ter versão mais nova
+  if (req.mode === 'navigate' || 
+      (req.headers.get('accept') || '').includes('text/html') ||
+      req.url.includes('.css') || 
+      req.url.includes('.js')) {
     event.respondWith(
       fetch(req)
         .then((res) => {
