@@ -229,30 +229,48 @@ function toggleDevice(el, deviceType) {
 
 // --- Controle do Hubitat ---
 
-// Hubitat Maker API (cloud HTTPS)
-const HUBITAT_CLOUD_BASE_URL = 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices/';
+// Detecta se está em produção (Cloudflare Pages) ou desenvolvimento
+const isProduction = !['localhost', '127.0.0.1', '::1'].includes(location.hostname);
+const API_BASE_URL = isProduction ? '/api/hubitat' : 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices';
 const HUBITAT_ACCESS_TOKEN = '8204fd02-e90e-4c0d-b083-431625526d10';
 
-// Helpers de URL para endpoints comuns da Maker API
+// Helpers de URL para endpoints comuns da API
 function urlDeviceInfo(deviceId) {
-    return `${HUBITAT_CLOUD_BASE_URL}${deviceId}?access_token=${HUBITAT_ACCESS_TOKEN}`;
+    return isProduction 
+        ? `${API_BASE_URL}/${deviceId}`
+        : `${API_BASE_URL}/${deviceId}?access_token=${HUBITAT_ACCESS_TOKEN}`;
 }
 function urlDeviceEvents(deviceId) {
-    return `${HUBITAT_CLOUD_BASE_URL}${deviceId}/events?access_token=${HUBITAT_ACCESS_TOKEN}`;
+    return isProduction 
+        ? `${API_BASE_URL}/${deviceId}/events`
+        : `${API_BASE_URL}/${deviceId}/events?access_token=${HUBITAT_ACCESS_TOKEN}`;
 }
 function urlDeviceCommands(deviceId) {
-    return `${HUBITAT_CLOUD_BASE_URL}${deviceId}/commands?access_token=${HUBITAT_ACCESS_TOKEN}`;
+    return isProduction 
+        ? `${API_BASE_URL}/${deviceId}/commands`
+        : `${API_BASE_URL}/${deviceId}/commands?access_token=${HUBITAT_ACCESS_TOKEN}`;
 }
 function urlDeviceCapabilities(deviceId) {
-    return `${HUBITAT_CLOUD_BASE_URL}${deviceId}/capabilities?access_token=${HUBITAT_ACCESS_TOKEN}`;
+    return isProduction 
+        ? `${API_BASE_URL}/${deviceId}/capabilities`
+        : `${API_BASE_URL}/${deviceId}/capabilities?access_token=${HUBITAT_ACCESS_TOKEN}`;
 }
 function urlDeviceAttribute(deviceId, attribute) {
-    return `${HUBITAT_CLOUD_BASE_URL}${deviceId}/attribute/${encodeURIComponent(attribute)}?access_token=${HUBITAT_ACCESS_TOKEN}`;
+    return isProduction 
+        ? `${API_BASE_URL}/${deviceId}/attribute/${encodeURIComponent(attribute)}`
+        : `${API_BASE_URL}/${deviceId}/attribute/${encodeURIComponent(attribute)}?access_token=${HUBITAT_ACCESS_TOKEN}`;
 }
 function urlSendCommand(deviceId, command, value) {
-    let url = `${HUBITAT_CLOUD_BASE_URL}${deviceId}/${encodeURIComponent(command)}`;
+    let url = isProduction 
+        ? `${API_BASE_URL}/${deviceId}/${encodeURIComponent(command)}`
+        : `${API_BASE_URL}/${deviceId}/${encodeURIComponent(command)}`;
+    
     if (value !== undefined) url += `/${encodeURIComponent(value)}`;
-    url += `?access_token=${HUBITAT_ACCESS_TOKEN}`;
+    
+    if (!isProduction) {
+        url += `?access_token=${HUBITAT_ACCESS_TOKEN}`;
+    }
+    
     return url;
 }
 
@@ -338,4 +356,80 @@ try {
     }
 } catch (_) { /* ignore */ }
 
-// Dynamic device assignment removed per user request
+// --- Polling automático de estados ---
+
+let pollingInterval = null;
+const POLLING_INTERVAL_MS = 5000; // 5 segundos
+
+function startPolling() {
+    if (pollingInterval) return; // Já está rodando
+    
+    pollingInterval = setInterval(updateDeviceStatesFromServer, POLLING_INTERVAL_MS);
+    console.log('Polling iniciado - atualizando a cada', POLLING_INTERVAL_MS / 1000, 'segundos');
+}
+
+function stopPolling() {
+    if (pollingInterval) {
+        clearInterval(pollingInterval);
+        pollingInterval = null;
+        console.log('Polling parado');
+    }
+}
+
+async function updateDeviceStatesFromServer() {
+    try {
+        const deviceIds = ALL_LIGHT_IDS.join(',');
+        const pollingUrl = isProduction 
+            ? `/api/polling?devices=${deviceIds}`
+            : null; // Em dev, pular polling por enquanto
+            
+        if (!pollingUrl) return;
+        
+        const response = await fetch(pollingUrl);
+        if (!response.ok) throw new Error(`Polling failed: ${response.status}`);
+        
+        const data = await response.json();
+        
+        // Atualizar UI com os novos estados
+        Object.entries(data.devices).forEach(([deviceId, deviceData]) => {
+            if (deviceData.success) {
+                setStoredState(deviceId, deviceData.state);
+                updateDeviceUI(deviceId, deviceData.state);
+            }
+        });
+        
+        // Atualizar botões master se estivermos na página de cenários
+        if (typeof updateMasterLightToggleState === 'function') {
+            updateMasterLightToggleState();
+        }
+        
+    } catch (error) {
+        console.error('Erro no polling:', error);
+    }
+}
+
+function updateDeviceUI(deviceId, state) {
+    // Atualizar controles de cômodo
+    const roomControls = document.querySelectorAll(`[data-device-id="${deviceId}"]`);
+    roomControls.forEach(el => {
+        if (el.classList.contains('room-control')) {
+            setRoomControlUI(el, state);
+        } else if (el.classList.contains('room-master-btn')) {
+            // Atualizar master buttons na home
+            const ids = (el.dataset.deviceIds || '').split(',').filter(Boolean);
+            const masterState = anyOn(ids) ? 'on' : 'off';
+            setMasterIcon(el, masterState);
+        }
+    });
+}
+
+// Iniciar polling quando a página carrega
+window.addEventListener('DOMContentLoaded', () => {
+    if (isProduction) {
+        // Aguardar um pouco para a página carregar completamente
+        setTimeout(startPolling, 2000);
+    }
+});
+
+// Parar polling quando a página é fechada
+window.addEventListener('beforeunload', stopPolling);
