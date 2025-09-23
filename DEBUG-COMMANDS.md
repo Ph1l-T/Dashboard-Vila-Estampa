@@ -13,13 +13,13 @@ window.debugEletrize.checkDevice('366')
 window.debugEletrize.checkAllDevices()
 ```
 
-### 🛡️ Sistema de Proteção
+### 🏠 Botões Master
 ```javascript
-// Ver quais dispositivos estão protegidos
-window.debugEletrize.showProtections()
+// Verificar status dos botões master
+window.debugEletrize.checkMasterButtons()
 
-// Limpar todas as proteções (use com cuidado)
-window.debugEletrize.clearProtections()
+// Sincronizar todos os controles visíveis
+window.debugEletrize.syncControls()
 ```
 
 ### 🔄 Carregamento e Polling
@@ -67,11 +67,11 @@ window.debugEletrize.hideLoader()
 
 ### Botões não atualizam?
 ```javascript
-// Verificar proteções ativas
-window.debugEletrize.showProtections()
+// Verificar estados dos botões master
+window.debugEletrize.checkMasterButtons()
 
-// Se necessário, limpar proteções
-window.debugEletrize.clearProtections()
+// Sincronizar todos os controles
+window.debugEletrize.syncControls()
 ```
 
 ### Estados incorretos?
@@ -96,6 +96,7 @@ window.debugEletrize.forcePolling()
 
 ## 🎛️ Configurações Importantes
 
-- **Proteção**: 8 segundos após comando manual
-- **Polling**: A cada 10 segundos em produção
-- **Timeout**: Estados salvos em localStorage como backup
+- **Polling**: A cada 5 segundos em produção (otimizado)
+- **Rate Limit**: ~12 requests/minuto (seguro para Hubitat)
+- **Backup**: Estados salvos em localStorage como fallback
+- **Mobile**: Console logging desabilitado para evitar travamentos

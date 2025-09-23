@@ -418,7 +418,7 @@ try {
 // --- Polling automático de estados ---
 
 let pollingInterval = null;
-const POLLING_INTERVAL_MS = 10000; // 10 segundos (mais conservador)
+const POLLING_INTERVAL_MS = 5000; // 5 segundos - otimizado para responsividade sem sobrecarregar
 
 function startPolling() {
     if (pollingInterval) return; // Já está rodando
