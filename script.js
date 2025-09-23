@@ -774,44 +774,8 @@ function updateProgress(percentage, text) {
 async function loadAllDeviceStatesGlobally() {
     console.log('🌍 Iniciando carregamento global de estados...');
     
-    // Verificar compatibilidade primeiro
-    if (!checkMobileCompatibility()) {
-        console.warn('📱 Modo compatibilidade ativado para mobile');
-        updateProgress(20, 'Modo compatibilidade mobile...');
-        
-        // Modo simplificado para dispositivos incompatíveis
-        console.log('📱 Carregando em modo compatibilidade mobile...');
-        
-        ALL_LIGHT_IDS.forEach((deviceId, index) => {
-            let storedState = 'off'; // Estado padrão seguro
-            
-            try {
-                if (typeof localStorage !== 'undefined') {
-                    const stored = localStorage.getItem(`device_state_${deviceId}`);
-                    if (stored) {
-                        storedState = stored;
-                    }
-                }
-            } catch (e) {
-                console.warn(`localStorage inacessível para ${deviceId}:`, e);
-            }
-            
-            // Simular delay para melhor UX
-            if (index < 3) {
-                setTimeout(() => {
-                    updateDeviceUI(deviceId, storedState, true);
-                }, index * 100);
-            } else {
-                updateDeviceUI(deviceId, storedState, true);
-            }
-            
-            const progress = 20 + ((index + 1) / ALL_LIGHT_IDS.length) * 80;
-            updateProgress(progress, `Dispositivo ${index + 1}/${ALL_LIGHT_IDS.length}`);
-        });
-        
-        updateProgress(100, 'Modo compatibilidade ativo!');
-        return true;
-    }
+    // Mobile usa carregamento completo (verificação de compatibilidade removida)
+    console.log('📱 Carregando estados de dispositivos...');
     
     if (!isProduction) {
         console.log('💻 Modo desenvolvimento - carregando do localStorage');
@@ -962,54 +926,7 @@ async function loadAllDeviceStatesGlobally() {
     }
 }
 
-// Verificar compatibilidade com mobile
-function checkMobileCompatibility() {
-    const issues = [];
-    const warnings = [];
-    
-    // APIs críticas (falha total se não existirem)
-    if (typeof fetch === 'undefined') {
-        issues.push('Fetch API não suportada');
-    }
-    
-    if (typeof Promise === 'undefined') {
-        issues.push('Promises não suportadas');
-    }
-    
-    // APIs opcionais (warnings apenas)
-    if (typeof MutationObserver === 'undefined') {
-        warnings.push('MutationObserver não suportado (usar fallback)');
-    }
-    
-    if (typeof AbortController === 'undefined') {
-        warnings.push('AbortController não suportado (sem timeout)');
-    }
-    
-    if (typeof localStorage === 'undefined') {
-        warnings.push('LocalStorage não suportado (sem persistência)');
-    }
-    
-    // Testar localStorage funcionamento
-    try {
-        const testKey = '__test_ls__';
-        localStorage.setItem(testKey, 'test');
-        localStorage.removeItem(testKey);
-    } catch (e) {
-        warnings.push('LocalStorage bloqueado (modo privado?)');
-    }
-    
-    if (warnings.length > 0) {
-        console.warn('⚠️ Avisos de compatibilidade:', warnings);
-    }
-    
-    if (issues.length > 0) {
-        console.error('❌ Problemas críticos detectados:', issues);
-        return false;
-    }
-    
-    console.log('✅ Compatibilidade mobile verificada');
-    return true;
-}
+// Função checkMobileCompatibility() removida - mobile usa inicialização completa
 
 // Observador para sincronizar novos elementos no DOM
 function setupDomObserver() {
@@ -1196,7 +1113,7 @@ window.debugEletrize = {
         console.log('  Connection:', navigator.connection ? 
             `${navigator.connection.effectiveType} (${navigator.connection.downlink}Mbps)` : 
             'Não disponível');
-        checkMobileCompatibility();
+        console.log('  Verificação de compatibilidade: DESABILITADA (mobile usa inicialização completa)');
     },
     testMobileApi: async () => {
         console.log('🧪 Testando APIs para mobile...');
@@ -1270,53 +1187,7 @@ function initUltraBasicMode() {
     }
 }
 
-// Função de inicialização simplificada para mobile  
-function initSimpleMode() {
-    console.log('📱 Inicializando modo simples para mobile...');
-    
-    try {
-        console.log('📱 Tentando mostrar loader...');
-        showLoader();
-        
-        console.log('📱 Atualizando progresso...');
-        updateProgress(10, 'Modo simples ativo...');
-        
-        console.log('📱 Processando', ALL_LIGHT_IDS.length, 'dispositivos...');
-        
-        // Carregar estados básicos
-        for (var i = 0; i < ALL_LIGHT_IDS.length; i++) {
-            var deviceId = ALL_LIGHT_IDS[i];
-            var progress = 10 + ((i + 1) / ALL_LIGHT_IDS.length) * 80;
-            
-            console.log('📱 Processando device', deviceId, '- progresso:', progress + '%');
-            updateProgress(progress, 'Carregando ' + (i + 1) + '/' + ALL_LIGHT_IDS.length + '...');
-            
-            try {
-                updateDeviceUI(deviceId, 'off', true);
-            } catch (e) {
-                console.error('❌ Erro no device', deviceId + ':', e);
-            }
-        }
-        
-        console.log('📱 Finalizando carregamento...');
-        updateProgress(100, 'Modo simples carregado!');
-        
-        setTimeout(function() {
-            console.log('📱 Escondendo loader...');
-            hideLoader();
-            console.log('✅ Modo simples ativo - funcionalidade básica disponível');
-        }, 1000);
-        
-    } catch (error) {
-        console.error('❌ ERRO CRÍTICO no modo simples:', error);
-        console.error('❌ Erro stack:', error.stack);
-        console.error('❌ Erro linha:', error.lineNumber || 'desconhecida');
-        
-        // Ativar modo ultra-básico
-        console.log('🚨 Ativando modo ultra-básico...');
-        initUltraBasicMode();
-    }
-}
+// Função initSimpleMode() removida - mobile usa inicialização completa
 
 // Tratamento de erros globais para debug mobile
 window.onerror = function(message, source, lineno, colno, error) {
@@ -1361,26 +1232,8 @@ window.addEventListener('DOMContentLoaded', function() {
     try {
         console.log('📱 Verificando compatibilidade mobile...');
         
-        // Verificar se é mobile com limitações críticas
-        if (isMobile) {
-            showMobileDebug('📱 Verificando compatibilidade mobile...', 'info');
-            var isCompatible = false;
-            try {
-                isCompatible = checkMobileCompatibility();
-                showMobileDebug('📱 Compatibilidade: ' + (isCompatible ? 'OK' : 'LIMITADO'), isCompatible ? 'success' : 'error');
-            } catch (e) {
-                console.error('❌ Erro na verificação de compatibilidade:', e);
-                showMobileDebug('❌ Erro na verificação: ' + e.message, 'error');
-                isCompatible = false;
-            }
-            
-            if (!isCompatible) {
-                console.warn('📱 Dispositivo móvel com limitações detectado - usando modo simples');
-                showMobileDebug('📱 Usando modo simples por limitações', 'info');
-                initSimpleMode();
-                return;
-            }
-        }
+        // Mobile usa inicialização completa (sem verificação de compatibilidade)
+        console.log('📱 Mobile detectado - usando inicialização completa');
         
         console.log('📱 Tentando mostrar loader...');
         // Mostrar loader imediatamente
