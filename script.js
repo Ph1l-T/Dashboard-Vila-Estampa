@@ -70,9 +70,6 @@ function toggleRoomControl(el) {
     
     if (!deviceId) return;
     
-    // Proteger dispositivo contra polling por 5 segundos
-    protectDevice(deviceId, 5000);
-    
     // Atualizar UI imediatamente
     el.dataset.state = newState;
     if (img) img.src = newState === 'on' ? ICON_ON : ICON_OFF;
@@ -94,8 +91,6 @@ function toggleRoomControl(el) {
             el.dataset.state = revertState;
             if (img) img.src = revertState === 'on' ? ICON_ON : ICON_OFF;
             setStoredState(deviceId, revertState);
-            // Remover proteção em caso de erro
-            deviceProtection.delete(deviceId);
         });
 }
 
@@ -424,7 +419,6 @@ try {
 
 let pollingInterval = null;
 const POLLING_INTERVAL_MS = 10000; // 10 segundos (mais conservador)
-const deviceProtection = new Map(); // Armazena proteções por deviceId
 
 function startPolling() {
     if (pollingInterval) return; // Já está rodando
@@ -437,49 +431,7 @@ function startPolling() {
     console.log('Polling iniciado - atualizando a cada', POLLING_INTERVAL_MS / 1000, 'segundos');
 }
 
-function protectDevice(deviceId, durationMs = 8000) {
-    const until = Date.now() + durationMs;
-    deviceProtection.set(deviceId, until);
-    console.log(`🛡️ Device ${deviceId} protegido por ${durationMs/1000}s até`, new Date(until).toLocaleTimeString());
-}
-
-function isDeviceProtected(deviceId) {
-    const until = deviceProtection.get(deviceId);
-    if (!until) return false;
-    
-    const now = Date.now();
-    if (now > until) {
-        deviceProtection.delete(deviceId);
-        console.log(`🔓 Proteção do device ${deviceId} expirou`);
-        return false;
-    }
-    
-    const remainingMs = until - now;
-    console.log(`🔒 Device ${deviceId} ainda protegido por ${Math.ceil(remainingMs/1000)}s`);
-    return true;
-}
-
-function clearAllProtections() {
-    const count = deviceProtection.size;
-    deviceProtection.clear();
-    console.log(`🧹 Limpadas ${count} proteções de dispositivos`);
-}
-
-function showProtectionStatus() {
-    const now = Date.now();
-    console.log('📊 Status das proteções:');
-    
-    if (deviceProtection.size === 0) {
-        console.log('  ✅ Nenhum dispositivo protegido');
-        return;
-    }
-    
-    deviceProtection.forEach((until, deviceId) => {
-        const remaining = Math.max(0, until - now);
-        const status = remaining > 0 ? '🔒 ATIVO' : '🔓 EXPIRADO';
-        console.log(`  ${status} ${deviceId}: ${Math.ceil(remaining/1000)}s restantes`);
-    });
-}
+// Funções de proteção removidas para simplificar o sistema
 
 function stopPolling() {
     if (pollingInterval) {
@@ -535,12 +487,6 @@ async function updateDeviceStatesFromServer() {
 }
 
 function updateDeviceUI(deviceId, state, forceUpdate = false) {
-    // Não atualizar se dispositivo está protegido (exceto se forçado)
-    if (!forceUpdate && isDeviceProtected(deviceId)) {
-        console.log(`🛡️ Device ${deviceId} protegido - ignorando atualização do polling`);
-        return;
-    }
-    
     // Atualizar controles de cômodo
     const roomControls = document.querySelectorAll(`[data-device-id="${deviceId}"]`);
     roomControls.forEach(el => {
@@ -607,7 +553,6 @@ function updateStatesAfterMasterCommand(deviceIds, command) {
     
     // Atualizar todos os dispositivos affected
     deviceIds.forEach(deviceId => {
-        // Forçar atualização mesmo com proteção
         updateDeviceUI(deviceId, command, true);
     });
     
@@ -1031,15 +976,13 @@ window.debugEletrize = {
     hideLoader: hideLoader,
     checkDevice: (deviceId) => {
         const stored = getStoredState(deviceId);
-        const protected = isDeviceProtected(deviceId);
-        console.log(`Device ${deviceId}: stored=${stored}, protected=${protected}`);
+        console.log(`Device ${deviceId}: stored=${stored}`);
     },
     checkAllDevices: () => {
         console.log('📋 Estados de todos os dispositivos:');
         ALL_LIGHT_IDS.forEach(deviceId => {
             const stored = getStoredState(deviceId);
-            const protected = isDeviceProtected(deviceId);
-            console.log(`  ${deviceId}: ${stored} ${protected ? '🔒' : '🔓'}`);
+            console.log(`  ${deviceId}: ${stored}`);
         });
     },
     checkMasterButtons: () => {
