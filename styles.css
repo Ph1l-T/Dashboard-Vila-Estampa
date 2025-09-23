@@ -143,6 +143,59 @@
 .room-master-btn:active { transform: translateY(2px) scale(0.98); }
 .room-master-btn img { width: 56px; height: 56px; filter: brightness(0) invert(1); }
 
+/* Estados de loading para botões master */
+.room-master-btn.loading {
+    pointer-events: none;
+    opacity: 0.6;
+    position: relative;
+}
+
+.room-master-btn.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #ffffff;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 12;
+}
+
+.room-master-btn.loading img {
+    opacity: 0.3;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Loading para botão master da página de cenários */
+.scene-control-card.loading {
+    pointer-events: none;
+    opacity: 0.6;
+    position: relative;
+}
+
+.scene-control-card.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 24px;
+    height: 24px;
+    margin: -12px 0 0 -12px;
+    border: 3px solid #ffffff;
+    border-top: 3px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 12;
+}
+
 .room-card:hover {
     box-shadow: 0 4px 16px rgba(0,0,0,0.25);
 }

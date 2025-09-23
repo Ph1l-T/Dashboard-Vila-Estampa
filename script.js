@@ -427,6 +427,17 @@ const POLLING_INTERVAL_MS = 5000; // 5 segundos - otimizado para responsividade 
 const recentCommands = new Map(); // deviceId -> timestamp do último comando
 const COMMAND_PROTECTION_MS = 8000; // 8 segundos de proteção após comando manual
 
+// Sistema de loading para botões master
+function setMasterButtonLoading(button, isLoading) {
+    if (isLoading) {
+        button.classList.add('loading');
+        button.dataset.loading = 'true';
+    } else {
+        button.classList.remove('loading');
+        button.dataset.loading = 'false';
+    }
+}
+
 function cleanupExpiredCommands() {
     const now = Date.now();
     for (const [deviceId, timestamp] of recentCommands.entries()) {
@@ -572,6 +583,85 @@ function initHomeMasters() {
         const ids = (btn.dataset.deviceIds || '').split(',').filter(Boolean);
         const state = anyOn(ids) ? 'on' : 'off';
         setMasterIcon(btn, state, true); // forçar na inicialização
+    });
+}
+
+// Função chamada pelo onclick dos botões master na home
+function onHomeMasterClick(event, button) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Verificar se já está carregando
+    if (button.dataset.loading === 'true') {
+        return;
+    }
+    
+    const deviceIds = (button.dataset.deviceIds || '').split(',').filter(Boolean);
+    if (deviceIds.length === 0) return;
+    
+    // Determinar comando baseado no estado atual
+    const currentState = anyOn(deviceIds) ? 'on' : 'off';
+    const newCommand = currentState === 'on' ? 'off' : 'on';
+    
+    // Ativar loading visual
+    setMasterButtonLoading(button, true);
+    
+    // Atualizar UI imediatamente
+    setMasterIcon(button, newCommand);
+    
+    // Enviar comandos para todos os dispositivos
+    const promises = deviceIds.map(deviceId => {
+        // Marcar comando recente
+        recentCommands.set(deviceId, Date.now());
+        setStoredState(deviceId, newCommand);
+        return sendHubitatCommand(deviceId, newCommand);
+    });
+    
+    // Aguardar conclusão de todos os comandos
+    Promise.allSettled(promises).finally(() => {
+        // Remover loading após comandos
+        setTimeout(() => {
+            setMasterButtonLoading(button, false);
+        }, 1000); // 1 segundo de delay para feedback visual
+    });
+}
+
+// Função para o botão master da página de cenários
+function handleMasterLightToggle() {
+    const button = document.getElementById('master-light-toggle-btn');
+    if (!button) return;
+    
+    // Verificar se já está carregando
+    if (button.dataset.loading === 'true') {
+        return;
+    }
+    
+    // Usar todos os IDs de luzes
+    const deviceIds = ALL_LIGHT_IDS;
+    
+    // Determinar comando baseado no estado atual
+    const currentState = anyOn(deviceIds) ? 'on' : 'off';
+    const newCommand = currentState === 'on' ? 'off' : 'on';
+    
+    // Ativar loading visual
+    setMasterButtonLoading(button, true);
+    
+    // Enviar comandos para todos os dispositivos
+    const promises = deviceIds.map(deviceId => {
+        // Marcar comando recente
+        recentCommands.set(deviceId, Date.now());
+        setStoredState(deviceId, newCommand);
+        return sendHubitatCommand(deviceId, newCommand);
+    });
+    
+    // Aguardar conclusão de todos os comandos
+    Promise.allSettled(promises).finally(() => {
+        // Remover loading após comandos
+        setTimeout(() => {
+            setMasterButtonLoading(button, false);
+            // Atualizar estado visual do botão
+            updateMasterLightToggleState();
+        }, 1000); // 1 segundo de delay para feedback visual
     });
 }
 
@@ -1022,6 +1112,18 @@ window.debugEletrize = {
             const remaining = Math.max(0, COMMAND_PROTECTION_MS - (now - timestamp));
             const status = remaining > 0 ? '🔒 ATIVO' : '🔓 EXPIRADO';
             console.log(`  ${status} ${deviceId}: ${Math.ceil(remaining/1000)}s restantes`);
+        });
+    },
+    testMasterLoading: () => {
+        console.log('🔄 Testando loading nos botões master...');
+        const masters = document.querySelectorAll('.room-master-btn');
+        masters.forEach((btn, index) => {
+            setTimeout(() => {
+                setMasterButtonLoading(btn, true);
+                setTimeout(() => {
+                    setMasterButtonLoading(btn, false);
+                }, 2000);
+            }, index * 500);
         });
     },
     checkMasterButtons: () => {

@@ -23,6 +23,9 @@ window.debugEletrize.syncControls()
 
 // Verificar comandos protegidos (anti-conflito polling)
 window.debugEletrize.checkProtectedCommands()
+
+// Testar animação de loading nos botões master
+window.debugEletrize.testMasterLoading()
 ```
 
 ### 🔄 Carregamento e Polling
