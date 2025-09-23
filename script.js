@@ -273,39 +273,47 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 // SOLUÇÃO: Desabilitar console.log em mobile para evitar travamentos
 const ENABLE_DEBUG_LOGS = true; // Logs habilitados em desktop e mobile
 
-// Sistema de detecção de cache desatualizado para mobile
+// Sistema de detecção de cache desatualizado para mobile (TEMPORARIAMENTE DESABILITADO)
 const APP_VERSION = '2025.01.23.002'; // Incrementar a cada deploy importante
 (function() {
-    if (isMobile) {
+    if (false && isMobile) { // DESABILITADO para debug
         try {
             var lastVersion = localStorage.getItem('app_version');
             var lastLoad = localStorage.getItem('last_mobile_load');
             var now = new Date().getTime();
             
-            // Se versão mudou ou último carregamento foi há mais de 1 hora
-            if (lastVersion !== APP_VERSION || (lastLoad && (now - parseInt(lastLoad)) > 3600000)) {
-                console.log('📱 Detectado app desatualizado no mobile - forçando reload cache');
+            // Só recarregar se versão realmente mudou (não por tempo)
+            if (lastVersion && lastVersion !== APP_VERSION) {
+                console.log('📱 Nova versão detectada - forçando reload cache');
                 console.log('📱 Versão anterior:', lastVersion, 'Nova:', APP_VERSION);
                 
-                // Limpar caches
-                try {
-                    localStorage.clear();
-                    sessionStorage.clear();
-                } catch(e) {}
-                
-                // Marcar nova versão
+                // Marcar que já foi recarregado para esta versão
                 localStorage.setItem('app_version', APP_VERSION);
                 localStorage.setItem('last_mobile_load', now.toString());
+                localStorage.setItem('reload_done_' + APP_VERSION, 'true');
                 
-                // Forçar reload após delay
-                setTimeout(function() {
-                    console.log('📱 Recarregando página para limpar cache mobile...');
-                    window.location.reload(true);
-                }, 2000);
+                // Limpar caches exceto os marcadores de versão
+                var itemsToKeep = ['app_version', 'last_mobile_load', 'reload_done_' + APP_VERSION];
+                var keysToRemove = [];
+                for (var i = 0; i < localStorage.length; i++) {
+                    var key = localStorage.key(i);
+                    if (key && !itemsToKeep.includes(key) && !key.startsWith('reload_done_')) {
+                        keysToRemove.push(key);
+                    }
+                }
+                keysToRemove.forEach(key => localStorage.removeItem(key));
                 
-                return; // Não continuar inicialização
+                // Forçar reload apenas se não foi feito ainda para esta versão
+                if (!localStorage.getItem('reload_done_' + APP_VERSION)) {
+                    setTimeout(function() {
+                        console.log('📱 Recarregando página para nova versão...');
+                        window.location.reload(true);
+                    }, 2000);
+                    return; // Não continuar inicialização
+                }
             } else {
-                // Atualizar timestamp da última carga
+                // Primeira vez ou mesma versão - continuar normalmente
+                localStorage.setItem('app_version', APP_VERSION);
                 localStorage.setItem('last_mobile_load', now.toString());
                 console.log('📱 Mobile cache OK - versão', APP_VERSION);
             }
@@ -353,8 +361,8 @@ safeLog('=== AMBIENTE DETECTADO ===', {
     isIOS,
     userAgent: navigator.userAgent.substring(0, 60) + '...'
 });
-const HUBITAT_PROXY_URL = '/hubitat-proxy';
-const POLLING_URL = '/polling';
+const HUBITAT_PROXY_URL = '/functions/hubitat-proxy';
+const POLLING_URL = '/functions/polling';
 const HUBITAT_DIRECT_URL = 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices';
 const HUBITAT_ACCESS_TOKEN = '8204fd02-e90e-4c0d-b083-431625526d10';
 
@@ -881,9 +889,11 @@ async function loadAllDeviceStatesGlobally() {
             console.warn('⚠️ AbortController não suportado - sem timeout');
         }
         
+        console.log('📡 Fazendo fetch para:', `${POLLING_URL}?devices=${deviceIds}`);
         const response = await fetch(`${POLLING_URL}?devices=${deviceIds}`, fetchOptions);
         if (timeoutId) clearTimeout(timeoutId);
         
+        console.log('📡 Resposta recebida, status:', response.status);
         updateProgress(50, 'Recebendo dados...');
         
         if (!response.ok) {
@@ -892,7 +902,9 @@ async function loadAllDeviceStatesGlobally() {
         
         let data;
         try {
+            console.log('📡 Parseando resposta JSON...');
             data = await response.json();
+            console.log('📡 JSON parseado com sucesso');
         } catch (jsonError) {
             console.error('❌ Erro ao parsear JSON:', jsonError);
             throw new Error('Resposta inválida do servidor');
