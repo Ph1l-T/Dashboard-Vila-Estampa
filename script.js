@@ -465,7 +465,8 @@ async function updateDeviceStatesFromServer() {
             }
         });
         
-        // Atualizar botões master se estivermos na página de cenários
+        // Atualizar todos os botões master (home e cenários)
+        updateAllMasterButtons();
         if (typeof updateMasterLightToggleState === 'function') {
             updateMasterLightToggleState();
         }
@@ -481,9 +482,9 @@ async function updateDeviceStatesFromServer() {
     }
 }
 
-function updateDeviceUI(deviceId, state) {
-    // Não atualizar se dispositivo está protegido
-    if (isDeviceProtected(deviceId)) {
+function updateDeviceUI(deviceId, state, forceUpdate = false) {
+    // Não atualizar se dispositivo está protegido (exceto se forçado)
+    if (!forceUpdate && isDeviceProtected(deviceId)) {
         console.log(`🛡️ Device ${deviceId} protegido - ignorando atualização do polling`);
         return;
     }
@@ -493,58 +494,141 @@ function updateDeviceUI(deviceId, state) {
     roomControls.forEach(el => {
         if (el.classList.contains('room-control')) {
             const currentState = el.dataset.state;
-            if (currentState !== state) {
-                console.log(`🔄 Atualizando device ${deviceId}: ${currentState} → ${state}`);
+            if (currentState !== state || forceUpdate) {
+                console.log(`🔄 Atualizando device ${deviceId}: ${currentState} → ${state}${forceUpdate ? ' (forçado)' : ''}`);
                 setRoomControlUI(el, state);
             }
-        } else if (el.classList.contains('room-master-btn')) {
-            // Atualizar master buttons na home
-            const ids = (el.dataset.deviceIds || '').split(',').filter(Boolean);
+        }
+    });
+    
+    // Atualizar botões master da home após qualquer mudança de dispositivo
+    updateAllMasterButtons();
+}
+
+function updateAllMasterButtons() {
+    const masterButtons = document.querySelectorAll('.room-master-btn');
+    masterButtons.forEach(btn => {
+        const ids = (btn.dataset.deviceIds || '').split(',').filter(Boolean);
+        if (ids.length > 0) {
             const masterState = anyOn(ids) ? 'on' : 'off';
-            setMasterIcon(el, masterState);
+            setMasterIcon(btn, masterState);
         }
     });
 }
 
-// Buscar estados iniciais dos dispositivos
-async function loadInitialDeviceStates() {
+// === SISTEMA DE CARREGAMENTO GLOBAL ===
+
+// Controle da tela de loading
+function showLoader() {
+    const loader = document.getElementById('global-loader');
+    if (loader) {
+        loader.classList.remove('hidden');
+        updateProgress(0, 'Iniciando carregamento...');
+    }
+}
+
+function hideLoader() {
+    const loader = document.getElementById('global-loader');
+    if (loader) {
+        setTimeout(() => {
+            loader.classList.add('hidden');
+        }, 500); // Pequeno delay para melhor UX
+    }
+}
+
+function updateProgress(percentage, text) {
+    const progressFill = document.getElementById('progress-fill');
+    const progressText = document.getElementById('progress-text');
+    const loaderText = document.querySelector('.loader-text');
+    
+    if (progressFill) progressFill.style.width = percentage + '%';
+    if (progressText) progressText.textContent = Math.round(percentage) + '%';
+    if (loaderText && text) loaderText.textContent = text;
+}
+
+// Carregamento global de todos os estados dos dispositivos
+async function loadAllDeviceStatesGlobally() {
+    console.log('🌍 Iniciando carregamento global de estados...');
+    
     if (!isProduction) {
-        console.log('💻 Modo desenvolvimento - carregando estados do localStorage apenas');
-        // Em desenvolvimento, usar apenas localStorage
-        ALL_LIGHT_IDS.forEach(deviceId => {
+        console.log('💻 Modo desenvolvimento - carregando do localStorage');
+        updateProgress(20, 'Carregando estados salvos...');
+        
+        // Simular carregamento para melhor UX
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        ALL_LIGHT_IDS.forEach((deviceId, index) => {
             const storedState = getStoredState(deviceId) || 'off';
-            updateDeviceUI(deviceId, storedState);
+            updateDeviceUI(deviceId, storedState, true); // forceUpdate = true
+            
+            const progress = 20 + ((index + 1) / ALL_LIGHT_IDS.length) * 80;
+            updateProgress(progress, `Carregando dispositivo ${index + 1}/${ALL_LIGHT_IDS.length}...`);
         });
-        return;
+        
+        updateProgress(100, 'Carregamento concluído!');
+        return true;
     }
     
-    console.log('🔍 Buscando estados iniciais dos dispositivos...');
     try {
+        updateProgress(10, 'Conectando com servidor...');
+        
         const deviceIds = ALL_LIGHT_IDS.join(',');
+        console.log(`📡 Buscando estados de ${ALL_LIGHT_IDS.length} dispositivos...`);
+        
+        updateProgress(30, 'Enviando solicitação...');
         const response = await fetch(`${POLLING_URL}?devices=${deviceIds}`);
         
-        if (response.ok) {
-            const data = await response.json();
-            console.log('📡 Estados iniciais recebidos:', data);
-            
-            Object.entries(data.devices).forEach(([deviceId, deviceData]) => {
-                if (deviceData.success) {
-                    setStoredState(deviceId, deviceData.state);
-                    updateDeviceUI(deviceId, deviceData.state);
-                }
-            });
-            
-            console.log('✅ Estados iniciais aplicados com sucesso');
-        } else {
-            throw new Error(`HTTP ${response.status}`);
+        updateProgress(50, 'Recebendo dados...');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-    } catch (error) {
-        console.error('❌ Erro ao buscar estados iniciais:', error);
-        // Fallback para localStorage
-        ALL_LIGHT_IDS.forEach(deviceId => {
-            const storedState = getStoredState(deviceId) || 'off';
-            updateDeviceUI(deviceId, storedState);
+        
+        const data = await response.json();
+        console.log('📡 Estados recebidos:', data);
+        
+        updateProgress(70, 'Processando estados...');
+        
+        // Processar dispositivos com progresso
+        const deviceEntries = Object.entries(data.devices);
+        let processedCount = 0;
+        
+        deviceEntries.forEach(([deviceId, deviceData]) => {
+            if (deviceData.success) {
+                setStoredState(deviceId, deviceData.state);
+                updateDeviceUI(deviceId, deviceData.state, true); // forceUpdate = true
+                console.log(`✅ Device ${deviceId}: ${deviceData.state}`);
+            } else {
+                console.warn(`⚠️ Falha no device ${deviceId}:`, deviceData.error);
+                // Usar estado salvo como fallback
+                const storedState = getStoredState(deviceId) || 'off';
+                updateDeviceUI(deviceId, storedState, true); // forceUpdate = true
+            }
+            
+            processedCount++;
+            const progress = 70 + (processedCount / deviceEntries.length) * 25;
+            updateProgress(progress, `Aplicando estado ${processedCount}/${deviceEntries.length}...`);
         });
+        
+        updateProgress(100, 'Estados carregados com sucesso!');
+        console.log('✅ Carregamento global concluído com sucesso');
+        return true;
+        
+    } catch (error) {
+        console.error('❌ Erro no carregamento global:', error);
+        updateProgress(60, 'Erro na conexão, usando dados salvos...');
+        
+        // Fallback para localStorage
+        ALL_LIGHT_IDS.forEach((deviceId, index) => {
+            const storedState = getStoredState(deviceId) || 'off';
+            updateDeviceUI(deviceId, storedState, true); // forceUpdate = true
+            
+            const progress = 60 + ((index + 1) / ALL_LIGHT_IDS.length) * 35;
+            updateProgress(progress, `Carregando backup ${index + 1}/${ALL_LIGHT_IDS.length}...`);
+        });
+        
+        updateProgress(100, 'Carregamento concluído (modo offline)');
+        return false;
     }
 }
 
@@ -553,27 +637,58 @@ window.debugEletrize = {
     showProtections: showProtectionStatus,
     clearProtections: clearAllProtections,
     forcePolling: updateDeviceStatesFromServer,
+    reloadStates: loadAllDeviceStatesGlobally,
+    showLoader: showLoader,
+    hideLoader: hideLoader,
     checkDevice: (deviceId) => {
         const stored = getStoredState(deviceId);
         const protected = isDeviceProtected(deviceId);
         console.log(`Device ${deviceId}: stored=${stored}, protected=${protected}`);
+    },
+    checkAllDevices: () => {
+        console.log('📋 Estados de todos os dispositivos:');
+        ALL_LIGHT_IDS.forEach(deviceId => {
+            const stored = getStoredState(deviceId);
+            const protected = isDeviceProtected(deviceId);
+            console.log(`  ${deviceId}: ${stored} ${protected ? '🔒' : '🔓'}`);
+        });
     }
 };
 
-// Iniciar polling quando a página carrega
+// Inicialização global da aplicação
 window.addEventListener('DOMContentLoaded', () => {
-    console.log('🏠 Dashboard Eletrize carregado');
+    console.log('🏠 Dashboard Eletrize inicializando...');
     console.log('🛠️ Comandos debug disponíveis: window.debugEletrize');
     
+    // Mostrar loader imediatamente
+    showLoader();
+    
+    // Aguardar um pouco para UI carregar e então iniciar carregamento
     setTimeout(async () => {
-        // Primeiro carregar estados iniciais
-        await loadInitialDeviceStates();
-        
-        // Depois iniciar polling se estiver em produção
-        if (isProduction) {
-            setTimeout(startPolling, 3000); // Aguardar 3s após carregar estados
+        try {
+            // Carregamento global de todos os estados
+            const success = await loadAllDeviceStatesGlobally();
+            
+            // Aguardar um momento para mostrar 100%
+            await new Promise(resolve => setTimeout(resolve, 800));
+            
+            // Esconder loader
+            hideLoader();
+            
+            // Iniciar polling se estiver em produção
+            if (isProduction) {
+                console.log('🔄 Iniciando polling em 3 segundos...');
+                setTimeout(startPolling, 3000);
+            }
+            
+            console.log('🎉 Aplicação totalmente inicializada!');
+            
+        } catch (error) {
+            console.error('💥 Erro crítico na inicialização:', error);
+            updateProgress(100, 'Erro na inicialização');
+            setTimeout(hideLoader, 2000);
         }
-    }, 1000); // Aguardar 1s para DOM estar completamente pronto
+    }, 500); // Aguardar 500ms para DOM estar completamente pronto
 });
 
 // Parar polling quando a página é fechada
