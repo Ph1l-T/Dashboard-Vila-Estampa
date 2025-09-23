@@ -284,6 +284,60 @@ function safeLog() {
     }
 }
 
+// Sistema de debug visual para mobile (sem console)
+function showMobileDebug(message, type) {
+    if (!isMobile) return;
+    
+    try {
+        var debugDiv = document.getElementById('mobile-debug');
+        if (!debugDiv) {
+            debugDiv = document.createElement('div');
+            debugDiv.id = 'mobile-debug';
+            debugDiv.style.cssText = 'position:fixed;top:10px;left:10px;right:10px;background:rgba(0,0,0,0.8);color:white;padding:10px;font-size:12px;z-index:9999;max-height:200px;overflow-y:auto;';
+            document.body.appendChild(debugDiv);
+            
+            // Adicionar botão de limpeza
+            var clearBtn = document.createElement('div');
+            clearBtn.innerHTML = '🗑️ Limpar';
+            clearBtn.style.cssText = 'position:absolute;top:5px;right:5px;background:#333;padding:2px 8px;border-radius:4px;cursor:pointer;font-size:10px;';
+            clearBtn.onclick = function() {
+                debugDiv.innerHTML = '';
+                debugDiv.appendChild(clearBtn);
+            };
+            debugDiv.appendChild(clearBtn);
+        }
+        
+        var now = new Date().toLocaleTimeString();
+        var color = type === 'error' ? '#ff6b6b' : type === 'success' ? '#51cf66' : '#fff';
+        var msgDiv = document.createElement('div');
+        msgDiv.style.color = color;
+        msgDiv.innerHTML = now + ': ' + message;
+        
+        // Inserir antes do botão de limpeza
+        var clearBtn = debugDiv.querySelector('div:last-child');
+        debugDiv.insertBefore(msgDiv, clearBtn);
+        
+        debugDiv.scrollTop = debugDiv.scrollHeight;
+        
+        // Limitar número de mensagens (máximo 20)
+        var messages = debugDiv.querySelectorAll('div');
+        if (messages.length > 21) { // 20 + botão
+            messages[0].remove();
+        }
+        
+        // Auto-hide após 15 segundos se não for erro
+        if (type !== 'error') {
+            setTimeout(function() {
+                if (debugDiv && debugDiv.parentNode) {
+                    debugDiv.style.opacity = '0.6';
+                }
+            }, 15000);
+        }
+    } catch (e) {
+        // Silenciar se falhar
+    }
+}
+
 // Substituir console.log globalmente para mobile
 if (!ENABLE_DEBUG_LOGS) {
     // Criar console mock silencioso para mobile
@@ -1219,24 +1273,49 @@ window.debugEletrize = {
 
 // Versão ultra-básica para browsers problemáticos
 function initUltraBasicMode() {
-    console.log('🚨 Inicializando modo ultra-básico...');
-    
-    // Não usar try-catch para ver o erro real
-    var loader = document.getElementById('global-loader');
-    if (loader) {
-        loader.style.display = 'none';
-        console.log('✅ Loader escondido em modo básico');
+    try {
+        showMobileDebug('🚨 Inicializando modo ultra-básico...', 'info');
+        
+        // Esconder loader de forma mais segura
+        var loader = document.getElementById('global-loader');
+        if (loader) {
+            loader.style.display = 'none';
+            showMobileDebug('✅ Loader escondido em modo básico', 'success');
+        }
+        
+        // Definir estados básicos sem usar localStorage (pode falhar no mobile)
+        var processedDevices = 0;
+        ALL_LIGHT_IDS.forEach(function(deviceId) {
+            try {
+                var controls = document.querySelectorAll('[data-device-id="' + deviceId + '"]');
+                controls.forEach(function(control) {
+                    if (control.classList.contains('room-control')) {
+                        control.dataset.state = 'off';
+                        var img = control.querySelector('.room-control-icon');
+                        if (img) {
+                            img.src = 'images/icons/icon-small-light-off.svg';
+                        }
+                        processedDevices++;
+                    }
+                });
+            } catch (e) {
+                showMobileDebug('Erro no dispositivo ' + deviceId + ': ' + e.message, 'error');
+            }
+        });
+        
+        showMobileDebug('✅ Modo ultra-básico ativo - ' + processedDevices + ' dispositivos processados', 'success');
+        
+        // Verificar elementos básicos
+        var controls = document.querySelectorAll('.room-control');
+        var masters = document.querySelectorAll('.room-master-btn');
+        showMobileDebug('🔍 Encontrados ' + controls.length + ' controles e ' + masters.length + ' masters', 'info');
+        
+        return true; // Sucesso
+        
+    } catch (error) {
+        showMobileDebug('❌ ERRO CRÍTICO no modo ultra-básico: ' + error.message, 'error');
+        return false; // Falha
     }
-    
-    // Apenas marcar que carregou
-    console.log('✅ Modo ultra-básico ativo');
-    
-    // Tentar atualizar alguns elementos básicos
-    var controls = document.querySelectorAll('.room-control');
-    console.log('🔍 Encontrados', controls.length, 'controles');
-    
-    var masters = document.querySelectorAll('.room-master-btn');
-    console.log('🔍 Encontrados', masters.length, 'masters');
 }
 
 // Função de inicialização simplificada para mobile  
@@ -1323,22 +1402,29 @@ window.addEventListener('DOMContentLoaded', function() {
     console.log('🛠️ Comandos debug disponíveis: window.debugEletrize');
     console.log('📱 Mobile detectado:', isMobile);
     
+    // Debug visual para mobile
+    showMobileDebug('🏠 DASHBOARD ELETRIZE INICIALIZANDO', 'info');
+    
     // Envolver TUDO em try-catch para capturar qualquer erro
     try {
         console.log('📱 Verificando compatibilidade mobile...');
         
         // Verificar se é mobile com limitações críticas
         if (isMobile) {
+            showMobileDebug('📱 Verificando compatibilidade mobile...', 'info');
             var isCompatible = false;
             try {
                 isCompatible = checkMobileCompatibility();
+                showMobileDebug('📱 Compatibilidade: ' + (isCompatible ? 'OK' : 'LIMITADO'), isCompatible ? 'success' : 'error');
             } catch (e) {
                 console.error('❌ Erro na verificação de compatibilidade:', e);
+                showMobileDebug('❌ Erro na verificação: ' + e.message, 'error');
                 isCompatible = false;
             }
             
             if (!isCompatible) {
                 console.warn('📱 Dispositivo móvel com limitações detectado - usando modo simples');
+                showMobileDebug('📱 Usando modo simples por limitações', 'info');
                 initSimpleMode();
                 return;
             }
@@ -1387,11 +1473,13 @@ window.addEventListener('DOMContentLoaded', function() {
                     
                 }).catch(function(error) {
                     console.error('❌ Erro no carregamento global:', error);
+                    showMobileDebug('❌ Erro no carregamento: ' + error.message, 'error');
                     window.initializationError = error;
                     
                     // Tentar modo de emergência
                     if (!window.emergencyModeActive) {
                         console.log('🚨 Ativando modo de emergência...');
+                        showMobileDebug('🚨 Ativando modo de emergência...', 'info');
                         window.emergencyModeActive = true;
                         initUltraBasicMode();
                     }
@@ -1399,10 +1487,12 @@ window.addEventListener('DOMContentLoaded', function() {
                 
             } catch (error) {
                 console.error('💥 Erro crítico na inicialização:', error);
+                showMobileDebug('💥 ERRO CRÍTICO: ' + error.message, 'error');
                 
                 // Modo de emergência para mobile
                 if (isMobile) {
                     console.log('📱 Ativando modo de emergência para mobile...');
+                    showMobileDebug('📱 Ativando modo de emergência mobile...', 'info');
                     updateProgress(80, 'Modo de emergência mobile...');
                     
                     try {
@@ -1412,6 +1502,7 @@ window.addEventListener('DOMContentLoaded', function() {
                         });
                         
                         updateProgress(100, 'Modo básico carregado');
+                        showMobileDebug('✅ Modo básico carregado com sucesso', 'success');
                         setTimeout(hideLoader, 1000);
                         
                     } catch (emergencyError) {
@@ -1421,11 +1512,26 @@ window.addEventListener('DOMContentLoaded', function() {
                     }
                     
                 } else {
+                    // Desktop - mostrar erro mas tentar modo de emergência também
                     try {
-                        updateProgress(100, 'Erro na inicialização');
-                        setTimeout(function() { hideLoader(); }, 2000);
+                        console.error('🖥️ Erro no desktop, tentando modo de emergência...');
+                        updateProgress(90, 'Tentando recuperação...');
+                        
+                        // Tentar modo ultra-básico também no desktop
+                        setTimeout(function() {
+                            try {
+                                initUltraBasicMode();
+                            } catch (ultraError) {
+                                console.error('💀 Falha total na recuperação desktop:', ultraError);
+                                updateProgress(100, 'Erro crítico - recarregue a página');
+                                setTimeout(function() { hideLoader(); }, 3000);
+                            }
+                        }, 1000);
+                        
                     } catch (e) {
                         console.error('❌ Erro no fallback desktop:', e);
+                        updateProgress(100, 'Erro crítico - recarregue a página');
+                        setTimeout(function() { hideLoader(); }, 3000);
                     }
                 }
             }
@@ -1437,11 +1543,21 @@ window.addEventListener('DOMContentLoaded', function() {
         
         // Último recurso - modo ultra-básico
         console.log('🚨 Executando último recurso...');
+        showMobileDebug('🚨 Executando último recurso...', 'info');
         try {
-            initUltraBasicMode();
+            var success = initUltraBasicMode();
+            if (success) {
+                showMobileDebug('✅ Último recurso bem-sucedido!', 'success');
+            } else {
+                showMobileDebug('❌ Último recurso falhou', 'error');
+            }
         } catch (finalError) {
             console.error('💀 FALHA TOTAL:', finalError);
-            alert('Erro crítico. Recarregue a página.');
+            showMobileDebug('💀 FALHA TOTAL: ' + finalError.message, 'error');
+            // No mobile, evitar alert que pode bloquear
+            if (!isMobile) {
+                alert('Erro crítico. Recarregue a página.');
+            }
         }
     }
 });
