@@ -149,10 +149,22 @@ async function refreshRoomControlFromHubitat(el) {
 }
 
 function initRoomPage() {
+    console.log('🏠 Inicializando página de cômodo...');
     const controls = document.querySelectorAll('.room-control[data-device-id]:not([data-no-sync="true"])');
+    
     controls.forEach(el => {
-        setRoomControlUI(el, el.dataset.state || 'off');
+        const deviceId = el.dataset.deviceId;
+        // SEMPRE usar estado salvo do carregamento global
+        const savedState = getStoredState(deviceId);
+        const fallbackState = el.dataset.state || 'off';
+        const finalState = savedState !== null ? savedState : fallbackState;
+        
+        console.log(`🔄 Controle ${deviceId}: salvo="${savedState}", fallback="${fallbackState}", final="${finalState}"`);
+        setRoomControlUI(el, finalState);
     });
+    
+    // Forçar atualização de botões master também
+    setTimeout(updateAllMasterButtons, 50);
 
     // Rename label on Sinuca page: Iluminação -> Bar (UI-only)
     try {
@@ -610,6 +622,14 @@ async function loadAllDeviceStatesGlobally() {
             updateProgress(progress, `Aplicando estado ${processedCount}/${deviceEntries.length}...`);
         });
         
+        updateProgress(95, 'Finalizando sincronização...');
+        
+        // Forçar atualização de todos os botões master após carregamento
+        setTimeout(() => {
+            updateAllMasterButtons();
+            console.log('🔄 Botões master atualizados após carregamento global');
+        }, 100);
+        
         updateProgress(100, 'Estados carregados com sucesso!');
         console.log('✅ Carregamento global concluído com sucesso');
         return true;
@@ -632,12 +652,67 @@ async function loadAllDeviceStatesGlobally() {
     }
 }
 
+// Observador para sincronizar novos elementos no DOM
+function setupDomObserver() {
+    const observer = new MutationObserver((mutations) => {
+        let needsUpdate = false;
+        
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    // Verificar se adicionou controles de dispositivos
+                    const controls = node.querySelectorAll ? 
+                        node.querySelectorAll('.room-control[data-device-id], .room-master-btn[data-device-ids]') :
+                        [];
+                    
+                    if (controls.length > 0 || node.matches?.('.room-control[data-device-id], .room-master-btn[data-device-ids]')) {
+                        needsUpdate = true;
+                        console.log('🔍 Novos controles adicionados ao DOM, sincronizando estados...');
+                    }
+                }
+            });
+        });
+        
+        if (needsUpdate) {
+            // Aguardar um pouco para DOM estar estável
+            setTimeout(() => {
+                syncAllVisibleControls();
+            }, 50);
+        }
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    console.log('👁️ Observador DOM configurado para sincronização automática');
+}
+
+// Sincronizar todos os controles visíveis com estados salvos
+function syncAllVisibleControls() {
+    // Sincronizar controles de cômodo
+    const roomControls = document.querySelectorAll('.room-control[data-device-id]');
+    roomControls.forEach(el => {
+        const deviceId = el.dataset.deviceId;
+        const savedState = getStoredState(deviceId);
+        if (savedState && el.dataset.state !== savedState) {
+            console.log(`🔄 Sincronizando controle ${deviceId}: ${el.dataset.state} → ${savedState}`);
+            setRoomControlUI(el, savedState);
+        }
+    });
+    
+    // Atualizar botões master
+    updateAllMasterButtons();
+}
+
 // Comandos de debug globais
 window.debugEletrize = {
     showProtections: showProtectionStatus,
     clearProtections: clearAllProtections,
     forcePolling: updateDeviceStatesFromServer,
     reloadStates: loadAllDeviceStatesGlobally,
+    syncControls: syncAllVisibleControls,
     showLoader: showLoader,
     hideLoader: hideLoader,
     checkDevice: (deviceId) => {
@@ -674,6 +749,12 @@ window.addEventListener('DOMContentLoaded', () => {
             
             // Esconder loader
             hideLoader();
+            
+            // Configurar observador DOM
+            setupDomObserver();
+            
+            // Sincronizar controles já existentes
+            setTimeout(syncAllVisibleControls, 100);
             
             // Iniciar polling se estiver em produção
             if (isProduction) {
