@@ -267,6 +267,17 @@ function toggleDevice(el, deviceType) {
 
 // Detecta se está em produção (Cloudflare Pages) ou desenvolvimento
 const isProduction = !['localhost', '127.0.0.1', '::1'].includes(location.hostname);
+
+// Detectar dispositivos móveis
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+console.log('🔍 Ambiente detectado:', {
+    isProduction,
+    isMobile,
+    isIOS,
+    userAgent: navigator.userAgent.substring(0, 50) + '...'
+});
 const HUBITAT_PROXY_URL = '/hubitat-proxy';
 const POLLING_URL = '/polling';
 const HUBITAT_DIRECT_URL = 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices';
@@ -618,6 +629,32 @@ function updateProgress(percentage, text) {
 async function loadAllDeviceStatesGlobally() {
     console.log('🌍 Iniciando carregamento global de estados...');
     
+    // Verificar compatibilidade primeiro
+    if (!checkMobileCompatibility()) {
+        console.warn('📱 Modo compatibilidade ativado para mobile');
+        updateProgress(20, 'Modo compatibilidade mobile...');
+        
+        // Modo simplificado para dispositivos incompatíveis
+        ALL_LIGHT_IDS.forEach((deviceId, index) => {
+            const storedState = 'off'; // Estado padrão seguro
+            try {
+                if (typeof localStorage !== 'undefined') {
+                    const stored = localStorage.getItem(`device_state_${deviceId}`);
+                    if (stored) storedState = stored;
+                }
+            } catch (e) {
+                console.warn('localStorage não acessível:', e);
+            }
+            
+            updateDeviceUI(deviceId, storedState, true);
+            const progress = 20 + ((index + 1) / ALL_LIGHT_IDS.length) * 80;
+            updateProgress(progress, `Carregando ${index + 1}/${ALL_LIGHT_IDS.length}...`);
+        });
+        
+        updateProgress(100, 'Modo compatibilidade carregado!');
+        return true;
+    }
+    
     if (!isProduction) {
         console.log('💻 Modo desenvolvimento - carregando do localStorage');
         updateProgress(20, 'Carregando estados salvos...');
@@ -644,7 +681,23 @@ async function loadAllDeviceStatesGlobally() {
         console.log(`📡 Buscando estados de ${ALL_LIGHT_IDS.length} dispositivos...`);
         
         updateProgress(30, 'Enviando solicitação...');
-        const response = await fetch(`${POLLING_URL}?devices=${deviceIds}`);
+        
+        // Configurações otimizadas para mobile
+        const fetchOptions = {
+            method: 'GET',
+            cache: isMobile ? 'no-cache' : 'default',
+            mode: 'cors'
+        };
+        
+        // Timeout mais longo para mobile
+        const controller = new AbortController();
+        const timeout = isMobile ? 15000 : 10000; // 15s para mobile, 10s para desktop
+        
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
+        fetchOptions.signal = controller.signal;
+        
+        const response = await fetch(`${POLLING_URL}?devices=${deviceIds}`, fetchOptions);
+        clearTimeout(timeoutId);
         
         updateProgress(50, 'Recebendo dados...');
         
@@ -652,7 +705,13 @@ async function loadAllDeviceStatesGlobally() {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         
-        const data = await response.json();
+        let data;
+        try {
+            data = await response.json();
+        } catch (jsonError) {
+            console.error('❌ Erro ao parsear JSON:', jsonError);
+            throw new Error('Resposta inválida do servidor');
+        }
         console.log('📡 Estados recebidos:', data);
         
         updateProgress(70, 'Processando estados...');
@@ -692,7 +751,22 @@ async function loadAllDeviceStatesGlobally() {
         
     } catch (error) {
         console.error('❌ Erro no carregamento global:', error);
-        updateProgress(60, 'Erro na conexão, usando dados salvos...');
+        
+        // Diagnóstico específico para mobile
+        if (isMobile) {
+            if (error.name === 'AbortError') {
+                console.warn('📱 Timeout de rede em dispositivo móvel');
+                updateProgress(60, 'Timeout móvel - usando backup...');
+            } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                console.warn('📱 Problema de conectividade móvel');
+                updateProgress(60, 'Sem rede móvel - modo offline...');
+            } else {
+                console.warn('📱 Erro específico de mobile:', error.message);
+                updateProgress(60, 'Erro móvel - usando backup...');
+            }
+        } else {
+            updateProgress(60, 'Erro na conexão, usando dados salvos...');
+        }
         
         // Fallback para localStorage
         ALL_LIGHT_IDS.forEach((deviceId, index) => {
@@ -703,14 +777,55 @@ async function loadAllDeviceStatesGlobally() {
             updateProgress(progress, `Carregando backup ${index + 1}/${ALL_LIGHT_IDS.length}...`);
         });
         
-        updateProgress(100, 'Carregamento concluído (modo offline)');
+        const offlineMsg = isMobile ? 'Modo offline móvel ativo' : 'Carregamento concluído (modo offline)';
+        updateProgress(100, offlineMsg);
         return false;
     }
 }
 
+// Verificar compatibilidade com mobile
+function checkMobileCompatibility() {
+    const issues = [];
+    
+    if (typeof MutationObserver === 'undefined') {
+        issues.push('MutationObserver não suportado');
+    }
+    
+    if (typeof fetch === 'undefined') {
+        issues.push('Fetch API não suportada');
+    }
+    
+    if (typeof localStorage === 'undefined') {
+        issues.push('LocalStorage não suportado');
+    }
+    
+    if (typeof Promise === 'undefined') {
+        issues.push('Promises não suportadas');
+    }
+    
+    if (issues.length > 0) {
+        console.warn('⚠️ Problemas de compatibilidade detectados:', issues);
+        return false;
+    }
+    
+    console.log('✅ Compatibilidade mobile verificada');
+    return true;
+}
+
 // Observador para sincronizar novos elementos no DOM
 function setupDomObserver() {
-    const observer = new MutationObserver((mutations) => {
+    // Verificar se MutationObserver está disponível
+    if (typeof MutationObserver === 'undefined') {
+        console.warn('⚠️ MutationObserver não disponível - usando fallback');
+        // Fallback: verificar mudanças periodicamente
+        setInterval(() => {
+            syncAllVisibleControls();
+        }, 5000);
+        return;
+    }
+    
+    try {
+        const observer = new MutationObserver((mutations) => {
         let needsUpdate = false;
         
         mutations.forEach((mutation) => {
@@ -737,12 +852,22 @@ function setupDomObserver() {
         }
     });
     
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-    
-    console.log('👁️ Observador DOM configurado para sincronização automática');
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+        
+        console.log('👁️ Observador DOM configurado para sincronização automática');
+        
+    } catch (error) {
+        console.error('❌ Erro ao configurar MutationObserver:', error);
+        console.warn('📱 Usando fallback para compatibilidade mobile');
+        
+        // Fallback: verificar mudanças a cada 5 segundos
+        setInterval(() => {
+            syncAllVisibleControls();
+        }, 5000);
+    }
 }
 
 // Sincronizar todos os controles visíveis com estados salvos
@@ -822,6 +947,33 @@ window.debugEletrize = {
             setMasterIcon(btn, state, true);
         });
         console.log('✅ Botões master corrigidos!');
+    },
+    mobileInfo: () => {
+        console.log('📱 Informações do dispositivo móvel:');
+        console.log('  isMobile:', isMobile);
+        console.log('  isIOS:', isIOS);
+        console.log('  isProduction:', isProduction);
+        console.log('  User Agent:', navigator.userAgent);
+        console.log('  Screen:', `${screen.width}x${screen.height}`);
+        console.log('  Viewport:', `${window.innerWidth}x${window.innerHeight}`);
+        console.log('  Connection:', navigator.connection ? 
+            `${navigator.connection.effectiveType} (${navigator.connection.downlink}Mbps)` : 
+            'Não disponível');
+        checkMobileCompatibility();
+    },
+    testMobileApi: async () => {
+        console.log('🧪 Testando APIs para mobile...');
+        try {
+            const testUrl = isProduction ? '/functions/polling?devices=366' : '#test';
+            const response = await fetch(testUrl, { 
+                method: 'GET',
+                cache: 'no-cache',
+                signal: AbortSignal.timeout(5000)
+            });
+            console.log('✅ Fetch test:', response.status, response.statusText);
+        } catch (error) {
+            console.error('❌ Fetch test failed:', error);
+        }
     }
 };
 
@@ -833,36 +985,66 @@ window.addEventListener('DOMContentLoaded', () => {
     // Mostrar loader imediatamente
     showLoader();
     
+    // Timeout ajustado para mobile (mais tempo para carregar)
+    const initDelay = isMobile ? 1500 : 500;
+    console.log(`⏱️ Delay de inicialização: ${initDelay}ms (mobile: ${isMobile})`);
+    
     // Aguardar um pouco para UI carregar e então iniciar carregamento
     setTimeout(async () => {
         try {
             // Carregamento global de todos os estados
             const success = await loadAllDeviceStatesGlobally();
             
-            // Aguardar um momento para mostrar 100%
-            await new Promise(resolve => setTimeout(resolve, 800));
+            // Aguardar mais tempo em mobile para estabilizar
+            const finalDelay = isMobile ? 1200 : 800;
+            await new Promise(resolve => setTimeout(resolve, finalDelay));
             
             // Esconder loader
             hideLoader();
             
-            // Configurar observador DOM
+            // Configurar observador DOM (com fallback para mobile)
             setupDomObserver();
             
-            // Sincronizar controles já existentes
-            setTimeout(syncAllVisibleControls, 100);
+            // Sincronizar controles já existentes (delay maior em mobile)
+            const syncDelay = isMobile ? 300 : 100;
+            setTimeout(syncAllVisibleControls, syncDelay);
             
-            // Iniciar polling se estiver em produção
+            // Iniciar polling se estiver em produção (delay maior para mobile)
             if (isProduction) {
-                console.log('🔄 Iniciando polling em 3 segundos...');
-                setTimeout(startPolling, 3000);
+                const pollingDelay = isMobile ? 5000 : 3000;
+                console.log(`🔄 Iniciando polling em ${pollingDelay/1000} segundos (mobile: ${isMobile})`);
+                setTimeout(startPolling, pollingDelay);
             }
             
             console.log('🎉 Aplicação totalmente inicializada!');
             
         } catch (error) {
             console.error('💥 Erro crítico na inicialização:', error);
-            updateProgress(100, 'Erro na inicialização');
-            setTimeout(hideLoader, 2000);
+            
+            // Modo de emergência para mobile
+            if (isMobile) {
+                console.log('📱 Ativando modo de emergência para mobile...');
+                updateProgress(80, 'Modo de emergência mobile...');
+                
+                try {
+                    // Inicialização mínima sem APIs externas
+                    ALL_LIGHT_IDS.forEach(deviceId => {
+                        updateDeviceUI(deviceId, 'off', true);
+                    });
+                    
+                    updateProgress(100, 'Modo básico carregado');
+                    setTimeout(hideLoader, 1000);
+                    
+                } catch (emergencyError) {
+                    console.error('💥 Falha no modo de emergência:', emergencyError);
+                    updateProgress(100, 'Erro: Recarregue a página');
+                    setTimeout(hideLoader, 3000);
+                }
+                
+            } else {
+                updateProgress(100, 'Erro na inicialização');
+                setTimeout(hideLoader, 2000);
+            }
         }
     }, 500); // Aguardar 500ms para DOM estar completamente pronto
 });
