@@ -268,32 +268,40 @@ function toggleDevice(el, deviceType) {
 // Detecta se está em produção (Cloudflare Pages) ou desenvolvimento
 const isProduction = !['localhost', '127.0.0.1', '::1'].includes(location.hostname);
 
-// Detectar dispositivos móveis com logs agressivos
+// Detectar dispositivos móveis
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
-// Logs imediatos para debug
-console.log('=== DASHBOARD ELETRIZE DEBUG MOBILE ===');
-console.log('🔍 isProduction:', isProduction);
-console.log('🔍 isMobile:', isMobile);
-console.log('🔍 isIOS:', isIOS);
-console.log('🔍 userAgent:', navigator.userAgent);
-console.log('🔍 location:', window.location.href);
-console.log('🔍 Script carregado em:', new Date().toISOString());
+// SOLUÇÃO: Desabilitar console.log em mobile para evitar travamentos
+const ENABLE_DEBUG_LOGS = !isMobile; // Logs apenas em desktop
 
-// Verificar APIs críticas imediatamente
-console.log('=== VERIFICAÇÃO DE APIs ===');
-console.log('✓ window:', typeof window);
-console.log('✓ document:', typeof document);
-console.log('✓ navigator:', typeof navigator);
-console.log('✓ console:', typeof console);
-console.log('✓ setTimeout:', typeof setTimeout);
-console.log('✓ addEventListener:', typeof window.addEventListener);
-console.log('✓ fetch:', typeof fetch);
-console.log('✓ Promise:', typeof Promise);
-console.log('✓ JSON:', typeof JSON);
+// Função de log segura para mobile
+function safeLog() {
+    if (ENABLE_DEBUG_LOGS && typeof console !== 'undefined' && console.log) {
+        try {
+            console.log.apply(console, arguments);
+        } catch (e) {
+            // Silenciar se console falhar
+        }
+    }
+}
 
-console.log('=== AMBIENTE DETECTADO ===', {
+// Substituir console.log globalmente para mobile
+if (!ENABLE_DEBUG_LOGS) {
+    // Criar console mock silencioso para mobile
+    window.console = window.console || {};
+    window.console.log = function() {};
+    window.console.error = function() {};
+    window.console.warn = function() {};
+}
+
+// Debug mínimo apenas se necessário
+if (ENABLE_DEBUG_LOGS) {
+    safeLog('=== DASHBOARD ELETRIZE DEBUG ===');
+    safeLog('🔍 isProduction:', isProduction, 'isMobile:', isMobile);
+}
+
+safeLog('=== AMBIENTE DETECTADO ===', {
     isProduction,
     isMobile,
     isIOS,
