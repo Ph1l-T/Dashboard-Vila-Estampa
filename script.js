@@ -523,9 +523,65 @@ function updateAllMasterButtons() {
         const ids = (btn.dataset.deviceIds || '').split(',').filter(Boolean);
         if (ids.length > 0) {
             const masterState = anyOn(ids) ? 'on' : 'off';
-            setMasterIcon(btn, masterState);
+            setMasterIcon(btn, masterState, false); // não forçar se pendente
         }
     });
+}
+
+// Funções auxiliares para botões master (movidas do HTML)
+function anyOn(deviceIds) {
+    return (deviceIds || []).some(id => (getStoredState(id) || 'off') === 'on');
+}
+
+function setMasterIcon(btn, state, forceUpdate = false) {
+    // Não atualizar se estiver com comando pendente (exceto se forçado)
+    if (!forceUpdate && btn.dataset.pending === 'true') {
+        console.log('🔒 Master button pendente, ignorando atualização');
+        return;
+    }
+    
+    const img = btn.querySelector('img');
+    if (!img) return;
+    
+    const newSrc = state === 'on' ? 'images/icons/icon-small-light-on.svg' : 'images/icons/icon-small-light-off.svg';
+    const currentSrc = img.src;
+    
+    if (!currentSrc.includes(newSrc.split('/').pop())) {
+        img.src = newSrc;
+        btn.dataset.state = state;
+        console.log(`🎨 Master icon atualizado: ${state}`);
+    }
+}
+
+function initHomeMasters() {
+    document.querySelectorAll('.room-master-btn').forEach(btn => {
+        const ids = (btn.dataset.deviceIds || '').split(',').filter(Boolean);
+        const state = anyOn(ids) ? 'on' : 'off';
+        setMasterIcon(btn, state, true); // forçar na inicialização
+    });
+}
+
+// Função especial para atualizar estados após comandos master
+function updateStatesAfterMasterCommand(deviceIds, command) {
+    console.log(`🎯 Atualizando estados após master ${command} para:`, deviceIds);
+    
+    // Atualizar todos os dispositivos affected
+    deviceIds.forEach(deviceId => {
+        // Forçar atualização mesmo com proteção
+        updateDeviceUI(deviceId, command, true);
+    });
+    
+    // Forçar atualização de todos os masters
+    setTimeout(() => {
+        const masterButtons = document.querySelectorAll('.room-master-btn');
+        masterButtons.forEach(btn => {
+            const ids = (btn.dataset.deviceIds || '').split(',').filter(Boolean);
+            if (ids.some(id => deviceIds.includes(id))) {
+                const masterState = anyOn(ids) ? 'on' : 'off';
+                setMasterIcon(btn, masterState, true); // forçar atualização
+            }
+        });
+    }, 100);
 }
 
 // === SISTEMA DE CARREGAMENTO GLOBAL ===
@@ -690,20 +746,36 @@ function setupDomObserver() {
 }
 
 // Sincronizar todos os controles visíveis com estados salvos
-function syncAllVisibleControls() {
+function syncAllVisibleControls(forceMasterUpdate = false) {
+    console.log('🔄 Sincronizando todos os controles visíveis...');
+    
     // Sincronizar controles de cômodo
     const roomControls = document.querySelectorAll('.room-control[data-device-id]');
+    let updatedControls = 0;
+    
     roomControls.forEach(el => {
         const deviceId = el.dataset.deviceId;
         const savedState = getStoredState(deviceId);
-        if (savedState && el.dataset.state !== savedState) {
-            console.log(`🔄 Sincronizando controle ${deviceId}: ${el.dataset.state} → ${savedState}`);
+        const currentState = el.dataset.state;
+        
+        if (savedState && currentState !== savedState) {
+            console.log(`🔄 Sincronizando controle ${deviceId}: ${currentState} → ${savedState}`);
             setRoomControlUI(el, savedState);
+            updatedControls++;
         }
     });
     
-    // Atualizar botões master
-    updateAllMasterButtons();
+    // Atualizar botões master (forçar se necessário)
+    const masterButtons = document.querySelectorAll('.room-master-btn');
+    masterButtons.forEach(btn => {
+        const ids = (btn.dataset.deviceIds || '').split(',').filter(Boolean);
+        if (ids.length > 0) {
+            const masterState = anyOn(ids) ? 'on' : 'off';
+            setMasterIcon(btn, masterState, forceMasterUpdate);
+        }
+    });
+    
+    console.log(`✅ Sincronização completa: ${updatedControls} controles atualizados`);
 }
 
 // Comandos de debug globais
@@ -727,6 +799,29 @@ window.debugEletrize = {
             const protected = isDeviceProtected(deviceId);
             console.log(`  ${deviceId}: ${stored} ${protected ? '🔒' : '🔓'}`);
         });
+    },
+    checkMasterButtons: () => {
+        console.log('🏠 Status dos botões master:');
+        document.querySelectorAll('.room-master-btn').forEach((btn, index) => {
+            const ids = (btn.dataset.deviceIds || '').split(',').filter(Boolean);
+            const route = btn.dataset.route || 'unknown';
+            const pending = btn.dataset.pending === 'true';
+            const currentState = btn.dataset.state || 'unknown';
+            const calculatedState = anyOn(ids) ? 'on' : 'off';
+            const consistent = currentState === calculatedState;
+            
+            console.log(`  ${index + 1}. ${route}: ${currentState} (calc: ${calculatedState}) ${consistent ? '✅' : '❌'} ${pending ? '⏳' : '🔓'}`);
+        });
+    },
+    fixMasterButtons: () => {
+        console.log('🔧 Corrigindo todos os botões master...');
+        document.querySelectorAll('.room-master-btn').forEach(btn => {
+            btn.dataset.pending = 'false';
+            const ids = (btn.dataset.deviceIds || '').split(',').filter(Boolean);
+            const state = anyOn(ids) ? 'on' : 'off';
+            setMasterIcon(btn, state, true);
+        });
+        console.log('✅ Botões master corrigidos!');
     }
 };
 
