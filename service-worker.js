@@ -1,4 +1,4 @@
-const CACHE_NAME = 'eletrize-cache-v2025.01.23.001';
+const CACHE_NAME = 'eletrize-cache-v2025.01.23.002';
 const ASSETS = [
   './',
   './index.html?v=1737455925',
@@ -7,6 +7,9 @@ const ASSETS = [
   './scenes.js?v=1737455925',
   './images/pwa/app-icon-192.png'
 ];
+
+// Detectar mobile para cache mais agressivo
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

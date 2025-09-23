@@ -15,6 +15,27 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <script>
+        // Cache busting dinâmico para mobile - força reload de assets
+        (function() {
+            var timestamp = new Date().getTime();
+            var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // Para mobile, adicionar timestamp mais agressivo
+                var cacheBuster = timestamp + '_' + Math.random().toString(36).substr(2, 9);
+                console.log('📱 Mobile detectado - cache buster:', cacheBuster);
+                
+                // Atualizar localStorage com nova versão
+                try {
+                    localStorage.setItem('app_cache_version', cacheBuster);
+                    localStorage.setItem('last_mobile_load', timestamp);
+                } catch(e) {
+                    console.warn('localStorage indisponível para cache busting');
+                }
+            }
+        })();
+    </script>
     <style>
         /* Botão invisível no card para capturar clique na Home */
         .room-card-link{position:absolute;left:0;top:0;width:100%;height:100%;z-index:10;background:transparent;border:none;cursor:pointer}
@@ -67,8 +88,30 @@
         </div>
     </nav>
 
-    <script src="script.js?v=1737455925"></script>
-    <script src="scenes.js?v=1737455925"></script>
+    <script>
+        // Carregamento dinâmico com cache busting agressivo para mobile
+        (function() {
+            var baseVersion = '1737455925';
+            var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            var cacheBuster = baseVersion;
+            
+            if (isMobile) {
+                // Cache busting extra agressivo para mobile
+                cacheBuster = baseVersion + '_' + new Date().getTime() + '_' + Math.random().toString(36).substr(2, 5);
+                console.log('📱 Mobile: cache busting agressivo -', cacheBuster);
+            }
+            
+            // Carregar script.js
+            var scriptMain = document.createElement('script');
+            scriptMain.src = 'script.js?v=' + cacheBuster;
+            document.head.appendChild(scriptMain);
+            
+            // Carregar scenes.js
+            var scriptScenes = document.createElement('script');
+            scriptScenes.src = 'scenes.js?v=' + cacheBuster;
+            document.head.appendChild(scriptScenes);
+        })();
+    </script>
     <script>
     // PWA: registra service worker (desativado em localhost para evitar cache no desenvolvimento)
     if ('serviceWorker' in navigator) {

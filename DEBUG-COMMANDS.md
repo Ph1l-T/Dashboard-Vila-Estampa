@@ -37,6 +37,21 @@ window.debugEletrize.reloadStates()
 window.debugEletrize.forcePolling()
 ```
 
+### 📱 Gerenciamento de Cache Mobile
+```javascript
+// Verificar informações do mobile
+window.debugEletrize.mobileInfo()
+
+// Verificar status do cache mobile
+window.debugEletrize.checkMobileCache()
+
+// Limpar cache mobile (requer recarga manual)
+window.debugEletrize.clearMobileCache()
+
+// Forçar recarga completa com limpeza de cache
+window.debugEletrize.forceMobileReload()
+```
+
 ### 🎨 Interface
 ```javascript
 // Mostrar tela de loading manualmente
@@ -109,4 +124,4 @@ window.debugEletrize.forcePolling()
 - **Proteção Anti-Conflito**: 8 segundos após comando manual
 - **Rate Limit**: ~12 requests/minuto (seguro para Hubitat)
 - **Backup**: Estados salvos em localStorage como fallback
-- **Mobile**: Console logging desabilitado para evitar travamentos
+- **Mobile**: Console logging HABILITADO (comportamento idêntico ao desktop)

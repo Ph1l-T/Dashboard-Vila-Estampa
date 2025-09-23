@@ -273,6 +273,48 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 // SOLUÇÃO: Desabilitar console.log em mobile para evitar travamentos
 const ENABLE_DEBUG_LOGS = true; // Logs habilitados em desktop e mobile
 
+// Sistema de detecção de cache desatualizado para mobile
+const APP_VERSION = '2025.01.23.002'; // Incrementar a cada deploy importante
+(function() {
+    if (isMobile) {
+        try {
+            var lastVersion = localStorage.getItem('app_version');
+            var lastLoad = localStorage.getItem('last_mobile_load');
+            var now = new Date().getTime();
+            
+            // Se versão mudou ou último carregamento foi há mais de 1 hora
+            if (lastVersion !== APP_VERSION || (lastLoad && (now - parseInt(lastLoad)) > 3600000)) {
+                console.log('📱 Detectado app desatualizado no mobile - forçando reload cache');
+                console.log('📱 Versão anterior:', lastVersion, 'Nova:', APP_VERSION);
+                
+                // Limpar caches
+                try {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                } catch(e) {}
+                
+                // Marcar nova versão
+                localStorage.setItem('app_version', APP_VERSION);
+                localStorage.setItem('last_mobile_load', now.toString());
+                
+                // Forçar reload após delay
+                setTimeout(function() {
+                    console.log('📱 Recarregando página para limpar cache mobile...');
+                    window.location.reload(true);
+                }, 2000);
+                
+                return; // Não continuar inicialização
+            } else {
+                // Atualizar timestamp da última carga
+                localStorage.setItem('last_mobile_load', now.toString());
+                console.log('📱 Mobile cache OK - versão', APP_VERSION);
+            }
+        } catch(e) {
+            console.warn('📱 Erro na verificação de versão mobile:', e);
+        }
+    }
+})();
+
 // Função de log segura para mobile
 function safeLog() {
     if (ENABLE_DEBUG_LOGS && typeof console !== 'undefined' && console.log) {
@@ -1151,6 +1193,57 @@ window.debugEletrize = {
         console.log('  isIOS:', isIOS);
         console.log('  isProduction:', isProduction);
         console.log('  User Agent:', navigator.userAgent);
+        console.log('  App Version:', APP_VERSION);
+        try {
+            console.log('  Última carga:', new Date(parseInt(localStorage.getItem('last_mobile_load') || '0')));
+            console.log('  Versão cache:', localStorage.getItem('app_version'));
+        } catch(e) {
+            console.log('  localStorage indisponível');
+        }
+    },
+    clearMobileCache: () => {
+        console.log('🧹 Limpando cache mobile...');
+        try {
+            localStorage.removeItem('app_version');
+            localStorage.removeItem('last_mobile_load');
+            localStorage.removeItem('app_cache_version');
+            sessionStorage.clear();
+            console.log('✅ Cache mobile limpo! Recarregue a página.');
+        } catch(e) {
+            console.error('❌ Erro ao limpar cache:', e);
+        }
+    },
+    forceMobileReload: () => {
+        console.log('🔄 Forçando recarga mobile com limpeza de cache...');
+        try {
+            localStorage.clear();
+            sessionStorage.clear();
+        } catch(e) {}
+        setTimeout(() => {
+            window.location.reload(true);
+        }, 1000);
+    },
+    checkMobileCache: () => {
+        console.log('🔍 Status do cache mobile:');
+        try {
+            const version = localStorage.getItem('app_version');
+            const lastLoad = localStorage.getItem('last_mobile_load');
+            const now = new Date().getTime();
+            
+            console.log('  App Version atual:', APP_VERSION);
+            console.log('  Versão em cache:', version);
+            console.log('  Cache válido:', version === APP_VERSION);
+            
+            if (lastLoad) {
+                const age = Math.floor((now - parseInt(lastLoad)) / 60000); // minutos
+                console.log('  Idade do cache:', age, 'minutos');
+                console.log('  Cache expirado:', age > 60);
+            } else {
+                console.log('  Primeira carga detectada');
+            }
+        } catch(e) {
+            console.error('  Erro na verificação:', e);
+        }
         console.log('  Screen:', `${screen.width}x${screen.height}`);
         console.log('  Viewport:', `${window.innerWidth}x${window.innerHeight}`);
         console.log('  Connection:', navigator.connection ? 
