@@ -236,27 +236,31 @@ function toggleDevice(el, deviceType) {
 
 // Detecta se está em produção (Cloudflare Pages) ou desenvolvimento
 const isProduction = !['localhost', '127.0.0.1', '::1'].includes(location.hostname);
-const API_BASE_URL = isProduction ? '/api/hubitat' : 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices';
+const HUBITAT_PROXY_URL = '/hubitat-proxy';
+const POLLING_URL = '/polling';
+const HUBITAT_DIRECT_URL = 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices';
 const HUBITAT_ACCESS_TOKEN = '8204fd02-e90e-4c0d-b083-431625526d10';
 
 // Helpers de URL para endpoints comuns da API
 function urlDeviceInfo(deviceId) {
-    return isProduction 
-        ? `/api/hubitat/${deviceId}`
-        : `${API_BASE_URL}/${deviceId}?access_token=${HUBITAT_ACCESS_TOKEN}`;
+    if (isProduction) {
+        return `${HUBITAT_PROXY_URL}?device=${deviceId}`;
+    } else {
+        return `${HUBITAT_DIRECT_URL}/${deviceId}?access_token=${HUBITAT_ACCESS_TOKEN}`;
+    }
 }
 
 function urlSendCommand(deviceId, command, value) {
     if (isProduction) {
-        // Em produção, usar rotas do Cloudflare Pages
-        let url = `/api/hubitat/${deviceId}/${encodeURIComponent(command)}`;
+        // Em produção, usar proxy do Cloudflare
+        let url = `${HUBITAT_PROXY_URL}?device=${deviceId}&command=${encodeURIComponent(command)}`;
         if (value !== undefined) {
-            url += `?value=${encodeURIComponent(value)}`;
+            url += `&value=${encodeURIComponent(value)}`;
         }
         return url;
     } else {
         // Em desenvolvimento, usar URL direta do Hubitat
-        let url = `${API_BASE_URL}/${deviceId}/${encodeURIComponent(command)}`;
+        let url = `${HUBITAT_DIRECT_URL}/${deviceId}/${encodeURIComponent(command)}`;
         if (value !== undefined) url += `/${encodeURIComponent(value)}`;
         url += `?access_token=${HUBITAT_ACCESS_TOKEN}`;
         return url;
@@ -264,18 +268,7 @@ function urlSendCommand(deviceId, command, value) {
 }
 
 function sendHubitatCommand(deviceId, command, value) {
-    let url;
-    
-    if (isProduction) {
-        // Em produção, usar o middleware do Cloudflare
-        url = `/api/hubitat/${deviceId}/${command}`;
-        if (value !== undefined) {
-            url += `?value=${encodeURIComponent(value)}`;
-        }
-    } else {
-        // Em desenvolvimento, usar URL direta
-        url = urlSendCommand(deviceId, command, value);
-    }
+    const url = urlSendCommand(deviceId, command, value);
 
     console.log(`Enviando comando para o Hubitat: ${url}`);
 
@@ -380,7 +373,7 @@ async function updateDeviceStatesFromServer() {
     try {
         const deviceIds = ALL_LIGHT_IDS.join(',');
         const pollingUrl = isProduction 
-            ? `/api/polling?devices=${deviceIds}`
+            ? `${POLLING_URL}?devices=${deviceIds}`
             : null; // Em dev, pular polling por enquanto
             
         if (!pollingUrl) return;

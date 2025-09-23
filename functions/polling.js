@@ -1,6 +1,6 @@
 /**
  * Polling endpoint para buscar estados de múltiplos dispositivos
- * GET /api/polling?devices=231,232,233
+ * Route: /polling - GET /polling?devices=231,232,233
  */
 
 const CORS_HEADERS = {
@@ -31,7 +31,7 @@ export async function onRequest(context) {
 
   const deviceIds = url.searchParams.get('devices');
   if (!deviceIds) {
-    return new Response(JSON.stringify({ error: 'Missing devices parameter' }), {
+    return new Response(JSON.stringify({ error: 'Missing devices parameter - use ?devices=231,232,233' }), {
       status: 400,
       headers: {
         ...CORS_HEADERS,
@@ -47,6 +47,8 @@ export async function onRequest(context) {
   const deviceStates = {};
 
   try {
+    console.log(`Polling devices: ${deviceList.join(', ')}`);
+    
     // Fetch states in parallel
     const promises = deviceList.map(async (deviceId) => {
       const url = `${HUBITAT_BASE_URL}/${deviceId}?access_token=${ACCESS_TOKEN}`;
