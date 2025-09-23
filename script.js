@@ -70,6 +70,9 @@ function toggleRoomControl(el) {
     
     if (!deviceId) return;
     
+    // Marcar comando recente para proteger contra polling
+    recentCommands.set(deviceId, Date.now());
+    
     // Atualizar UI imediatamente
     el.dataset.state = newState;
     if (img) img.src = newState === 'on' ? ICON_ON : ICON_OFF;
@@ -420,6 +423,19 @@ try {
 let pollingInterval = null;
 const POLLING_INTERVAL_MS = 5000; // 5 segundos - otimizado para responsividade sem sobrecarregar
 
+// Sistema para evitar conflitos entre comandos manuais e polling
+const recentCommands = new Map(); // deviceId -> timestamp do último comando
+const COMMAND_PROTECTION_MS = 8000; // 8 segundos de proteção após comando manual
+
+function cleanupExpiredCommands() {
+    const now = Date.now();
+    for (const [deviceId, timestamp] of recentCommands.entries()) {
+        if (now - timestamp > COMMAND_PROTECTION_MS) {
+            recentCommands.delete(deviceId);
+        }
+    }
+}
+
 function startPolling() {
     if (pollingInterval) return; // Já está rodando
     
@@ -443,6 +459,9 @@ function stopPolling() {
 
 async function updateDeviceStatesFromServer() {
     try {
+        // Limpar comandos antigos antes do polling
+        cleanupExpiredCommands();
+        
         const deviceIds = ALL_LIGHT_IDS.join(',');
         const pollingUrl = isProduction 
             ? `${POLLING_URL}?devices=${deviceIds}`
@@ -487,6 +506,15 @@ async function updateDeviceStatesFromServer() {
 }
 
 function updateDeviceUI(deviceId, state, forceUpdate = false) {
+    // Verificar se há comando recente que deve ser respeitado
+    if (!forceUpdate) {
+        const lastCommand = recentCommands.get(deviceId);
+        if (lastCommand && (Date.now() - lastCommand < COMMAND_PROTECTION_MS)) {
+            console.log(`🛡️ Device ${deviceId} protegido por comando recente - ignorando polling`);
+            return;
+        }
+    }
+    
     // Atualizar controles de cômodo
     const roomControls = document.querySelectorAll(`[data-device-id="${deviceId}"]`);
     roomControls.forEach(el => {
@@ -981,6 +1009,19 @@ window.debugEletrize = {
         ALL_LIGHT_IDS.forEach(deviceId => {
             const stored = getStoredState(deviceId);
             console.log(`  ${deviceId}: ${stored}`);
+        });
+    },
+    checkProtectedCommands: () => {
+        console.log('🛡️ Comandos protegidos:');
+        if (recentCommands.size === 0) {
+            console.log('  ✅ Nenhum comando protegido');
+            return;
+        }
+        const now = Date.now();
+        recentCommands.forEach((timestamp, deviceId) => {
+            const remaining = Math.max(0, COMMAND_PROTECTION_MS - (now - timestamp));
+            const status = remaining > 0 ? '🔒 ATIVO' : '🔓 EXPIRADO';
+            console.log(`  ${status} ${deviceId}: ${Math.ceil(remaining/1000)}s restantes`);
         });
     },
     checkMasterButtons: () => {

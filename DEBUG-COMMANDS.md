@@ -20,6 +20,9 @@ window.debugEletrize.checkMasterButtons()
 
 // Sincronizar todos os controles visíveis
 window.debugEletrize.syncControls()
+
+// Verificar comandos protegidos (anti-conflito polling)
+window.debugEletrize.checkProtectedCommands()
 ```
 
 ### 🔄 Carregamento e Polling
@@ -70,6 +73,9 @@ window.debugEletrize.hideLoader()
 // Verificar estados dos botões master
 window.debugEletrize.checkMasterButtons()
 
+// Verificar se há comandos sendo protegidos
+window.debugEletrize.checkProtectedCommands()
+
 // Sincronizar todos os controles
 window.debugEletrize.syncControls()
 ```
@@ -97,6 +103,7 @@ window.debugEletrize.forcePolling()
 ## 🎛️ Configurações Importantes
 
 - **Polling**: A cada 5 segundos em produção (otimizado)
+- **Proteção Anti-Conflito**: 8 segundos após comando manual
 - **Rate Limit**: ~12 requests/minuto (seguro para Hubitat)
 - **Backup**: Estados salvos em localStorage como fallback
 - **Mobile**: Console logging desabilitado para evitar travamentos
