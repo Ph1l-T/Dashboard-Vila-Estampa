@@ -66,18 +66,38 @@ function toggleRoomControl(el) {
     const img = el.querySelector('.room-control-icon');
     const isOff = (el.dataset.state || 'off') === 'off';
     const newState = isOff ? 'on' : 'off';
+    const deviceId = el.dataset.deviceId;
+    
+    if (!deviceId) return;
+    
+    // Atualizar UI imediatamente
     el.dataset.state = newState;
     if (img) img.src = newState === 'on' ? ICON_ON : ICON_OFF;
-
-    const deviceId = el.dataset.deviceId;
-    if (deviceId) {
-        // Persist locally
-        setStoredState(deviceId, newState);
-        // Send to Hubitat
-        try {
-            sendHubitatCommand(deviceId, newState === 'on' ? 'on' : 'off');
-        } catch (e) { /* opcional: log silencioso */ }
-    }
+    
+    // Marcar como "pendente" para evitar que polling sobrescreva
+    el.dataset.pending = 'true';
+    
+    // Persist locally
+    setStoredState(deviceId, newState);
+    
+    // Send to Hubitat
+    sendHubitatCommand(deviceId, newState === 'on' ? 'on' : 'off')
+        .then(() => {
+            console.log(`Comando ${newState} enviado com sucesso para dispositivo ${deviceId}`);
+            // Aguardar um tempo antes de permitir polling sobrescrever
+            setTimeout(() => {
+                el.dataset.pending = 'false';
+            }, 3000); // 3 segundos de proteção
+        })
+        .catch(error => {
+            console.error(`Erro ao enviar comando para dispositivo ${deviceId}:`, error);
+            // Em caso de erro, reverter o estado visual
+            const revertState = newState === 'on' ? 'off' : 'on';
+            el.dataset.state = revertState;
+            if (img) img.src = revertState === 'on' ? ICON_ON : ICON_OFF;
+            setStoredState(deviceId, revertState);
+            el.dataset.pending = 'false';
+        });
 }
 
 function setRoomControlUI(el, state) {
@@ -383,10 +403,16 @@ async function updateDeviceStatesFromServer() {
         
         const data = await response.json();
         
-        // Atualizar UI com os novos estados
+        // Atualizar UI com os novos estados (respeitando comandos pendentes)
         Object.entries(data.devices).forEach(([deviceId, deviceData]) => {
             if (deviceData.success) {
-                setStoredState(deviceId, deviceData.state);
+                // Só atualizar localStorage se o estado mudou
+                const currentStored = getStoredState(deviceId);
+                if (currentStored !== deviceData.state) {
+                    setStoredState(deviceId, deviceData.state);
+                }
+                
+                // Atualizar UI (função já verifica se elemento está pendente)
                 updateDeviceUI(deviceId, deviceData.state);
             }
         });
@@ -398,6 +424,12 @@ async function updateDeviceStatesFromServer() {
         
     } catch (error) {
         console.error('Erro no polling:', error);
+        // Em caso de erro, reduzir frequência temporariamente
+        setTimeout(() => {
+            if (pollingInterval) {
+                console.log('Tentando retomar polling após erro...');
+            }
+        }, 10000); // 10 segundos antes de tentar novamente
     }
 }
 
@@ -406,7 +438,10 @@ function updateDeviceUI(deviceId, state) {
     const roomControls = document.querySelectorAll(`[data-device-id="${deviceId}"]`);
     roomControls.forEach(el => {
         if (el.classList.contains('room-control')) {
-            setRoomControlUI(el, state);
+            // Não atualizar se o elemento está com comando pendente
+            if (el.dataset.pending !== 'true') {
+                setRoomControlUI(el, state);
+            }
         } else if (el.classList.contains('room-master-btn')) {
             // Atualizar master buttons na home
             const ids = (el.dataset.deviceIds || '').split(',').filter(Boolean);

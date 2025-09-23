@@ -622,6 +622,9 @@
         return (deviceIds||[]).some(id => (getStoredState(id) || 'off') === 'on');
     }
     function setMasterIcon(btn, state){
+        // Não atualizar se estiver com comando pendente
+        if (btn.dataset.pending === 'true') return;
+        
         const img = btn.querySelector('img');
         if (!img) return;
         img.src = state === 'on' ? 'images/icons/icon-small-light-on.svg' : 'images/icons/icon-small-light-off.svg';
@@ -639,10 +642,32 @@
         ev.preventDefault();
         const ids = (btn.dataset.deviceIds || '').split(',').filter(Boolean);
         if (!ids.length) return;
+        
         const shouldTurnOn = !anyOn(ids);
         const cmd = shouldTurnOn ? 'on' : 'off';
-        ids.forEach(id => { try { setStoredState(id, cmd); sendHubitatCommand(id, cmd); } catch(_){} });
+        
+        // Marcar botão como pendente
+        btn.dataset.pending = 'true';
+        
+        // Atualizar visual imediatamente
         setMasterIcon(btn, shouldTurnOn ? 'on' : 'off');
+        
+        // Enviar comandos para todos os dispositivos
+        const promises = ids.map(id => {
+            setStoredState(id, cmd);
+            return sendHubitatCommand(id, cmd);
+        });
+        
+        Promise.allSettled(promises).then(results => {
+            console.log(`Master ${cmd} completed for ${ids.length} devices`);
+            // Remover proteção após 3 segundos
+            setTimeout(() => {
+                btn.dataset.pending = 'false';
+            }, 3000);
+        }).catch(error => {
+            console.error('Master command error:', error);
+            btn.dataset.pending = 'false';
+        });
     };
 
     window.addEventListener('hashchange', renderSpa);
