@@ -284,58 +284,10 @@ function safeLog() {
     }
 }
 
-// Sistema de debug visual para mobile (sem console)
+// Sistema de debug visual para mobile (DESABILITADO - compatibilidade resolvida)
 function showMobileDebug(message, type) {
-    if (!isMobile) return;
-    
-    try {
-        var debugDiv = document.getElementById('mobile-debug');
-        if (!debugDiv) {
-            debugDiv = document.createElement('div');
-            debugDiv.id = 'mobile-debug';
-            debugDiv.style.cssText = 'position:fixed;top:10px;left:10px;right:10px;background:rgba(0,0,0,0.8);color:white;padding:10px;font-size:12px;z-index:9999;max-height:200px;overflow-y:auto;';
-            document.body.appendChild(debugDiv);
-            
-            // Adicionar botão de limpeza
-            var clearBtn = document.createElement('div');
-            clearBtn.innerHTML = '🗑️ Limpar';
-            clearBtn.style.cssText = 'position:absolute;top:5px;right:5px;background:#333;padding:2px 8px;border-radius:4px;cursor:pointer;font-size:10px;';
-            clearBtn.onclick = function() {
-                debugDiv.innerHTML = '';
-                debugDiv.appendChild(clearBtn);
-            };
-            debugDiv.appendChild(clearBtn);
-        }
-        
-        var now = new Date().toLocaleTimeString();
-        var color = type === 'error' ? '#ff6b6b' : type === 'success' ? '#51cf66' : '#fff';
-        var msgDiv = document.createElement('div');
-        msgDiv.style.color = color;
-        msgDiv.innerHTML = now + ': ' + message;
-        
-        // Inserir antes do botão de limpeza
-        var clearBtn = debugDiv.querySelector('div:last-child');
-        debugDiv.insertBefore(msgDiv, clearBtn);
-        
-        debugDiv.scrollTop = debugDiv.scrollHeight;
-        
-        // Limitar número de mensagens (máximo 20)
-        var messages = debugDiv.querySelectorAll('div');
-        if (messages.length > 21) { // 20 + botão
-            messages[0].remove();
-        }
-        
-        // Auto-hide após 15 segundos se não for erro
-        if (type !== 'error') {
-            setTimeout(function() {
-                if (debugDiv && debugDiv.parentNode) {
-                    debugDiv.style.opacity = '0.6';
-                }
-            }, 15000);
-        }
-    } catch (e) {
-        // Silenciar se falhar
-    }
+    // Debug desabilitado - funcionalidade mobile estável
+    return;
 }
 
 // Substituir console.log globalmente para mobile

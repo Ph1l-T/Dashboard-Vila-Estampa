@@ -931,24 +931,4 @@ html, body {
     100% { box-shadow: 0 0 5px rgba(76, 175, 80, 0.3); }
 }
 
-/* Debug mobile visual */
-#mobile-debug {
-    font-family: 'Courier New', monospace;
-    line-height: 1.4;
-    border: 2px solid #444;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    font-size: 11px;
-    word-break: break-word;
-}
-
-#mobile-debug:hover {
-    opacity: 1 !important;
-    background: rgba(0,0,0,0.95) !important;
-}
-
-#mobile-debug div {
-    margin-bottom: 2px;
-    padding: 2px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-}
+/* Debug mobile visual - REMOVIDO (compatibilidade resolvida) */
