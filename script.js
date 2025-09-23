@@ -271,7 +271,7 @@ const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
 // SOLUÇÃO: Desabilitar console.log em mobile para evitar travamentos
-const ENABLE_DEBUG_LOGS = !isMobile; // Logs apenas em desktop
+const ENABLE_DEBUG_LOGS = true; // Logs habilitados em desktop e mobile
 
 // Função de log segura para mobile
 function safeLog() {
@@ -729,7 +729,7 @@ function hideLoader() {
     try {
         const loader = document.getElementById('global-loader');
         if (loader) {
-            const delay = isMobile ? 800 : 500; // Mais tempo para mobile
+            const delay = 500; // Tempo padrão para desktop e mobile
             setTimeout(() => {
                 loader.classList.add('hidden');
                 // Esconder completamente após transição
@@ -774,44 +774,8 @@ function updateProgress(percentage, text) {
 async function loadAllDeviceStatesGlobally() {
     console.log('🌍 Iniciando carregamento global de estados...');
     
-    // Verificar compatibilidade primeiro
-    if (!checkMobileCompatibility()) {
-        console.warn('📱 Modo compatibilidade ativado para mobile');
-        updateProgress(20, 'Modo compatibilidade mobile...');
-        
-        // Modo simplificado para dispositivos incompatíveis
-        console.log('📱 Carregando em modo compatibilidade mobile...');
-        
-        ALL_LIGHT_IDS.forEach((deviceId, index) => {
-            let storedState = 'off'; // Estado padrão seguro
-            
-            try {
-                if (typeof localStorage !== 'undefined') {
-                    const stored = localStorage.getItem(`device_state_${deviceId}`);
-                    if (stored) {
-                        storedState = stored;
-                    }
-                }
-            } catch (e) {
-                console.warn(`localStorage inacessível para ${deviceId}:`, e);
-            }
-            
-            // Simular delay para melhor UX
-            if (index < 3) {
-                setTimeout(() => {
-                    updateDeviceUI(deviceId, storedState, true);
-                }, index * 100);
-            } else {
-                updateDeviceUI(deviceId, storedState, true);
-            }
-            
-            const progress = 20 + ((index + 1) / ALL_LIGHT_IDS.length) * 80;
-            updateProgress(progress, `Dispositivo ${index + 1}/${ALL_LIGHT_IDS.length}`);
-        });
-        
-        updateProgress(100, 'Modo compatibilidade com polling ativo!');
-        return true;
-    }
+    // Mobile e desktop usam EXATAMENTE o mesmo carregamento
+    console.log('🌍 Carregamento universal (desktop e mobile idênticos)');
     
     if (!isProduction) {
         console.log('💻 Modo desenvolvimento - carregando do localStorage');
@@ -819,7 +783,7 @@ async function loadAllDeviceStatesGlobally() {
         
         // Simular carregamento para melhor UX (mobile-friendly)
         try {
-            await new Promise(resolve => setTimeout(resolve, isMobile ? 800 : 500));
+            await new Promise(resolve => setTimeout(resolve, 500));
         } catch (e) {
             // Fallback se Promise.resolve falhar
             console.warn('Promise fallback ativo');
@@ -858,13 +822,13 @@ async function loadAllDeviceStatesGlobally() {
         // Configurações otimizadas para mobile
         const fetchOptions = {
             method: 'GET',
-            cache: isMobile ? 'no-cache' : 'default',
+            cache: 'default',
             mode: 'cors'
         };
         
         // Timeout mais longo para mobile (compatível com browsers antigos)
         let controller, timeoutId;
-        const timeout = isMobile ? 15000 : 10000; // 15s para mobile, 10s para desktop
+        const timeout = 10000; // 10s padrão para desktop e mobile
         
         // Verificar se AbortController é suportado
         if (typeof AbortController !== 'undefined') {
@@ -931,20 +895,16 @@ async function loadAllDeviceStatesGlobally() {
     } catch (error) {
         console.error('❌ Erro no carregamento global:', error);
         
-        // Diagnóstico específico para mobile
-        if (isMobile) {
-            if (error.name === 'AbortError') {
-                console.warn('📱 Timeout de rede em dispositivo móvel');
-                updateProgress(60, 'Timeout móvel - usando backup...');
-            } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                console.warn('📱 Problema de conectividade móvel');
-                updateProgress(60, 'Sem rede móvel - modo offline...');
-            } else {
-                console.warn('📱 Erro específico de mobile:', error.message);
-                updateProgress(60, 'Erro móvel - usando backup...');
-            }
+        // Tratamento universal de erro (desktop e mobile idênticos)
+        if (error.name === 'AbortError') {
+            console.warn('⏱️ Timeout de rede detectado');
+            updateProgress(60, 'Timeout - usando backup...');
+        } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
+            console.warn('🌐 Problema de conectividade');
+            updateProgress(60, 'Sem rede - modo offline...');
         } else {
-            updateProgress(60, 'Erro na conexão, usando dados salvos...');
+            console.warn('❌ Erro no carregamento:', error.message);
+            updateProgress(60, 'Erro - usando backup...');
         }
         
         // Fallback para localStorage
@@ -956,7 +916,7 @@ async function loadAllDeviceStatesGlobally() {
             updateProgress(progress, `Carregando backup ${index + 1}/${ALL_LIGHT_IDS.length}...`);
         });
         
-        const offlineMsg = isMobile ? 'Modo offline móvel ativo' : 'Carregamento concluído (modo offline)';
+        const offlineMsg = 'Carregamento concluído (modo offline)';
         updateProgress(100, offlineMsg);
         return false;
     }
@@ -1398,34 +1358,16 @@ window.addEventListener('DOMContentLoaded', function() {
     try {
         console.log('📱 Verificando compatibilidade mobile...');
         
-        // Verificar se é mobile com limitações críticas
-        if (isMobile) {
-            showMobileDebug('📱 Verificando compatibilidade mobile...', 'info');
-            var isCompatible = false;
-            try {
-                isCompatible = checkMobileCompatibility();
-                showMobileDebug('📱 Compatibilidade: ' + (isCompatible ? 'OK' : 'LIMITADO'), isCompatible ? 'success' : 'error');
-            } catch (e) {
-                console.error('❌ Erro na verificação de compatibilidade:', e);
-                showMobileDebug('❌ Erro na verificação: ' + e.message, 'error');
-                isCompatible = false;
-            }
-            
-            if (!isCompatible) {
-                console.warn('📱 Dispositivo móvel com limitações detectado - usando modo simples COM POLLING');
-                showMobileDebug('📱 Usando modo simples COM POLLING', 'info');
-                initSimpleMode();
-                return;
-            }
-        }
+        // Mobile usa EXATAMENTE a mesma inicialização do desktop
+        console.log('📱 Mobile usando inicialização idêntica ao desktop');
         
         console.log('📱 Tentando mostrar loader...');
         // Mostrar loader imediatamente
         showLoader();
         
-        // Timeout ajustado para mobile (mais tempo para carregar)
-        var initDelay = isMobile ? 2000 : 500; // Aumentei para 2s em mobile
-        console.log('⏱️ Delay de inicialização: ' + initDelay + 'ms (mobile: ' + isMobile + ')');
+        // Timeout padrão para desktop e mobile (comportamento idêntico)
+        var initDelay = 500; // Mesmo tempo para desktop e mobile
+        console.log('⏱️ Delay de inicialização: ' + initDelay + 'ms (universal)');
         
         // Aguardar um pouco para UI carregar e então iniciar carregamento
         setTimeout(function() {
@@ -1436,8 +1378,8 @@ window.addEventListener('DOMContentLoaded', function() {
                 loadAllDeviceStatesGlobally().then(function(success) {
                     console.log('📱 Carregamento global concluído, success:', success);
                     
-                    // Aguardar mais tempo em mobile para estabilizar
-                    var finalDelay = isMobile ? 1200 : 800;
+                    // Delay padrão para desktop e mobile
+                    var finalDelay = 800;
                     setTimeout(function() {
                         // Esconder loader
                         hideLoader();
@@ -1445,14 +1387,14 @@ window.addEventListener('DOMContentLoaded', function() {
                         // Configurar observador DOM (com fallback para mobile)
                         setupDomObserver();
                         
-                        // Sincronizar controles já existentes (delay maior em mobile)
-                        var syncDelay = isMobile ? 300 : 100;
+                        // Sincronizar controles já existentes (tempo padrão)
+                        var syncDelay = 100;
                         setTimeout(syncAllVisibleControls, syncDelay);
                         
-                        // Iniciar polling se estiver em produção (delay maior para mobile)
+                        // Iniciar polling se estiver em produção (tempo padrão)
                         if (isProduction) {
-                            var pollingDelay = isMobile ? 5000 : 3000;
-                            console.log('🔄 Iniciando polling em ' + (pollingDelay/1000) + ' segundos (mobile: ' + isMobile + ')');
+                            var pollingDelay = 3000;
+                            console.log('🔄 Iniciando polling em ' + (pollingDelay/1000) + ' segundos (universal)');
                             setTimeout(startPolling, pollingDelay);
                         }
                         
@@ -1478,50 +1420,33 @@ window.addEventListener('DOMContentLoaded', function() {
                 console.error('💥 Erro crítico na inicialização:', error);
                 showMobileDebug('💥 ERRO CRÍTICO: ' + error.message, 'error');
                 
-                // Modo de emergência para mobile
-                if (isMobile) {
-                    console.log('📱 Ativando modo de emergência para mobile...');
-                    showMobileDebug('📱 Ativando modo de emergência mobile...', 'info');
-                    updateProgress(80, 'Modo de emergência mobile...');
+                // Modo de emergência universal (desktop e mobile idênticos)
+                console.log('� Ativando modo de emergência universal...');
+                showMobileDebug('� Ativando modo de emergência...', 'info');
+                updateProgress(80, 'Modo de emergência...');
+                
+                try {
+                    // Inicialização mínima sem APIs externas
+                    ALL_LIGHT_IDS.forEach(function(deviceId) {
+                        updateDeviceUI(deviceId, 'off', true);
+                    });
                     
-                    try {
-                        // Inicialização mínima sem APIs externas
-                        ALL_LIGHT_IDS.forEach(function(deviceId) {
-                            updateDeviceUI(deviceId, 'off', true);
-                        });
-                        
-                        updateProgress(100, 'Modo básico carregado');
-                        showMobileDebug('✅ Modo básico carregado com sucesso', 'success');
-                        setTimeout(hideLoader, 1000);
-                        
-                    } catch (emergencyError) {
-                        console.error('💥 Falha no modo de emergência:', emergencyError);
-                        console.log('🚨 Ativando modo ultra-básico como último recurso...');
-                        initUltraBasicMode();
-                    }
+                    updateProgress(100, 'Modo básico carregado');
+                    showMobileDebug('✅ Modo básico carregado com sucesso', 'success');
+                    setTimeout(hideLoader, 1000);
                     
-                } else {
-                    // Desktop - mostrar erro mas tentar modo de emergência também
-                    try {
-                        console.error('🖥️ Erro no desktop, tentando modo de emergência...');
-                        updateProgress(90, 'Tentando recuperação...');
-                        
-                        // Tentar modo ultra-básico também no desktop
-                        setTimeout(function() {
-                            try {
-                                initUltraBasicMode();
-                            } catch (ultraError) {
-                                console.error('💀 Falha total na recuperação desktop:', ultraError);
-                                updateProgress(100, 'Erro crítico - recarregue a página');
-                                setTimeout(function() { hideLoader(); }, 3000);
-                            }
-                        }, 1000);
-                        
-                    } catch (e) {
-                        console.error('❌ Erro no fallback desktop:', e);
-                        updateProgress(100, 'Erro crítico - recarregue a página');
-                        setTimeout(function() { hideLoader(); }, 3000);
-                    }
+                } catch (emergencyError) {
+                    console.error('💥 Falha no modo de emergência:', emergencyError);
+                    console.log('🚨 Ativando modo ultra-básico como último recurso...');
+                    setTimeout(function() {
+                        try {
+                            initUltraBasicMode();
+                        } catch (ultraError) {
+                            console.error('💀 Falha total na recuperação:', ultraError);
+                            updateProgress(100, 'Erro crítico - recarregue a página');
+                            setTimeout(function() { hideLoader(); }, 3000);
+                        }
+                    }, 1000);
                 }
             }
         }, initDelay);
@@ -1543,10 +1468,7 @@ window.addEventListener('DOMContentLoaded', function() {
         } catch (finalError) {
             console.error('💀 FALHA TOTAL:', finalError);
             showMobileDebug('💀 FALHA TOTAL: ' + finalError.message, 'error');
-            // No mobile, evitar alert que pode bloquear
-            if (!isMobile) {
-                alert('Erro crítico. Recarregue a página.');
-            }
+            // Comportamento universal - sem alert para não bloquear interface
         }
     }
 });
