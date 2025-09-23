@@ -967,8 +967,6 @@ function syncAllVisibleControls(forceMasterUpdate = false) {
 
 // Comandos de debug globais
 window.debugEletrize = {
-    showProtections: showProtectionStatus,
-    clearProtections: clearAllProtections,
     forcePolling: updateDeviceStatesFromServer,
     reloadStates: loadAllDeviceStatesGlobally,
     syncControls: syncAllVisibleControls,
