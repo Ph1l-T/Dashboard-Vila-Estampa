@@ -1,6 +1,6 @@
 /**
  * Cloudflare Pages Function para fazer proxy das requisições ao Hubitat
- * Resolve problemas de CORS e centraliza as chamadas
+ * Route: /api/hubitat/[deviceId].js - handle device info requests
  */
 
 const CORS_HEADERS = {
@@ -11,7 +11,7 @@ const CORS_HEADERS = {
 };
 
 export async function onRequest(context) {
-  const { request, env } = context;
+  const { request, env, params } = context;
   const url = new URL(request.url);
 
   // Handle preflight requests
@@ -22,35 +22,19 @@ export async function onRequest(context) {
     });
   }
 
-  // Extract device ID and command from URL
-  // Expected format: /api/hubitat/{deviceId}/{command?}/{value?}
-  const pathParts = url.pathname.split('/').filter(Boolean);
-  
-  if (pathParts.length < 3 || pathParts[0] !== 'api' || pathParts[1] !== 'hubitat') {
-    return new Response('Invalid API path', { 
+  const deviceId = params.deviceId;
+  if (!deviceId) {
+    return new Response(JSON.stringify({ error: 'Device ID required' }), { 
       status: 400,
-      headers: CORS_HEADERS 
+      headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
     });
   }
-
-  const deviceId = pathParts[2];
-  const command = pathParts[3] || null;
-  const value = pathParts[4] || null;
 
   // Build Hubitat URL
   const HUBITAT_BASE_URL = env.HUBITAT_BASE_URL || 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices';
   const ACCESS_TOKEN = env.HUBITAT_ACCESS_TOKEN || '8204fd02-e90e-4c0d-b083-431625526d10';
 
-  let hubitatUrl = `${HUBITAT_BASE_URL}/${deviceId}`;
-  
-  if (command) {
-    hubitatUrl += `/${command}`;
-    if (value !== null) {
-      hubitatUrl += `/${value}`;
-    }
-  }
-  
-  hubitatUrl += `?access_token=${ACCESS_TOKEN}`;
+  const hubitatUrl = `${HUBITAT_BASE_URL}/${deviceId}?access_token=${ACCESS_TOKEN}`;
 
   try {
     // Forward request to Hubitat

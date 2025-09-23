@@ -110,14 +110,19 @@ function setStoredState(deviceId, state) {
 }
 
 async function fetchDeviceState(deviceId) {
-    const url = urlDeviceInfo(deviceId);
-    const resp = await fetch(url);
-    if (!resp.ok) throw new Error(`Hubitat state fetch failed: ${resp.status}`);
-    const data = await resp.json();
-    // Maker API returns attributes array; prefer currentValue, fallback to value
-    const attr = Array.isArray(data.attributes) ? data.attributes.find(a => a.name === 'switch') : null;
-    const state = attr?.currentValue || attr?.value || null;
-    return state;
+    try {
+        const url = urlDeviceInfo(deviceId);
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error(`Hubitat state fetch failed: ${resp.status}`);
+        const data = await resp.json();
+        // Maker API returns attributes array; prefer currentValue, fallback to value
+        const attr = Array.isArray(data.attributes) ? data.attributes.find(a => a.name === 'switch') : null;
+        const state = attr?.currentValue || attr?.value || 'off';
+        return state;
+    } catch (error) {
+        console.error(`Error fetching state for device ${deviceId}:`, error);
+        return 'off'; // fallback
+    }
 }
 
 async function refreshRoomControlFromHubitat(el) {
@@ -237,45 +242,40 @@ const HUBITAT_ACCESS_TOKEN = '8204fd02-e90e-4c0d-b083-431625526d10';
 // Helpers de URL para endpoints comuns da API
 function urlDeviceInfo(deviceId) {
     return isProduction 
-        ? `${API_BASE_URL}/${deviceId}`
+        ? `/api/hubitat/${deviceId}`
         : `${API_BASE_URL}/${deviceId}?access_token=${HUBITAT_ACCESS_TOKEN}`;
 }
-function urlDeviceEvents(deviceId) {
-    return isProduction 
-        ? `${API_BASE_URL}/${deviceId}/events`
-        : `${API_BASE_URL}/${deviceId}/events?access_token=${HUBITAT_ACCESS_TOKEN}`;
-}
-function urlDeviceCommands(deviceId) {
-    return isProduction 
-        ? `${API_BASE_URL}/${deviceId}/commands`
-        : `${API_BASE_URL}/${deviceId}/commands?access_token=${HUBITAT_ACCESS_TOKEN}`;
-}
-function urlDeviceCapabilities(deviceId) {
-    return isProduction 
-        ? `${API_BASE_URL}/${deviceId}/capabilities`
-        : `${API_BASE_URL}/${deviceId}/capabilities?access_token=${HUBITAT_ACCESS_TOKEN}`;
-}
-function urlDeviceAttribute(deviceId, attribute) {
-    return isProduction 
-        ? `${API_BASE_URL}/${deviceId}/attribute/${encodeURIComponent(attribute)}`
-        : `${API_BASE_URL}/${deviceId}/attribute/${encodeURIComponent(attribute)}?access_token=${HUBITAT_ACCESS_TOKEN}`;
-}
+
 function urlSendCommand(deviceId, command, value) {
-    let url = isProduction 
-        ? `${API_BASE_URL}/${deviceId}/${encodeURIComponent(command)}`
-        : `${API_BASE_URL}/${deviceId}/${encodeURIComponent(command)}`;
-    
-    if (value !== undefined) url += `/${encodeURIComponent(value)}`;
-    
-    if (!isProduction) {
+    if (isProduction) {
+        // Em produção, usar rotas do Cloudflare Pages
+        let url = `/api/hubitat/${deviceId}/${encodeURIComponent(command)}`;
+        if (value !== undefined) {
+            url += `?value=${encodeURIComponent(value)}`;
+        }
+        return url;
+    } else {
+        // Em desenvolvimento, usar URL direta do Hubitat
+        let url = `${API_BASE_URL}/${deviceId}/${encodeURIComponent(command)}`;
+        if (value !== undefined) url += `/${encodeURIComponent(value)}`;
         url += `?access_token=${HUBITAT_ACCESS_TOKEN}`;
+        return url;
     }
-    
-    return url;
 }
 
 function sendHubitatCommand(deviceId, command, value) {
-    const url = urlSendCommand(deviceId, command, value);
+    let url;
+    
+    if (isProduction) {
+        // Em produção, usar o middleware do Cloudflare
+        url = `/api/hubitat/${deviceId}/${command}`;
+        if (value !== undefined) {
+            url += `?value=${encodeURIComponent(value)}`;
+        }
+    } else {
+        // Em desenvolvimento, usar URL direta
+        url = urlSendCommand(deviceId, command, value);
+    }
 
     console.log(`Enviando comando para o Hubitat: ${url}`);
 
