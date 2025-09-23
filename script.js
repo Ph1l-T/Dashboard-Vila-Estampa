@@ -599,30 +599,64 @@ function updateStatesAfterMasterCommand(deviceIds, command) {
 
 // Controle da tela de loading
 function showLoader() {
-    const loader = document.getElementById('global-loader');
-    if (loader) {
-        loader.classList.remove('hidden');
-        updateProgress(0, 'Iniciando carregamento...');
+    try {
+        const loader = document.getElementById('global-loader');
+        if (loader) {
+            loader.classList.remove('hidden');
+            loader.style.display = 'flex'; // Forçar display
+            updateProgress(0, 'Iniciando carregamento...');
+            console.log('📱 Loader exibido');
+        } else {
+            console.warn('⚠️ Elemento loader não encontrado');
+        }
+    } catch (error) {
+        console.error('❌ Erro ao mostrar loader:', error);
     }
 }
 
 function hideLoader() {
-    const loader = document.getElementById('global-loader');
-    if (loader) {
-        setTimeout(() => {
-            loader.classList.add('hidden');
-        }, 500); // Pequeno delay para melhor UX
+    try {
+        const loader = document.getElementById('global-loader');
+        if (loader) {
+            const delay = isMobile ? 800 : 500; // Mais tempo para mobile
+            setTimeout(() => {
+                loader.classList.add('hidden');
+                // Esconder completamente após transição
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 500);
+                console.log('📱 Loader escondido');
+            }, delay);
+        }
+    } catch (error) {
+        console.error('❌ Erro ao esconder loader:', error);
     }
 }
 
 function updateProgress(percentage, text) {
-    const progressFill = document.getElementById('progress-fill');
-    const progressText = document.getElementById('progress-text');
-    const loaderText = document.querySelector('.loader-text');
-    
-    if (progressFill) progressFill.style.width = percentage + '%';
-    if (progressText) progressText.textContent = Math.round(percentage) + '%';
-    if (loaderText && text) loaderText.textContent = text;
+    try {
+        const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
+        const loaderText = document.querySelector('.loader-text');
+        
+        if (progressFill) {
+            progressFill.style.width = percentage + '%';
+        }
+        
+        if (progressText) {
+            progressText.textContent = Math.round(percentage) + '%';
+        }
+        
+        if (loaderText && text) {
+            loaderText.textContent = text;
+        }
+        
+        // Log para debug mobile
+        console.log(`📊 Progresso: ${percentage}% - ${text || 'Carregando...'}`);
+        
+    } catch (error) {
+        console.warn('⚠️ Erro ao atualizar progresso:', error);
+    }
 }
 
 // Carregamento global de todos os estados dos dispositivos
@@ -635,23 +669,36 @@ async function loadAllDeviceStatesGlobally() {
         updateProgress(20, 'Modo compatibilidade mobile...');
         
         // Modo simplificado para dispositivos incompatíveis
+        console.log('📱 Carregando em modo compatibilidade mobile...');
+        
         ALL_LIGHT_IDS.forEach((deviceId, index) => {
-            const storedState = 'off'; // Estado padrão seguro
+            let storedState = 'off'; // Estado padrão seguro
+            
             try {
                 if (typeof localStorage !== 'undefined') {
                     const stored = localStorage.getItem(`device_state_${deviceId}`);
-                    if (stored) storedState = stored;
+                    if (stored) {
+                        storedState = stored;
+                    }
                 }
             } catch (e) {
-                console.warn('localStorage não acessível:', e);
+                console.warn(`localStorage inacessível para ${deviceId}:`, e);
             }
             
-            updateDeviceUI(deviceId, storedState, true);
+            // Simular delay para melhor UX
+            if (index < 3) {
+                setTimeout(() => {
+                    updateDeviceUI(deviceId, storedState, true);
+                }, index * 100);
+            } else {
+                updateDeviceUI(deviceId, storedState, true);
+            }
+            
             const progress = 20 + ((index + 1) / ALL_LIGHT_IDS.length) * 80;
-            updateProgress(progress, `Carregando ${index + 1}/${ALL_LIGHT_IDS.length}...`);
+            updateProgress(progress, `Dispositivo ${index + 1}/${ALL_LIGHT_IDS.length}`);
         });
         
-        updateProgress(100, 'Modo compatibilidade carregado!');
+        updateProgress(100, 'Modo compatibilidade ativo!');
         return true;
     }
     
@@ -659,15 +706,30 @@ async function loadAllDeviceStatesGlobally() {
         console.log('💻 Modo desenvolvimento - carregando do localStorage');
         updateProgress(20, 'Carregando estados salvos...');
         
-        // Simular carregamento para melhor UX
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Simular carregamento para melhor UX (mobile-friendly)
+        try {
+            await new Promise(resolve => setTimeout(resolve, isMobile ? 800 : 500));
+        } catch (e) {
+            // Fallback se Promise.resolve falhar
+            console.warn('Promise fallback ativo');
+        }
         
         ALL_LIGHT_IDS.forEach((deviceId, index) => {
-            const storedState = getStoredState(deviceId) || 'off';
-            updateDeviceUI(deviceId, storedState, true); // forceUpdate = true
+            let storedState = 'off';
+            try {
+                storedState = getStoredState(deviceId) || 'off';
+            } catch (e) {
+                console.warn(`Erro ao ler estado do ${deviceId}:`, e);
+            }
+            
+            try {
+                updateDeviceUI(deviceId, storedState, true); // forceUpdate = true
+            } catch (e) {
+                console.warn(`Erro ao atualizar UI do ${deviceId}:`, e);
+            }
             
             const progress = 20 + ((index + 1) / ALL_LIGHT_IDS.length) * 80;
-            updateProgress(progress, `Carregando dispositivo ${index + 1}/${ALL_LIGHT_IDS.length}...`);
+            updateProgress(progress, `Dispositivo ${index + 1}/${ALL_LIGHT_IDS.length}...`);
         });
         
         updateProgress(100, 'Carregamento concluído!');
@@ -689,15 +751,21 @@ async function loadAllDeviceStatesGlobally() {
             mode: 'cors'
         };
         
-        // Timeout mais longo para mobile
-        const controller = new AbortController();
+        // Timeout mais longo para mobile (compatível com browsers antigos)
+        let controller, timeoutId;
         const timeout = isMobile ? 15000 : 10000; // 15s para mobile, 10s para desktop
         
-        const timeoutId = setTimeout(() => controller.abort(), timeout);
-        fetchOptions.signal = controller.signal;
+        // Verificar se AbortController é suportado
+        if (typeof AbortController !== 'undefined') {
+            controller = new AbortController();
+            timeoutId = setTimeout(() => controller.abort(), timeout);
+            fetchOptions.signal = controller.signal;
+        } else {
+            console.warn('⚠️ AbortController não suportado - sem timeout');
+        }
         
         const response = await fetch(`${POLLING_URL}?devices=${deviceIds}`, fetchOptions);
-        clearTimeout(timeoutId);
+        if (timeoutId) clearTimeout(timeoutId);
         
         updateProgress(50, 'Recebendo dados...');
         
@@ -786,25 +854,45 @@ async function loadAllDeviceStatesGlobally() {
 // Verificar compatibilidade com mobile
 function checkMobileCompatibility() {
     const issues = [];
+    const warnings = [];
     
-    if (typeof MutationObserver === 'undefined') {
-        issues.push('MutationObserver não suportado');
-    }
-    
+    // APIs críticas (falha total se não existirem)
     if (typeof fetch === 'undefined') {
         issues.push('Fetch API não suportada');
-    }
-    
-    if (typeof localStorage === 'undefined') {
-        issues.push('LocalStorage não suportado');
     }
     
     if (typeof Promise === 'undefined') {
         issues.push('Promises não suportadas');
     }
     
+    // APIs opcionais (warnings apenas)
+    if (typeof MutationObserver === 'undefined') {
+        warnings.push('MutationObserver não suportado (usar fallback)');
+    }
+    
+    if (typeof AbortController === 'undefined') {
+        warnings.push('AbortController não suportado (sem timeout)');
+    }
+    
+    if (typeof localStorage === 'undefined') {
+        warnings.push('LocalStorage não suportado (sem persistência)');
+    }
+    
+    // Testar localStorage funcionamento
+    try {
+        const testKey = '__test_ls__';
+        localStorage.setItem(testKey, 'test');
+        localStorage.removeItem(testKey);
+    } catch (e) {
+        warnings.push('LocalStorage bloqueado (modo privado?)');
+    }
+    
+    if (warnings.length > 0) {
+        console.warn('⚠️ Avisos de compatibilidade:', warnings);
+    }
+    
     if (issues.length > 0) {
-        console.warn('⚠️ Problemas de compatibilidade detectados:', issues);
+        console.error('❌ Problemas críticos detectados:', issues);
         return false;
     }
     
@@ -965,11 +1053,20 @@ window.debugEletrize = {
         console.log('🧪 Testando APIs para mobile...');
         try {
             const testUrl = isProduction ? '/functions/polling?devices=366' : '#test';
-            const response = await fetch(testUrl, { 
+            // Configurar timeout compatível
+            const fetchConfig = { 
                 method: 'GET',
-                cache: 'no-cache',
-                signal: AbortSignal.timeout(5000)
-            });
+                cache: 'no-cache'
+            };
+            
+            // Adicionar timeout se AbortController for suportado
+            if (typeof AbortController !== 'undefined') {
+                const testController = new AbortController();
+                setTimeout(() => testController.abort(), 5000);
+                fetchConfig.signal = testController.signal;
+            }
+            
+            const response = await fetch(testUrl, fetchConfig);
             console.log('✅ Fetch test:', response.status, response.statusText);
         } catch (error) {
             console.error('❌ Fetch test failed:', error);
@@ -977,10 +1074,53 @@ window.debugEletrize = {
     }
 };
 
+// Função de inicialização simplificada para mobile
+function initSimpleMode() {
+    console.log('📱 Inicializando modo simples para mobile...');
+    
+    try {
+        showLoader();
+        updateProgress(10, 'Modo simples ativo...');
+        
+        // Carregar estados básicos
+        ALL_LIGHT_IDS.forEach((deviceId, index) => {
+            const progress = 10 + ((index + 1) / ALL_LIGHT_IDS.length) * 80;
+            updateProgress(progress, `Carregando ${index + 1}/${ALL_LIGHT_IDS.length}...`);
+            
+            try {
+                updateDeviceUI(deviceId, 'off', true);
+            } catch (e) {
+                console.warn(`Erro simples no device ${deviceId}:`, e);
+            }
+        });
+        
+        updateProgress(100, 'Modo simples carregado!');
+        
+        setTimeout(() => {
+            hideLoader();
+            console.log('✅ Modo simples ativo - funcionalidade básica disponível');
+        }, 1000);
+        
+    } catch (error) {
+        console.error('❌ Falha no modo simples:', error);
+        // Último recurso - esconder loader e permitir uso básico
+        setTimeout(() => {
+            hideLoader();
+        }, 2000);
+    }
+}
+
 // Inicialização global da aplicação
 window.addEventListener('DOMContentLoaded', () => {
     console.log('🏠 Dashboard Eletrize inicializando...');
     console.log('🛠️ Comandos debug disponíveis: window.debugEletrize');
+    
+    // Verificar se é mobile com limitações críticas
+    if (isMobile && !checkMobileCompatibility()) {
+        console.warn('📱 Dispositivo móvel com limitações detectado - usando modo simples');
+        initSimpleMode();
+        return;
+    }
     
     // Mostrar loader imediatamente
     showLoader();
