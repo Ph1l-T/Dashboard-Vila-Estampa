@@ -429,12 +429,16 @@ const COMMAND_PROTECTION_MS = 8000; // 8 segundos de proteção após comando ma
 
 // Sistema de loading para botões master
 function setMasterButtonLoading(button, isLoading) {
+    console.log('🔄 setMasterButtonLoading chamada:', button, 'loading:', isLoading);
+    
     if (isLoading) {
         button.classList.add('loading');
         button.dataset.loading = 'true';
+        console.log('✅ Loading ativado - classes:', button.className);
     } else {
         button.classList.remove('loading');
         button.dataset.loading = 'false';
+        console.log('❌ Loading desativado - classes:', button.className);
     }
 }
 
@@ -588,22 +592,31 @@ function initHomeMasters() {
 
 // Função chamada pelo onclick dos botões master na home
 function onHomeMasterClick(event, button) {
+    console.log('🖱️ onHomeMasterClick chamada!', button);
     event.preventDefault();
     event.stopPropagation();
     
     // Verificar se já está carregando
     if (button.dataset.loading === 'true') {
+        console.log('⏸️ Botão já está carregando, ignorando clique');
         return;
     }
     
     const deviceIds = (button.dataset.deviceIds || '').split(',').filter(Boolean);
-    if (deviceIds.length === 0) return;
+    console.log('🔍 Device IDs encontrados:', deviceIds);
+    
+    if (deviceIds.length === 0) {
+        console.log('❌ Nenhum device ID encontrado');
+        return;
+    }
     
     // Determinar comando baseado no estado atual
     const currentState = anyOn(deviceIds) ? 'on' : 'off';
     const newCommand = currentState === 'on' ? 'off' : 'on';
+    console.log('🎯 Comando determinado:', currentState, '→', newCommand);
     
     // Ativar loading visual
+    console.log('🔄 Ativando loading visual...');
     setMasterButtonLoading(button, true);
     
     // Atualizar UI imediatamente
@@ -1117,13 +1130,30 @@ window.debugEletrize = {
     testMasterLoading: () => {
         console.log('🔄 Testando loading nos botões master...');
         const masters = document.querySelectorAll('.room-master-btn');
+        const scenes = document.querySelectorAll('.scene-control-card');
+        
+        console.log('Botões master encontrados:', masters.length);
+        console.log('Botões de cenário encontrados:', scenes.length);
+        
+        // Testar botões master da home
         masters.forEach((btn, index) => {
+            console.log(`Testando botão master ${index + 1}:`, btn);
             setTimeout(() => {
                 setMasterButtonLoading(btn, true);
                 setTimeout(() => {
                     setMasterButtonLoading(btn, false);
-                }, 2000);
-            }, index * 500);
+                }, 3000);
+            }, index * 200);
+        });
+        
+        // Testar botão de cenários também
+        scenes.forEach((btn, index) => {
+            setTimeout(() => {
+                setMasterButtonLoading(btn, true);
+                setTimeout(() => {
+                    setMasterButtonLoading(btn, false);
+                }, 3000);
+            }, (masters.length + index) * 200);
         });
     },
     checkMasterButtons: () => {
