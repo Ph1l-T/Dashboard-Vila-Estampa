@@ -70,33 +70,32 @@ function toggleRoomControl(el) {
     
     if (!deviceId) return;
     
+    // Proteger dispositivo contra polling por 5 segundos
+    protectDevice(deviceId, 5000);
+    
     // Atualizar UI imediatamente
     el.dataset.state = newState;
     if (img) img.src = newState === 'on' ? ICON_ON : ICON_OFF;
     
-    // Marcar como "pendente" para evitar que polling sobrescreva
-    el.dataset.pending = 'true';
-    
     // Persist locally
     setStoredState(deviceId, newState);
+    
+    console.log(`Enviando comando ${newState} para dispositivo ${deviceId}`);
     
     // Send to Hubitat
     sendHubitatCommand(deviceId, newState === 'on' ? 'on' : 'off')
         .then(() => {
-            console.log(`Comando ${newState} enviado com sucesso para dispositivo ${deviceId}`);
-            // Aguardar um tempo antes de permitir polling sobrescrever
-            setTimeout(() => {
-                el.dataset.pending = 'false';
-            }, 3000); // 3 segundos de proteção
+            console.log(`✅ Comando ${newState} enviado com sucesso para dispositivo ${deviceId}`);
         })
         .catch(error => {
-            console.error(`Erro ao enviar comando para dispositivo ${deviceId}:`, error);
+            console.error(`❌ Erro ao enviar comando para dispositivo ${deviceId}:`, error);
             // Em caso de erro, reverter o estado visual
             const revertState = newState === 'on' ? 'off' : 'on';
             el.dataset.state = revertState;
             if (img) img.src = revertState === 'on' ? ICON_ON : ICON_OFF;
             setStoredState(deviceId, revertState);
-            el.dataset.pending = 'false';
+            // Remover proteção em caso de erro
+            deviceProtection.delete(deviceId);
         });
 }
 
@@ -372,13 +371,62 @@ try {
 // --- Polling automático de estados ---
 
 let pollingInterval = null;
-const POLLING_INTERVAL_MS = 5000; // 5 segundos
+const POLLING_INTERVAL_MS = 10000; // 10 segundos (mais conservador)
+const deviceProtection = new Map(); // Armazena proteções por deviceId
 
 function startPolling() {
     if (pollingInterval) return; // Já está rodando
     
+    // Buscar estados iniciais imediatamente
+    updateDeviceStatesFromServer();
+    
+    // Depois iniciar polling regular
     pollingInterval = setInterval(updateDeviceStatesFromServer, POLLING_INTERVAL_MS);
     console.log('Polling iniciado - atualizando a cada', POLLING_INTERVAL_MS / 1000, 'segundos');
+}
+
+function protectDevice(deviceId, durationMs = 8000) {
+    const until = Date.now() + durationMs;
+    deviceProtection.set(deviceId, until);
+    console.log(`🛡️ Device ${deviceId} protegido por ${durationMs/1000}s até`, new Date(until).toLocaleTimeString());
+}
+
+function isDeviceProtected(deviceId) {
+    const until = deviceProtection.get(deviceId);
+    if (!until) return false;
+    
+    const now = Date.now();
+    if (now > until) {
+        deviceProtection.delete(deviceId);
+        console.log(`🔓 Proteção do device ${deviceId} expirou`);
+        return false;
+    }
+    
+    const remainingMs = until - now;
+    console.log(`🔒 Device ${deviceId} ainda protegido por ${Math.ceil(remainingMs/1000)}s`);
+    return true;
+}
+
+function clearAllProtections() {
+    const count = deviceProtection.size;
+    deviceProtection.clear();
+    console.log(`🧹 Limpadas ${count} proteções de dispositivos`);
+}
+
+function showProtectionStatus() {
+    const now = Date.now();
+    console.log('📊 Status das proteções:');
+    
+    if (deviceProtection.size === 0) {
+        console.log('  ✅ Nenhum dispositivo protegido');
+        return;
+    }
+    
+    deviceProtection.forEach((until, deviceId) => {
+        const remaining = Math.max(0, until - now);
+        const status = remaining > 0 ? '🔒 ATIVO' : '🔓 EXPIRADO';
+        console.log(`  ${status} ${deviceId}: ${Math.ceil(remaining/1000)}s restantes`);
+    });
 }
 
 function stopPolling() {
@@ -434,12 +482,19 @@ async function updateDeviceStatesFromServer() {
 }
 
 function updateDeviceUI(deviceId, state) {
+    // Não atualizar se dispositivo está protegido
+    if (isDeviceProtected(deviceId)) {
+        console.log(`🛡️ Device ${deviceId} protegido - ignorando atualização do polling`);
+        return;
+    }
+    
     // Atualizar controles de cômodo
     const roomControls = document.querySelectorAll(`[data-device-id="${deviceId}"]`);
     roomControls.forEach(el => {
         if (el.classList.contains('room-control')) {
-            // Não atualizar se o elemento está com comando pendente
-            if (el.dataset.pending !== 'true') {
+            const currentState = el.dataset.state;
+            if (currentState !== state) {
+                console.log(`🔄 Atualizando device ${deviceId}: ${currentState} → ${state}`);
                 setRoomControlUI(el, state);
             }
         } else if (el.classList.contains('room-master-btn')) {
@@ -451,12 +506,74 @@ function updateDeviceUI(deviceId, state) {
     });
 }
 
+// Buscar estados iniciais dos dispositivos
+async function loadInitialDeviceStates() {
+    if (!isProduction) {
+        console.log('💻 Modo desenvolvimento - carregando estados do localStorage apenas');
+        // Em desenvolvimento, usar apenas localStorage
+        ALL_LIGHT_IDS.forEach(deviceId => {
+            const storedState = getStoredState(deviceId) || 'off';
+            updateDeviceUI(deviceId, storedState);
+        });
+        return;
+    }
+    
+    console.log('🔍 Buscando estados iniciais dos dispositivos...');
+    try {
+        const deviceIds = ALL_LIGHT_IDS.join(',');
+        const response = await fetch(`${POLLING_URL}?devices=${deviceIds}`);
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log('📡 Estados iniciais recebidos:', data);
+            
+            Object.entries(data.devices).forEach(([deviceId, deviceData]) => {
+                if (deviceData.success) {
+                    setStoredState(deviceId, deviceData.state);
+                    updateDeviceUI(deviceId, deviceData.state);
+                }
+            });
+            
+            console.log('✅ Estados iniciais aplicados com sucesso');
+        } else {
+            throw new Error(`HTTP ${response.status}`);
+        }
+    } catch (error) {
+        console.error('❌ Erro ao buscar estados iniciais:', error);
+        // Fallback para localStorage
+        ALL_LIGHT_IDS.forEach(deviceId => {
+            const storedState = getStoredState(deviceId) || 'off';
+            updateDeviceUI(deviceId, storedState);
+        });
+    }
+}
+
+// Comandos de debug globais
+window.debugEletrize = {
+    showProtections: showProtectionStatus,
+    clearProtections: clearAllProtections,
+    forcePolling: updateDeviceStatesFromServer,
+    checkDevice: (deviceId) => {
+        const stored = getStoredState(deviceId);
+        const protected = isDeviceProtected(deviceId);
+        console.log(`Device ${deviceId}: stored=${stored}, protected=${protected}`);
+    }
+};
+
 // Iniciar polling quando a página carrega
 window.addEventListener('DOMContentLoaded', () => {
-    if (isProduction) {
-        // Aguardar um pouco para a página carregar completamente
-        setTimeout(startPolling, 2000);
-    }
+    console.log('🏠 Dashboard Eletrize carregado');
+    console.log('🛠️ Comandos debug disponíveis: window.debugEletrize');
+    
+    setTimeout(async () => {
+        // Primeiro carregar estados iniciais
+        await loadInitialDeviceStates();
+        
+        // Depois iniciar polling se estiver em produção
+        if (isProduction) {
+            setTimeout(startPolling, 3000); // Aguardar 3s após carregar estados
+        }
+    }, 1000); // Aguardar 1s para DOM estar completamente pronto
 });
 
 // Parar polling quando a página é fechada
