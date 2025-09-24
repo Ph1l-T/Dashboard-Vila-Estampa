@@ -520,45 +520,76 @@ function urlDeviceInfo(deviceId) {
 }
 
 function urlSendCommand(deviceId, command, value) {
-    if (isProduction) {
-        // Em produção, usar proxy do Cloudflare
-        let url = `${HUBITAT_PROXY_URL}?device=${deviceId}&command=${encodeURIComponent(command)}`;
-        if (value !== undefined) {
-            url += `&value=${encodeURIComponent(value)}`;
-        }
-        return url;
-    } else {
-        // Em desenvolvimento, usar URL direta do Hubitat para comandos
-        const baseUrl = HUBITAT_DIRECT_URL.split('/all?')[0]; // Remove /all?access_token=...
-        let url = `${baseUrl}/${deviceId}/${encodeURIComponent(command)}`;
-        if (value !== undefined) url += `/${encodeURIComponent(value)}`;
-        url += `?access_token=${HUBITAT_ACCESS_TOKEN}`;
-        return url;
-    }
+    // SEMPRE usar API direta se estivermos em produção mas Functions não funcionam
+    // (será detectado automaticamente no primeiro erro)
+    
+    // Em desenvolvimento ou como fallback, usar URL direta do Hubitat para comandos
+    const baseUrl = HUBITAT_DIRECT_URL.split('/all?')[0]; // Remove /all?access_token=...
+    let url = `${baseUrl}/${deviceId}/${encodeURIComponent(command)}`;
+    if (value !== undefined) url += `/${encodeURIComponent(value)}`;
+    url += `?access_token=${HUBITAT_ACCESS_TOKEN}`;
+    return url;
 }
 
-function sendHubitatCommand(deviceId, command, value) {
-    const url = urlSendCommand(deviceId, command, value);
-
-    console.log(`Enviando comando para o Hubitat: ${url}`);
-
-    return fetch(url)
-        .then(response => {
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            // alguns comandos retornam vazio; não forçar JSON
-            return response
-                .clone()
-                .json()
-                .catch(() => null);
-        })
-        .then(data => {
-            console.log('Resposta do Hubitat:', data);
-            return data;
-        })
-        .catch(error => {
-            console.error('Erro ao enviar comando para o Hubitat:', error);
-            throw error;
-        });
+async function sendHubitatCommand(deviceId, command, value) {
+    console.log(`Enviando comando: ${command} para dispositivo ${deviceId}${value !== undefined ? ` com valor ${value}` : ''}`);
+    
+    try {
+        // Se estivermos em produção, tenta usar o proxy primeiro
+        if (isProduction) {
+            const proxyUrl = `${HUBITAT_PROXY_URL}?device=${deviceId}&command=${encodeURIComponent(command)}${value !== undefined ? `&value=${encodeURIComponent(value)}` : ''}`;
+            
+            try {
+                const response = await fetch(proxyUrl);
+                const text = await response.text();
+                
+                // Verifica se a resposta é HTML (indica que a Function não está funcionando)
+                if (text.trim().startsWith('<!DOCTYPE') || text.includes('<html')) {
+                    throw new Error('Function retornou HTML - fazendo fallback para API direta');
+                }
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                console.log('Comando enviado com sucesso via proxy');
+                
+                // Tenta parse JSON, mas aceita resposta vazia
+                try {
+                    return JSON.parse(text);
+                } catch {
+                    return null; // Comando executado mas sem resposta JSON
+                }
+                
+            } catch (error) {
+                console.log('Proxy falhou, tentando API direta:', error.message);
+            }
+        }
+        
+        // Fallback para API direta do Hubitat
+        const url = urlSendCommand(deviceId, command, value);
+        console.log(`Enviando comando direto para o Hubitat: ${url}`);
+        
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        console.log('Comando enviado com sucesso via API direta');
+        
+        // Tenta parse JSON, mas aceita resposta vazia
+        try {
+            const text = await response.text();
+            return JSON.parse(text);
+        } catch {
+            return null; // Comando executado mas sem resposta JSON
+        }
+        
+    } catch (error) {
+        console.error('Erro ao enviar comando para o Hubitat:', error);
+        throw error;
+    }
 }
 
 // --- Cortinas (abrir/parar/fechar) ---
@@ -1072,16 +1103,59 @@ async function loadAllDeviceStatesGlobally() {
             if (responseText.trim().startsWith('<!DOCTYPE html') || responseText.trim().startsWith('<html')) {
                 console.error('❌ CRÍTICO: Cloudflare Functions não estão funcionando!');
                 console.error('❌ O servidor está retornando HTML em vez de executar as Functions.');
-                console.error('❌ Isso deve ser corrigido no painel do Cloudflare Pages.');
+                console.error('❌ Implementando fallback automático para API direta do Hubitat...');
                 
-                // Usar estados salvos como fallback
-                console.log('📦 Usando estados salvos como fallback...');
-                ALL_LIGHT_IDS.forEach(deviceId => {
-                    const storedState = getStoredState(deviceId) || 'off';
-                    updateDeviceUI(deviceId, storedState, true);
-                });
+                // FALLBACK AUTOMÁTICO: Usar API direta do Hubitat
+                console.log('🔄 Tentando API direta do Hubitat como fallback...');
+                updateProgress(60, 'Usando API direta como fallback...');
                 
-                throw new Error('Cloudflare Functions não configuradas - verifique o deploy e variáveis de ambiente');
+                try {
+                    const fallbackData = await loadAllDeviceStatesDirect(ALL_LIGHT_IDS);
+                    console.log('✅ Fallback bem-sucedido:', fallbackData);
+                    
+                    // Processar dados do fallback
+                    const deviceEntries = Object.entries(fallbackData.devices);
+                    let processedCount = 0;
+                    
+                    deviceEntries.forEach(([deviceId, deviceData]) => {
+                        if (deviceData.success) {
+                            setStoredState(deviceId, deviceData.state);
+                            updateDeviceUI(deviceId, deviceData.state, true);
+                            console.log(`✅ Device ${deviceId}: ${deviceData.state} (direto)`);
+                        } else {
+                            const storedState = getStoredState(deviceId) || 'off';
+                            updateDeviceUI(deviceId, storedState, true);
+                            console.log(`⚠️ Device ${deviceId}: usando estado salvo "${storedState}"`);
+                        }
+                        
+                        processedCount++;
+                        const progress = 60 + (processedCount / deviceEntries.length) * 35;
+                        updateProgress(progress, `Processando ${processedCount}/${deviceEntries.length}...`);
+                    });
+                    
+                    updateProgress(100, 'Carregamento via API direta concluído!');
+                    
+                    // Forçar atualização dos botões master
+                    setTimeout(() => {
+                        updateAllMasterButtons();
+                        console.log('🔄 Botões master atualizados após fallback');
+                    }, 100);
+                    
+                    console.log('✅ Fallback automático concluído com sucesso');
+                    return true;
+                    
+                } catch (fallbackError) {
+                    console.error('❌ Fallback também falhou:', fallbackError);
+                    
+                    // Último recurso: usar estados salvos
+                    console.log('📦 Usando estados salvos como último recurso...');
+                    ALL_LIGHT_IDS.forEach(deviceId => {
+                        const storedState = getStoredState(deviceId) || 'off';
+                        updateDeviceUI(deviceId, storedState, true);
+                    });
+                    
+                    throw new Error('Functions não funcionam e API direta também falhou - usando estados salvos');
+                }
             }
             
             // Tentar parsear o JSON
