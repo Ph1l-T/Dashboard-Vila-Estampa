@@ -16,14 +16,20 @@ export async function onRequest(context) {
     });
   }
 
+  // Verifica se as variáveis de ambiente estão configuradas
+  if (!env.HUBITAT_BASE_URL || !env.HUBITAT_ACCESS_TOKEN) {
+    return new Response(JSON.stringify({
+      error: 'Variáveis HUBITAT_BASE_URL ou HUBITAT_ACCESS_TOKEN não configuradas'
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+    });
+  }
+
   try {
-    // URL base correta (sem /all)
-    const baseUrl = 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices';
-    const accessToken = 'beddf703-c860-47bf-a6df-3df6ccc98138';
-    
-    let cmdUrl = `${baseUrl}/${device}/${encodeURIComponent(command)}`;
+    let cmdUrl = `${env.HUBITAT_BASE_URL}/${device}/${encodeURIComponent(command)}`;
     if (value) cmdUrl += `/${encodeURIComponent(value)}`;
-    cmdUrl += `?access_token=${accessToken}`;
+    cmdUrl += `?access_token=${env.HUBITAT_ACCESS_TOKEN}`;
 
     const response = await fetch(cmdUrl);
     

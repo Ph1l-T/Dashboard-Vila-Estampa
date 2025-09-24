@@ -1,9 +1,19 @@
 ﻿// Polling function - busca todos os estados dos dispositivos
 export async function onRequest(context) {
+  const { env } = context;
+
+  // Verifica se as variáveis de ambiente estão configuradas
+  if (!env.HUBITAT_FULL_URL) {
+    return new Response(JSON.stringify({
+      error: 'Variável HUBITAT_FULL_URL não configurada'
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+    });
+  }
+
   try {
-    // URL completa que funciona
-    const url = 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices/all?access_token=beddf703-c860-47bf-a6df-3df6ccc98138';
-    const response = await fetch(url);
+    const response = await fetch(env.HUBITAT_FULL_URL);
     
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
