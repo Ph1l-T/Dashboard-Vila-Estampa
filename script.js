@@ -364,7 +364,7 @@ safeLog('=== AMBIENTE DETECTADO ===', {
 const HUBITAT_PROXY_URL = '/functions/hubitat-proxy';
 const POLLING_URL = '/functions/polling';
 const HUBITAT_DIRECT_URL = 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices';
-const HUBITAT_ACCESS_TOKEN = '8204fd02-e90e-4c0d-b083-431625526d10';
+const HUBITAT_ACCESS_TOKEN = 'beddf703-c860-47bf-a6df-3df6ccc98138';
 
 // Função para mostrar erro ao usuário
 function showErrorMessage(message) {
