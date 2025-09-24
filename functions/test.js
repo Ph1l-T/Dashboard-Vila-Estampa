@@ -11,6 +11,7 @@ export async function onRequest(context) {
     timestamp: new Date().toISOString(),
     method: request.method,
     url: request.url,
+    testId: Math.random().toString(36).substring(7),
     environmentVariables: {
       hasHubitatBaseUrl: !!env.HUBITAT_BASE_URL,
       hasHubitatAccessToken: !!env.HUBITAT_ACCESS_TOKEN,
