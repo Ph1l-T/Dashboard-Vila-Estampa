@@ -253,7 +253,7 @@
             </main>
         `,
 
-        entrada: () => `
+        escritorio: () => `
 <div class="top-bar-custom"></div>
 <div class="page active page-container">
     <div class="page-header">
@@ -285,7 +285,7 @@
 </div>
         `,
 
-        vitrine: () => `
+        projetos: () => `
 <div class="top-bar-custom"></div>
 <div class="page active page-container">
     <div class="page-header">
@@ -482,25 +482,7 @@
 </div>
         `,
 
-        externo: () => `
-<div class="top-bar-custom"></div>
-<div class="page active page-container">
-    <div class="page-header">
-        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
-        <h1 class="page-title">Externo</h1>
-    </div>
-    <div class="room-controls-list">
-        <div class="room-control" data-state="off" data-device-id="256" onclick="toggleRoomControl(this)">
-            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
-            <div class="room-control-label">Jardim</div>
-        </div>
-        <div class="room-control" data-state="off" data-device-id="257" onclick="toggleRoomControl(this)">
-            <img class="room-control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
-            <div class="room-control-label">Fachada</div>
-        </div>
-    </div>
-</div>
-        `,
+
 
         refeitorio: () => `
 <div class="top-bar-custom"></div>
@@ -562,18 +544,7 @@
 </div>
         `,
 
-        garagem: () => `
-<div class="top-bar-custom"></div>
-<div class="page active page-container">
-    <div class="page-header">
-        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back.svg" alt="Voltar"></button>
-        <h1 class="page-title">Garagem</h1>
-    </div>
-    <div class="room-controls-list">
-        <div style="color:#bbb; text-align:center; width: 100%;">Sem botões ainda.</div>
-    </div>
-</div>
-        `
+
     };
 
     function spaNavigate(page) {
@@ -588,8 +559,8 @@
         // Constrói a lista de cômodos na Home
         if (page === 'home') {
             const rooms = [
-                { name: 'Escritório', route: 'entrada' },
-                { name: 'Projetos', route: 'vitrine' },
+                { name: 'Escritório', route: 'escritorio' },
+                { name: 'Projetos', route: 'projetos' },
                 { name: 'Programação', route: 'garden' },
                 { name: 'Sinuca', route: 'cafe' },
                 { name: 'Eletrize Solar', route: 'reuniao' },
@@ -598,20 +569,19 @@
                 { name: 'Recepção', route: 'recepcao' },
                 { name: 'Cinema', route: 'cinema' },
                 { name: 'Piscina', route: 'piscina' },
-                { name: 'Externo', route: 'externo' },
                 { name: 'Refeitório', route: 'refeitorio' },
                 { name: 'Funcionários', route: 'funcionarios' },
             ];
             const list = document.querySelector('.rooms-list');
             if (list) {
-                const order = ['entrada','vitrine','garden','cafe','reuniao','piscina','gourmet','home-ambiente','funcionarios','cinema','recepcao'];
+                const order = ['escritorio','projetos','garden','cafe','reuniao','piscina','gourmet','home-ambiente','funcionarios','cinema','recepcao'];
                 const visible = rooms
                     .filter(r => order.includes(r.route))
                     .sort((a, b) => order.indexOf(a.route) - order.indexOf(b.route));
                 const photoMap = ROOM_PHOTOS;
                 const roomDevices = {
-                    'entrada': ['231','232','233','234','235'],
-                    'vitrine': ['236','237'],
+                    'escritorio': ['231','232','233','234','235'],
+                    'projetos': ['236','237'],
                     'garden': ['238','239','240'],
                     'cafe': ['241','242','243','244'],
                     'reuniao': ['248','249','250'],
