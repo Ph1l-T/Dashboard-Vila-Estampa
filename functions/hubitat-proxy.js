@@ -34,9 +34,10 @@ export async function onRequest(context) {
     });
   }
 
-  // Build Hubitat URL
-  const HUBITAT_BASE_URL = env.HUBITAT_BASE_URL || 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices';
-  const ACCESS_TOKEN = env.HUBITAT_ACCESS_TOKEN || '8204fd02-e90e-4c0d-b083-431625526d10';
+  // Build Hubitat URL - remover /all da URL base se presente
+  const HUBITAT_FULL_URL = env.HUBITAT_BASE_URL || 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices/all?access_token=beddf703-c860-47bf-a6df-3df6ccc98138';
+  const HUBITAT_BASE_URL = HUBITAT_FULL_URL.split('/all?')[0] || 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices';
+  const ACCESS_TOKEN = env.HUBITAT_ACCESS_TOKEN || 'beddf703-c860-47bf-a6df-3df6ccc98138';
 
   let hubitatUrl = `${HUBITAT_BASE_URL}/${deviceId}`;
   

@@ -47,7 +47,8 @@ export async function onRequest(context) {
     envKeys: Object.keys(env || {})
   });
 
-  const HUBITAT_BASE_URL = env.HUBITAT_BASE_URL || 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices';
+  // Nova URL com /all que já inclui o access_token
+  const HUBITAT_ALL_URL = env.HUBITAT_BASE_URL || 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices/all?access_token=beddf703-c860-47bf-a6df-3df6ccc98138';
   const ACCESS_TOKEN = env.HUBITAT_ACCESS_TOKEN || 'beddf703-c860-47bf-a6df-3df6ccc98138';
 
   const deviceList = deviceIds.split(',').filter(Boolean);
@@ -56,35 +57,40 @@ export async function onRequest(context) {
   try {
     console.log(`Polling devices: ${deviceList.join(', ')}`);
     
-    // Fetch states in parallel
-    const promises = deviceList.map(async (deviceId) => {
-      const url = `${HUBITAT_BASE_URL}/${deviceId}?access_token=${ACCESS_TOKEN}`;
-      try {
-        const response = await fetch(url);
-        if (response.ok) {
-          const data = await response.json();
-          // Extract switch state from attributes
-          const switchAttr = data.attributes?.find(attr => attr.name === 'switch');
-          const state = switchAttr?.currentValue || switchAttr?.value || 'off';
-          return { deviceId, state, success: true };
-        } else {
-          return { deviceId, state: 'off', success: false, error: response.status };
-        }
-      } catch (error) {
-        return { deviceId, state: 'off', success: false, error: error.message };
-      }
-    });
-
-    const results = await Promise.all(promises);
+    // Buscar todos os dispositivos de uma vez usando /all
+    console.log('Fetching all devices via /all endpoint...');
+    const response = await fetch(HUBITAT_ALL_URL);
     
-    // Build response object
-    results.forEach(result => {
-      deviceStates[result.deviceId] = {
-        state: result.state,
-        success: result.success,
-        ...(result.error && { error: result.error })
-      };
-    });
+    if (response.ok) {
+      const allDevicesData = await response.json();
+      console.log(`Received data for ${allDevicesData.length} devices`);
+      
+      // Processar apenas os dispositivos solicitados
+      deviceList.forEach(deviceId => {
+        const deviceData = allDevicesData.find(device => device.id.toString() === deviceId.toString());
+        
+        if (deviceData && deviceData.attributes) {
+          const switchAttr = deviceData.attributes.find(attr => attr.name === 'switch');
+          const state = switchAttr?.currentValue || switchAttr?.value || 'off';
+          
+          deviceStates[deviceId] = {
+            state: state,
+            success: true
+          };
+          
+          console.log(`✅ Device ${deviceId}: ${state}`);
+        } else {
+          console.warn(`⚠️ Device ${deviceId} not found in /all response`);
+          deviceStates[deviceId] = {
+            state: 'off',
+            success: false,
+            error: 'Device not found'
+          };
+        }
+      });
+    } else {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
 
     return new Response(JSON.stringify({
       timestamp: new Date().toISOString(),
