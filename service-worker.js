@@ -37,8 +37,7 @@ self.addEventListener('fetch', (event) => {
 
   // Nunca interceptar/cachear chamadas ao Hubitat ou cross-origin
   if (!isSameOrigin || isHubitat) {
-    event.respondWith(fetch(req));
-    return;
+    return; // Deixa o browser lidar com CORS naturalmente
   }
 
   // Network-first para HTML, CSS, JS para sempre ter versão mais nova
