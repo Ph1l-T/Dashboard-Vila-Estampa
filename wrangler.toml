@@ -3,8 +3,9 @@ name = "dashboard-eletrize"
 compatibility_date = "2024-03-01"
 pages_build_output_dir = "."
 
-# Variáveis de ambiente devem ser configuradas no painel do Cloudflare Pages:
-# Settings > Environment variables
-# 
-# HUBITAT_BASE_URL = https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices
-# HUBITAT_ACCESS_TOKEN = beddf703-c860-47bf-a6df-3df6ccc98138
+# Environment variables are configured in Cloudflare Pages dashboard:
+# Dashboard > Workers & Pages > dashboard-eletrize > Settings > Environment variables
+#
+# Required variables:
+# HUBITAT_BASE_URL - Base URL for Hubitat API (without access_token parameter)
+# HUBITAT_ACCESS_TOKEN - Your Hubitat access token
