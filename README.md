@@ -1,111 +1,167 @@
-# Eletrize Dashboard - Cloudflare Pages
+# 🏠 Eletrize Dashboard
 
-Este projeto é um dashboard para controle de dispositivos IoT via Hubitat, hospedado no Cloudflare Pages.
+> **Dashboard inteligente para controle de automação residencial via Hubitat**
 
-## 🚀 Deploy
+[![Deploy Status](https://img.shields.io/badge/Cloudflare%20Pages-Deployed-orange)](https://pages.cloudflare.com)
+[![PWA Ready](https://img.shields.io/badge/PWA-Ready-green)](https://web.dev/progressive-web-apps/)
+[![Mobile First](https://img.shields.io/badge/Mobile-First-blue)](#)
 
-### 1. Configuração no Cloudflare Pages
+Um dashboard moderno e responsivo para controle de dispositivos IoT domésticos, construído com tecnologias web nativas e hospedado no Cloudflare Pages com funcionalidades serverless.
 
-1. **Conecte seu repositório:**
-   - Acesse [Cloudflare Pages](https://pages.cloudflare.com)
-   - Clique em "Create a project" > "Connect to Git"
-   - Conecte sua conta GitHub e selecione o repositório `Dashboard-Eletrize`
+## ✨ Funcionalidades
 
-2. **Configure o build:**
-   - **Project name:** `dashboard-eletrize`
-   - **Production branch:** `main`
-   - **Build command:** `echo "Static site"`
-   - **Build output directory:** `.` (raiz)
+### 🎛️ **Controle de Dispositivos**
+- **Iluminação inteligente** - Controle individual e em grupo
+- **TVs e entretenimento** - Liga/desliga equipamentos audiovisuais  
+- **Cortinas automáticas** - Abertura, fechamento e parada
+- **Smart glass** - Controle de transparência
+- **Telas móveis** - Controle de projetores e telas retráteis
 
-3. **Defina as variáveis de ambiente:**
-   ```
-   HUBITAT_BASE_URL = https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices
-   HUBITAT_ACCESS_TOKEN = 8204fd02-e90e-4c0d-b083-431625526d10
-   ```
+### 📱 **Interface Responsiva**
+- **Design glassmorphism** com efeitos de vidro translúcido
+- **Mobile-first** - Otimizado para uso em tablets e smartphones
+- **PWA completa** - Instalável como app nativo
+- **Tema escuro elegante** com gradientes modernos
 
-### 2. Configuração Manual (wrangler CLI)
+### ⚡ **Performance & Tecnologia**
+- **Cloudflare Pages** - Deploy automático e CDN global
+- **Serverless Functions** - Proxy para APIs sem CORS
+- **Service Worker** - Cache inteligente e funcionamento offline
+- **Fallback automático** - Funciona mesmo com APIs indisponíveis
 
-Se preferir usar o wrangler CLI:
+## 🚀 Arquitetura
+
+```mermaid
+graph TD
+    A[Dashboard Web] --> B[Cloudflare Pages]
+    B --> C[Serverless Functions]
+    C --> D[Hubitat Hub API]
+    
+    A --> E[Service Worker]
+    E --> F[Cache Local]
+    
+    C --> G[Proxy CORS]
+    G --> H[Device Control]
+```
+
+### 🔧 **Stack Tecnológica**
+- **Frontend:** HTML5, CSS3, Vanilla JavaScript
+- **Hosting:** Cloudflare Pages
+- **Functions:** Cloudflare Workers (Serverless)
+- **API:** Hubitat Maker API
+- **PWA:** Service Worker, Web App Manifest
+
+## 📦 Deploy & Configuração
+
+### **1. Cloudflare Pages Setup**
 
 ```bash
-# Instale o wrangler
-npm install -g wrangler
+# 1. Fork/Clone este repositório
+git clone [seu-fork-url]
 
-# Faça login no Cloudflare
-wrangler login
-
-# Deploy para Pages
-wrangler pages project create dashboard-eletrize
-wrangler pages deploy . --project-name=dashboard-eletrize
+# 2. Conecte no Cloudflare Pages
+# - Pages > Create project > Connect to Git
+# - Selecione seu repositório
+# - Build settings: deixe vazio (site estático)
 ```
 
-## 🔧 APIs Disponíveis
+### **2. Variáveis de Ambiente**
 
-### Controle de Dispositivos
-```
-GET/POST /api/hubitat/{deviceId}
-GET/POST /api/hubitat/{deviceId}/{command}
-GET/POST /api/hubitat/{deviceId}/{command}/{value}
-```
+No painel Cloudflare Pages → **Settings** → **Environment variables**:
 
-**Exemplos:**
-- `GET /api/hubitat/231` - Buscar estado do dispositivo 231
-- `POST /api/hubitat/231/on` - Ligar dispositivo 231
-- `POST /api/hubitat/231/off` - Desligar dispositivo 231
-
-### Polling de Estados
-```
-GET /api/polling?devices=231,232,233
+```env
+HUBITAT_FULL_URL=https://cloud.hubitat.com/api/[YOUR_APP_ID]/devices/all?access_token=[YOUR_TOKEN]
+HUBITAT_BASE_URL=https://cloud.hubitat.com/api/[YOUR_APP_ID]/devices  
+HUBITAT_ACCESS_TOKEN=[YOUR_ACCESS_TOKEN]
 ```
 
-**Resposta:**
-```json
-{
-  "timestamp": "2025-09-23T10:30:00.000Z",
-  "devices": {
-    "231": { "state": "on", "success": true },
-    "232": { "state": "off", "success": true },
-    "233": { "state": "on", "success": true }
-  }
-}
-```
+> ⚠️ **Substitua** `[YOUR_APP_ID]` e `[YOUR_TOKEN]` pelos seus valores reais
 
-## 🔄 Desenvolvimento Local
+### **3. Configuração Hubitat**
 
-Para testar localmente:
+1. **Ative o Maker API** no seu hub Hubitat
+2. **Adicione os dispositivos** que deseja controlar
+3. **Anote o App ID e Access Token** gerados
+4. **Configure CORS** se necessário
+
+## �️ Desenvolvimento Local
 
 ```bash
-# Clone o repositório
-git clone https://github.com/Ph1l-T/Dashboard-Eletrize.git
-cd Dashboard-Eletrize
-
-# Execute com wrangler (simula Cloudflare Pages Functions)
-wrangler pages dev .
-
-# Ou use um servidor HTTP simples
+# Servidor de desenvolvimento
 python -m http.server 8000
 # ou
-npx http-server .
+npx serve .
+
+# Com Cloudflare Wrangler (simula Functions)
+wrangler pages dev .
 ```
 
-## 📝 Configuração de Variáveis
+### **🔍 API Endpoints**
 
-No painel do Cloudflare Pages (Settings > Environment variables):
+```javascript
+// Buscar estado de dispositivo
+GET /functions/polling
 
-- **HUBITAT_BASE_URL:** URL base da API do Hubitat
-- **HUBITAT_ACCESS_TOKEN:** Token de acesso do Hubitat Maker API
+// Controlar dispositivo  
+GET /functions/hubitat-proxy?device=231&command=on
 
-## 🌐 URLs
+// Teste de conectividade
+GET /functions/test
 
-- **Produção:** `https://dashboard-eletrize.pages.dev`
-- **Preview:** `https://[commit-hash].dashboard-eletrize.pages.dev`
+// Webhook para notificações
+POST /functions/webhook
+```
 
-## ⚡ Recursos
+## � Instalação como PWA
 
-- ✅ PWA (Progressive Web App)
-- ✅ Service Worker para cache offline
-- ✅ Middleware Cloudflare para proxy de APIs
-- ✅ Polling automático de estados
-- ✅ Deploy automático via Git
-- ✅ HTTPS automático
-- ✅ CDN global
+### **Android/Chrome:**
+1. Abra o dashboard no Chrome
+2. Menu → "Instalar app" ou banner automático
+3. Confirme instalação
+
+### **iOS/Safari:**
+1. Abra no Safari
+2. Compartilhar → "Adicionar à Tela Inicial"
+3. Confirme instalação
+
+## � Personalização
+
+### **Temas & Cores**
+Edite `styles.css` para personalizar:
+- Gradientes de fundo
+- Cores de dispositivos  
+- Efeitos glassmorphism
+- Layout responsivo
+
+### **Dispositivos**
+Edite `script.js` para:
+- Adicionar novos dispositivos
+- Configurar IDs específicos
+- Personalizar comportamentos
+- Ajustar polling intervals
+
+## 🔐 Segurança & Privacy
+
+- ✅ **HTTPS obrigatório** via Cloudflare
+- ✅ **Tokens não expostos** no frontend
+- ✅ **Proxy serverless** evita CORS
+- ✅ **Cache local seguro** com Service Worker
+- ✅ **Sem dados sensíveis** no repositório público
+
+## 🌟 Demo & Screenshots
+
+> Dashboard responsivo funcionando em múltiplos dispositivos
+
+**Funcionalidades em destaque:**
+- Interface moderna com glassmorphism
+- Controles touch-friendly para mobile
+- Estados em tempo real dos dispositivos
+- Animações fluidas e feedback visual
+
+## 📄 Licença
+
+MIT License - Veja [LICENSE](LICENSE) para detalhes.
+
+---
+
+**Desenvolvido com ❤️ para automação residencial moderna**
