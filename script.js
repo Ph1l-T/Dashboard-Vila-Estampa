@@ -409,6 +409,49 @@ function showErrorMessage(message) {
     }, 10000);
 }
 
+// Função de fallback para API direta do Hubitat (quando Functions não funcionam)
+async function loadAllDeviceStatesDirect(deviceIds) {
+    console.log('🔄 Usando API direta do Hubitat como fallback');
+    
+    const devices = {};
+    const promises = deviceIds.map(async (deviceId) => {
+        try {
+            const url = `${HUBITAT_DIRECT_URL}/${deviceId}?access_token=${HUBITAT_ACCESS_TOKEN}`;
+            const response = await fetch(url);
+            
+            if (response.ok) {
+                const data = await response.json();
+                const switchAttr = data.attributes?.find(attr => attr.name === 'switch');
+                const state = switchAttr?.currentValue || switchAttr?.value || 'off';
+                
+                setStoredState(deviceId, state);
+                updateDeviceUI(deviceId, state, true);
+                console.log(`✅ Device ${deviceId}: ${state} (direto)`);
+                
+                devices[deviceId] = { state, success: true };
+            } else {
+                console.warn(`⚠️ Falha no device ${deviceId}:`, response.status);
+                const storedState = getStoredState(deviceId) || 'off';
+                updateDeviceUI(deviceId, storedState, true);
+                devices[deviceId] = { state: storedState, success: false, error: response.status };
+            }
+        } catch (error) {
+            console.error(`❌ Erro no device ${deviceId}:`, error);
+            const storedState = getStoredState(deviceId) || 'off';
+            updateDeviceUI(deviceId, storedState, true);
+            devices[deviceId] = { state: storedState, success: false, error: error.message };
+        }
+    });
+    
+    await Promise.all(promises);
+    
+    return {
+        timestamp: new Date().toISOString(),
+        devices,
+        fallback: true
+    };
+}
+
 // Função para testar configurações do Hubitat
 async function testHubitatConnection() {
     console.log('🔧 Testando conexão com Hubitat...');
@@ -978,15 +1021,22 @@ async function loadAllDeviceStatesGlobally() {
         }
         
         let data;
+        let responseText = '';
         try {
             console.log('📡 Parseando resposta JSON...');
             
             // Debug: Capturar o texto da resposta primeiro
-            const responseText = await response.text();
+            responseText = await response.text();
             console.log('📡 Resposta recebida (texto):', responseText.substring(0, 500)); // Primeiros 500 chars
             
             if (!responseText) {
                 throw new Error('Resposta vazia do servidor');
+            }
+            
+            // Verificar se é HTML (Functions não estão funcionando)
+            if (responseText.trim().startsWith('<!DOCTYPE html') || responseText.trim().startsWith('<html')) {
+                console.warn('⚠️ Cloudflare Functions não estão funcionando - tentando API direta');
+                return await loadAllDeviceStatesDirect(deviceIds);
             }
             
             // Tentar parsear o JSON
