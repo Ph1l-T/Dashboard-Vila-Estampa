@@ -366,6 +366,81 @@ const POLLING_URL = '/functions/polling';
 const HUBITAT_DIRECT_URL = 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices';
 const HUBITAT_ACCESS_TOKEN = '8204fd02-e90e-4c0d-b083-431625526d10';
 
+// Função para mostrar erro ao usuário
+function showErrorMessage(message) {
+    // Criar modal de erro
+    const errorModal = document.createElement('div');
+    errorModal.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 0, 0, 0.3);
+        border-radius: 16px;
+        padding: 20px;
+        max-width: 90vw;
+        z-index: 10000;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(255, 0, 0, 0.1);
+    `;
+    
+    errorModal.innerHTML = `
+        <h3 style="color: #e74c3c; margin-bottom: 10px;">❌ Erro de Conexão</h3>
+        <p style="margin-bottom: 15px;">${message}</p>
+        <button onclick="this.parentElement.remove()" style="
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        ">Fechar</button>
+    `;
+    
+    document.body.appendChild(errorModal);
+    
+    // Remover automaticamente após 10 segundos
+    setTimeout(() => {
+        if (errorModal.parentElement) {
+            errorModal.remove();
+        }
+    }, 10000);
+}
+
+// Função para testar configurações do Hubitat
+async function testHubitatConnection() {
+    console.log('🔧 Testando conexão com Hubitat...');
+    
+    try {
+        // Testar com um dispositivo conhecido (231)
+        const response = await fetch('/functions/polling?devices=231');
+        console.log('🔧 Status da resposta:', response.status);
+        console.log('🔧 Headers da resposta:', Object.fromEntries(response.headers.entries()));
+        
+        const responseText = await response.text();
+        console.log('🔧 Conteúdo da resposta:', responseText.substring(0, 300));
+        
+        if (response.ok) {
+            try {
+                const data = JSON.parse(responseText);
+                console.log('✅ Conexão OK - Dados:', data);
+                return true;
+            } catch (e) {
+                console.error('❌ Resposta não é JSON válido:', e);
+                return false;
+            }
+        } else {
+            console.error('❌ Erro HTTP:', response.status, response.statusText);
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Erro na conexão:', error);
+        return false;
+    }
+}
+
 // Helpers de URL para endpoints comuns da API
 function urlDeviceInfo(deviceId) {
     if (isProduction) {
@@ -889,8 +964,10 @@ async function loadAllDeviceStatesGlobally() {
             console.warn('⚠️ AbortController não suportado - sem timeout');
         }
         
-        console.log('📡 Fazendo fetch para:', `${POLLING_URL}?devices=${deviceIds}`);
-        const response = await fetch(`${POLLING_URL}?devices=${deviceIds}`, fetchOptions);
+        const requestUrl = `${POLLING_URL}?devices=${deviceIds}`;
+        console.log('📡 Fazendo fetch para:', requestUrl);
+        
+        const response = await fetch(requestUrl, fetchOptions);
         if (timeoutId) clearTimeout(timeoutId);
         
         console.log('📡 Resposta recebida, status:', response.status);
@@ -903,11 +980,22 @@ async function loadAllDeviceStatesGlobally() {
         let data;
         try {
             console.log('📡 Parseando resposta JSON...');
-            data = await response.json();
+            
+            // Debug: Capturar o texto da resposta primeiro
+            const responseText = await response.text();
+            console.log('📡 Resposta recebida (texto):', responseText.substring(0, 500)); // Primeiros 500 chars
+            
+            if (!responseText) {
+                throw new Error('Resposta vazia do servidor');
+            }
+            
+            // Tentar parsear o JSON
+            data = JSON.parse(responseText);
             console.log('📡 JSON parseado com sucesso');
         } catch (jsonError) {
             console.error('❌ Erro ao parsear JSON:', jsonError);
-            throw new Error('Resposta inválida do servidor');
+            console.error('❌ Conteúdo da resposta que falhou:', responseText?.substring(0, 200));
+            throw new Error(`Resposta inválida do servidor: ${jsonError.message}`);
         }
         console.log('📡 Estados recebidos:', data);
         
@@ -948,6 +1036,17 @@ async function loadAllDeviceStatesGlobally() {
         
     } catch (error) {
         console.error('❌ Erro no carregamento global:', error);
+        
+        // Tentar diagnóstico automático da conexão
+        try {
+            console.log('🔧 Executando diagnóstico da conexão...');
+            const connectionTest = await testHubitatConnection();
+            if (!connectionTest) {
+                showErrorMessage('Falha na conexão com Hubitat. Verifique se as configurações foram alteradas no painel do Cloudflare.');
+            }
+        } catch (diagError) {
+            console.error('Erro no diagnóstico:', diagError);
+        }
         
         // Tratamento universal de erro (desktop e mobile idênticos)
         if (error.name === 'AbortError') {
@@ -1569,3 +1668,7 @@ setTimeout(function() {
 
 // Parar polling quando a página é fechada
 window.addEventListener('beforeunload', stopPolling);
+
+// Funções de debug disponíveis globalmente
+window.testHubitatConnection = testHubitatConnection;
+window.showErrorMessage = showErrorMessage;
