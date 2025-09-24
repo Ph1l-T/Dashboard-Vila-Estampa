@@ -36,9 +36,9 @@
 /fonts/*
   Cache-Control: public, max-age=86400, s-maxage=86400
 
-# Functions - CORS e sem cache
-/functions/*
-  Access-Control-Allow-Origin: *
-  Access-Control-Allow-Methods: GET, POST, OPTIONS
-  Access-Control-Allow-Headers: Content-Type
-  Cache-Control: no-cache, no-store, must-revalidate
+# Functions - CORS handled internally by Functions
+# /functions/*
+#   Access-Control-Allow-Origin: *
+#   Access-Control-Allow-Methods: GET, POST, OPTIONS
+#   Access-Control-Allow-Headers: Content-Type
+#   Cache-Control: no-cache, no-store, must-revalidate

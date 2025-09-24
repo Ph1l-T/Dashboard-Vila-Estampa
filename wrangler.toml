@@ -1,6 +1,6 @@
 # Cloudflare Pages configuration
 name = "dashboard-eletrize"
-compatibility_date = "2024-03-01"
+compatibility_date = "2024-09-23"
 pages_build_output_dir = "."
 
 # Environment variables are configured in Cloudflare Pages dashboard:
