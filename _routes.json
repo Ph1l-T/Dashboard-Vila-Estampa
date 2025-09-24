@@ -1,10 +1,7 @@
 ﻿{
   "version": 1,
   "include": [
-    "/functions/polling",
-    "/functions/hubitat-proxy", 
-    "/functions/test",
-    "/functions/webhook"
+    "/functions/*"
   ],
   "exclude": []
 }
