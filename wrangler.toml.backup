@@ -3,6 +3,11 @@ name = "dashboard-eletrize"
 compatibility_date = "2024-09-23"
 pages_build_output_dir = "."
 
+# Force Pages Functions (not Workers)
+[env.production]
+account_id = ""
+compatibility_flags = []
+
 # Environment variables are configured in Cloudflare Pages dashboard:
 # Dashboard > Workers & Pages > dashboard-eletrize > Settings > Environment variables
 #
