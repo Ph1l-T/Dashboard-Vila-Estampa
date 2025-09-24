@@ -696,12 +696,20 @@ async function updateDeviceStatesFromServer() {
         
     } catch (error) {
         console.error('Erro no polling:', error);
-        // Em caso de erro, reduzir frequência temporariamente
+        
+        // Se é erro de JSON (Functions não funcionam), parar polling
+        if (error.message.includes('JSON.parse') || error.message.includes('unexpected character')) {
+            console.error('❌ PARANDO POLLING - Cloudflare Functions não funcionam');
+            stopPolling();
+            return;
+        }
+        
+        // Outros erros: tentar novamente em 10 segundos
         setTimeout(() => {
             if (pollingInterval) {
                 console.log('Tentando retomar polling após erro...');
             }
-        }, 10000); // 10 segundos antes de tentar novamente
+        }, 10000);
     }
 }
 
@@ -1046,8 +1054,18 @@ async function loadAllDeviceStatesGlobally() {
             
             // Verificar se é HTML (Functions não estão funcionando)
             if (responseText.trim().startsWith('<!DOCTYPE html') || responseText.trim().startsWith('<html')) {
-                console.warn('⚠️ Cloudflare Functions não estão funcionando - tentando API direta');
-                return await loadAllDeviceStatesDirect(deviceIds);
+                console.error('❌ CRÍTICO: Cloudflare Functions não estão funcionando!');
+                console.error('❌ O servidor está retornando HTML em vez de executar as Functions.');
+                console.error('❌ Isso deve ser corrigido no painel do Cloudflare Pages.');
+                
+                // Usar estados salvos como fallback
+                console.log('📦 Usando estados salvos como fallback...');
+                ALL_LIGHT_IDS.forEach(deviceId => {
+                    const storedState = getStoredState(deviceId) || 'off';
+                    updateDeviceUI(deviceId, storedState, true);
+                });
+                
+                throw new Error('Cloudflare Functions não configuradas - verifique o deploy e variáveis de ambiente');
             }
             
             // Tentar parsear o JSON

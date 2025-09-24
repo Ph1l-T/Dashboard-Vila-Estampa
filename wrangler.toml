@@ -4,11 +4,15 @@ compatibility_date = "2024-03-01"
 pages_build_output_dir = "."
 
 [env.production]
-vars = { NODE_ENV = "production" }
+vars = { 
+  NODE_ENV = "production",
+  HUBITAT_BASE_URL = "https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices",
+  HUBITAT_ACCESS_TOKEN = "8204fd02-e90e-4c0d-b083-431625526d10"
+}
 
 [env.preview] 
-vars = { NODE_ENV = "preview" }
-
-# Environment variables que serão definidas no Cloudflare Dashboard
-# HUBITAT_BASE_URL = "https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices"
-# HUBITAT_ACCESS_TOKEN = "8204fd02-e90e-4c0d-b083-431625526d10"
+vars = { 
+  NODE_ENV = "preview",
+  HUBITAT_BASE_URL = "https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices",
+  HUBITAT_ACCESS_TOKEN = "8204fd02-e90e-4c0d-b083-431625526d10"
+}
