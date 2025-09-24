@@ -395,6 +395,20 @@ html, body {
     transition: left 0.45s cubic-bezier(.4,1,.5,1);
     pointer-events: none;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    will-change: left; /* Otimiza animações */
+}
+
+/* Melhora responsividade em landscape/portrait */
+@media screen and (orientation: landscape) {
+    .navbar::before {
+        transition: left 0.3s ease-out; /* Transição mais rápida em landscape */
+    }
+}
+
+@media screen and (orientation: portrait) {
+    .navbar::before {
+        transition: left 0.45s cubic-bezier(.4,1,.5,1); /* Transição padrão em portrait */
+    }
 }
 
 .nav-item {
@@ -543,6 +557,7 @@ html, body {
 .back-btn img {
     width: 32px;
     height: 32px;
+    filter: brightness(0) invert(1); /* Torna o ícone branco */
 }
 
 .controls-grid {
@@ -557,6 +572,8 @@ html, body {
     gap: 10px;
     z-index: 1;
     align-items: center;
+    overflow-y: auto; /* Permitir scroll na grade de ambientes */
+    padding-bottom: 20px; /* Degrau transparente para evitar sobreposição com navbar */
 }
 
 .control-card {
@@ -685,6 +702,7 @@ html, body {
     gap: 10px;
     overflow-y: auto;
     z-index: 1;
+    padding-bottom: 20px; /* Degrau transparente para evitar sobreposição com navbar */
 }
 
 .room-control {
@@ -977,6 +995,16 @@ html, body {
     0% { box-shadow: 0 0 5px rgba(76, 175, 80, 0.3); }
     50% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.6); }
     100% { box-shadow: 0 0 5px rgba(76, 175, 80, 0.3); }
+}
+
+/* Degrau transparente adicional para últimos botões */
+.room-controls-list .room-control:last-child {
+    margin-bottom: 25px; /* Espaço extra para o último botão não ficar atrás da navbar */
+}
+
+/* Degrau transparente para os cards de ambiente na página Home */
+.controls-grid .control-card:nth-last-child(-n+2) {
+    margin-bottom: 25px; /* Espaço extra para os últimos 2 cards não ficarem atrás da navbar */
 }
 
 /* Debug mobile visual - REMOVIDO (compatibilidade resolvida) */
