@@ -40,6 +40,13 @@ export async function onRequest(context) {
     });
   }
 
+  // Debug das variáveis de ambiente
+  console.log('Environment variables:', {
+    hasBaseUrl: !!env.HUBITAT_BASE_URL,
+    hasAccessToken: !!env.HUBITAT_ACCESS_TOKEN,
+    envKeys: Object.keys(env || {})
+  });
+
   const HUBITAT_BASE_URL = env.HUBITAT_BASE_URL || 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices';
   const ACCESS_TOKEN = env.HUBITAT_ACCESS_TOKEN || '8204fd02-e90e-4c0d-b083-431625526d10';
 

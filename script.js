@@ -412,6 +412,17 @@ function showErrorMessage(message) {
 // Função de fallback para API direta do Hubitat (quando Functions não funcionam)
 async function loadAllDeviceStatesDirect(deviceIds) {
     console.log('🔄 Usando API direta do Hubitat como fallback');
+    console.log('🔍 DeviceIds recebidos:', deviceIds, typeof deviceIds);
+    
+    // Garantir que deviceIds é um array
+    if (!Array.isArray(deviceIds)) {
+        if (typeof deviceIds === 'string') {
+            deviceIds = deviceIds.split(',').map(id => id.trim()).filter(Boolean);
+        } else {
+            console.error('❌ deviceIds inválido:', deviceIds);
+            return { devices: {}, timestamp: new Date().toISOString(), error: 'Invalid deviceIds' };
+        }
+    }
     
     const devices = {};
     const promises = deviceIds.map(async (deviceId) => {
