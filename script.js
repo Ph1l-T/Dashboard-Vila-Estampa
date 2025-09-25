@@ -361,8 +361,9 @@ safeLog('=== AMBIENTE DETECTADO ===', {
     isIOS,
     userAgent: navigator.userAgent.substring(0, 60) + '...'
 });
-const HUBITAT_PROXY_URL = '/functions/hubitat-proxy';
-const POLLING_URL = '/functions/polling';
+// Endpoints de Functions (sem prefixo /functions após remoção de _routes.json)
+const HUBITAT_PROXY_URL = '/hubitat-proxy';
+const POLLING_URL = '/polling';
 const HUBITAT_DIRECT_URL = 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices/all?access_token=beddf703-c860-47bf-a6df-3df6ccc98138';
 const HUBITAT_ACCESS_TOKEN = 'beddf703-c860-47bf-a6df-3df6ccc98138';
 
@@ -482,7 +483,7 @@ async function testHubitatConnection() {
     
     try {
         // Testar com um dispositivo conhecido (231)
-        const response = await fetch('/functions/polling?devices=231');
+    const response = await fetch('/polling?devices=231');
         console.log('🔧 Status da resposta:', response.status);
         console.log('🔧 Headers da resposta:', Object.fromEntries(response.headers.entries()));
         
@@ -1534,7 +1535,7 @@ window.debugEletrize = {
     testMobileApi: async () => {
         console.log('🧪 Testando APIs para mobile...');
         try {
-            const testUrl = isProduction ? '/functions/polling?devices=366' : '#test';
+            const testUrl = isProduction ? '/polling?devices=366' : '#test';
             // Configurar timeout compatível
             const fetchConfig = { 
                 method: 'GET',
