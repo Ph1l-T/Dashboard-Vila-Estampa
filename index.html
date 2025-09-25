@@ -633,10 +633,13 @@
         items.forEach((item, idx) => item.classList.toggle('active', idx === activeIndex));
         const activeItem = items[activeIndex];
         if (activeItem) {
-            const navRect = nav.getBoundingClientRect();
-            const itemRect = activeItem.getBoundingClientRect();
-            const center = itemRect.left + itemRect.width / 2 - navRect.left;
-            nav.style.setProperty('--indicator-left', `${center}px`);
+            // Usar setTimeout para garantir que o layout seja calculado após mudanças de DOM
+            setTimeout(() => {
+                const navRect = nav.getBoundingClientRect();
+                const itemRect = activeItem.getBoundingClientRect();
+                const center = itemRect.left + itemRect.width / 2 - navRect.left;
+                nav.style.setProperty('--indicator-left', `${center}px`);
+            }, 10);
         }
 
         // Inicializa botões dos cômodos nas páginas internas
@@ -724,6 +727,19 @@
         });
     };
 
+    // Função para recalcular posição do page selector
+    function updatePageSelectorPosition() {
+        const nav = document.getElementById('spa-navbar');
+        const activeItem = nav?.querySelector('.nav-item.active');
+        if (activeItem && nav) {
+            const navRect = nav.getBoundingClientRect();
+            const itemRect = activeItem.getBoundingClientRect();
+            const center = itemRect.left + itemRect.width / 2 - navRect.left;
+            nav.style.setProperty('--indicator-left', `${center}px`);
+            console.log('📍 Page selector reposicionado:', center + 'px');
+        }
+    }
+
     window.addEventListener('hashchange', renderSpa);
     window.addEventListener('DOMContentLoaded', () => {
         renderSpa();
@@ -737,6 +753,18 @@
                 }
             });
         });
+    });
+
+    // Listeners para recalcular page selector ao rotacionar/redimensionar
+    window.addEventListener('resize', () => {
+        // Debounce para evitar múltiplas chamadas
+        clearTimeout(window.resizeTimeout);
+        window.resizeTimeout = setTimeout(updatePageSelectorPosition, 100);
+    });
+
+    window.addEventListener('orientationchange', () => {
+        // Aguardar um pouco após mudança de orientação para garantir layout correto
+        setTimeout(updatePageSelectorPosition, 300);
     });
     </script>
 </body>
