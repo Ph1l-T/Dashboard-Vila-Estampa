@@ -9,29 +9,92 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1C1C1C">
     <link rel="apple-touch-icon" href="images/pwa/app-icon-192.png">
-    <link rel="stylesheet" href="styles.css?v=1737455925">
+    <script>
+        // Cache buster dinâmico para CSS
+        document.write('<link rel="stylesheet" href="styles.css?cb=' + new Date().getTime() + Math.random().toString(36).substr(2, 9) + '">');
+    </script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <script>
-        // Cache busting dinâmico para mobile - força reload de assets
+        // LIMPEZA AGRESSIVA DE CACHE - TODOS OS DISPOSITIVOS
         (function() {
+            console.log('🧹 INICIANDO LIMPEZA TOTAL DE CACHE...');
+            
             var timestamp = new Date().getTime();
+            var randomId = Math.random().toString(36).substr(2, 12);
+            var cacheBuster = timestamp + '_' + randomId;
             var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
-            if (isMobile) {
-                // Para mobile, adicionar timestamp mais agressivo
-                var cacheBuster = timestamp + '_' + Math.random().toString(36).substr(2, 9);
-                console.log('📱 Mobile detectado - cache buster:', cacheBuster);
+            console.log('🧹 Cache buster gerado:', cacheBuster);
+            console.log('🧹 Dispositivo móvel:', isMobile);
+            
+            // 1. LIMPAR TODOS OS STORAGES
+            try {
+                console.log('🧹 Limpando localStorage...');
+                // Manter apenas configurações críticas
+                var criticalKeys = ['hubitat_host', 'hubitat_token'];
+                var backup = {};
+                criticalKeys.forEach(function(key) {
+                    if (localStorage.getItem(key)) {
+                        backup[key] = localStorage.getItem(key);
+                    }
+                });
                 
-                // Atualizar localStorage com nova versão
-                try {
-                    localStorage.setItem('app_cache_version', cacheBuster);
-                    localStorage.setItem('last_mobile_load', timestamp);
-                } catch(e) {
-                    console.warn('localStorage indisponível para cache busting');
-                }
+                localStorage.clear();
+                
+                // Restaurar configurações críticas
+                Object.keys(backup).forEach(function(key) {
+                    localStorage.setItem(key, backup[key]);
+                });
+                
+                console.log('🧹 localStorage limpo e restaurado');
+            } catch(e) {
+                console.warn('⚠️ Erro ao limpar localStorage:', e);
             }
+            
+            try {
+                console.log('🧹 Limpando sessionStorage...');
+                sessionStorage.clear();
+            } catch(e) {
+                console.warn('⚠️ Erro ao limpar sessionStorage:', e);
+            }
+            
+            // 2. FORÇAR RELOAD DE CACHE DO NAVEGADOR
+            if ('caches' in window) {
+                console.log('🧹 Limpando cache do navegador...');
+                caches.keys().then(function(cacheNames) {
+                    return Promise.all(
+                        cacheNames.map(function(cacheName) {
+                            console.log('🧹 Deletando cache:', cacheName);
+                            return caches.delete(cacheName);
+                        })
+                    );
+                }).then(function() {
+                    console.log('✅ Cache do navegador limpo');
+                }).catch(function(e) {
+                    console.warn('⚠️ Erro ao limpar cache:', e);
+                });
+            }
+            
+            // 3. MARCAR NOVA VERSÃO E CACHE BUSTER
+            try {
+                localStorage.setItem('app_cache_version', cacheBuster);
+                localStorage.setItem('last_cache_clear', timestamp);
+                localStorage.setItem('force_reload_flag', 'true');
+                console.log('✅ Nova versão marcada:', cacheBuster);
+            } catch(e) {
+                console.warn('⚠️ localStorage indisponível para cache busting');
+            }
+            
+            // 4. FORÇAR RELOAD SE NECESSÁRIO
+            var forceReload = localStorage.getItem('force_reload_flag');
+            if (forceReload === 'true') {
+                localStorage.removeItem('force_reload_flag');
+                console.log('🔄 Flag de reload detectada - será recarregado após carregamento');
+            }
+            
+            console.log('✅ Limpeza de cache concluída');
         })();
     </script>
     <style>
@@ -99,14 +162,18 @@
                 console.log('📱 Mobile: cache busting agressivo -', cacheBuster);
             }
             
-            // Carregar script.js
+            // Carregar script.js com cache buster ultra-agressivo
             var scriptMain = document.createElement('script');
-            scriptMain.src = 'script.js?v=' + cacheBuster;
+            var ultraBuster = cacheBuster + '_' + Date.now() + '_' + Math.floor(Math.random() * 999999);
+            scriptMain.src = 'script.js?cb=' + ultraBuster + '&t=' + Date.now();
+            console.log('📜 Carregando script.js com cache buster:', ultraBuster);
             document.head.appendChild(scriptMain);
             
-            // Carregar scenes.js
+            // Carregar scenes.js com cache buster ultra-agressivo
             var scriptScenes = document.createElement('script');
-            scriptScenes.src = 'scenes.js?v=' + cacheBuster;
+            var scenesUltraBuster = cacheBuster + '_' + Date.now() + '_' + Math.floor(Math.random() * 999999);
+            scriptScenes.src = 'scenes.js?cb=' + scenesUltraBuster + '&t=' + Date.now();
+            console.log('🎬 Carregando scenes.js com cache buster:', scenesUltraBuster);
             document.head.appendChild(scriptScenes);
         })();
     </script>

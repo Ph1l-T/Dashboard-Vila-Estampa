@@ -287,6 +287,39 @@ function toggleDevice(el, deviceType) {
 // --- Controle do Hubitat ---
 
 // Detecta se está em produção (Cloudflare Pages) ou desenvolvimento
+// VERIFICAÇÃO DE CACHE FORÇADA - DEVE SER PRIMEIRA COISA A EXECUTAR
+(function() {
+    console.log('🧹 VERIFICANDO NECESSIDADE DE LIMPEZA DE CACHE...');
+    
+    try {
+        var lastCacheClear = localStorage.getItem('last_cache_clear');
+        var now = Date.now();
+        var oneHour = 60 * 60 * 1000; // 1 hora
+        
+        if (!lastCacheClear || (now - parseInt(lastCacheClear)) > oneHour) {
+            console.log('🧹 Cache expirado, forçando reload completo...');
+            localStorage.setItem('last_cache_clear', now.toString());
+            
+            // Limpar todos os caches possíveis
+            if ('caches' in window) {
+                caches.keys().then(function(names) {
+                    names.forEach(function(name) {
+                        caches.delete(name);
+                    });
+                });
+            }
+            
+            // Forçar reload sem cache
+            setTimeout(function() {
+                location.reload(true);
+            }, 100);
+            return;
+        }
+    } catch(e) {
+        console.warn('⚠️ Erro na verificação de cache:', e);
+    }
+})();
+
 const isProductionOriginal = !['localhost', '127.0.0.1', '::1'].includes(location.hostname);
 // TEMPORÁRIO: Forçar produção para debug mobile
 const isProduction = true; 

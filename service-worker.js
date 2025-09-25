@@ -1,15 +1,14 @@
-const CACHE_NAME = 'eletrize-cache-v2025.01.23.002';
-const ASSETS = [
-  './',
-  './index.html?v=1737455925',
-  './styles.css?v=1737455925',
-  './script.js?v=1737455925',
-  './scenes.js?v=1737455925',
-  './images/pwa/app-icon-192.png'
-];
+// CACHE DESABILITADO TEMPORARIAMENTE PARA DEBUG
+const CACHE_NAME = 'eletrize-no-cache-v' + Date.now();
+const DISABLE_CACHE = true; // Flag para desabilitar cache completamente
 
-// Detectar mobile para cache mais agressivo
+console.log('🚫 SERVICE WORKER: Cache desabilitado para debug de problemas');
+
+const ASSETS = []; // Array vazio - sem cache
+
+// Detectar mobile para logs
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+console.log('📱 Service Worker - Mobile:', isMobile);
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -38,6 +37,22 @@ self.addEventListener('fetch', (event) => {
   // Nunca interceptar/cachear chamadas ao Hubitat ou cross-origin
   if (!isSameOrigin || isHubitat) {
     return; // Deixa o browser lidar com CORS naturalmente
+  }
+
+  // CACHE COMPLETAMENTE DESABILITADO - SEMPRE BUSCAR DA REDE
+  if (DISABLE_CACHE) {
+    console.log('🚫 Cache desabilitado, buscando da rede:', req.url);
+    event.respondWith(
+      fetch(req, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      })
+    );
+    return;
   }
 
   // Network-first para HTML, CSS, JS para sempre ter versão mais nova
