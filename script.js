@@ -361,10 +361,9 @@ safeLog('=== AMBIENTE DETECTADO ===', {
     isIOS,
     userAgent: navigator.userAgent.substring(0, 60) + '...'
 });
-const HUBITAT_PROXY_URL = '/functions/hubitat-proxy';
-const POLLING_URL = '/functions/polling';
-const HUBITAT_DIRECT_URL = 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices/all?access_token=beddf703-c860-47bf-a6df-3df6ccc98138';
-const HUBITAT_ACCESS_TOKEN = 'beddf703-c860-47bf-a6df-3df6ccc98138';
+const HUBITAT_PROXY_URL = '/hubitat-proxy';
+const POLLING_URL = '/polling';
+// (Removido: HUBITAT_DIRECT_URL / HUBITAT_ACCESS_TOKEN do frontend por segurança)
 
 // Função para mostrar erro ao usuário
 function showErrorMessage(message) {
@@ -409,71 +408,19 @@ function showErrorMessage(message) {
     }, 10000);
 }
 
-// Função de fallback para API direta do Hubitat (quando Functions não funcionam)
+// Fallback direto desativado por segurança (CORS e exposição de token)
 async function loadAllDeviceStatesDirect(deviceIds) {
-    console.log('🔄 Usando API direta do Hubitat como fallback');
-    console.log('🔍 DeviceIds recebidos:', deviceIds, typeof deviceIds);
-    
-    // Garantir que deviceIds é um array
+    console.warn('Fallback direto desativado. Usando apenas estados locais armazenados.');
     if (!Array.isArray(deviceIds)) {
-        if (typeof deviceIds === 'string') {
-            deviceIds = deviceIds.split(',').map(id => id.trim()).filter(Boolean);
-        } else {
-            console.error('❌ deviceIds inválido:', deviceIds);
-            return { devices: {}, timestamp: new Date().toISOString(), error: 'Invalid deviceIds' };
-        }
+        deviceIds = typeof deviceIds === 'string' ? deviceIds.split(',').map(id => id.trim()) : [];
     }
-    
     const devices = {};
-    
-    try {
-        // Usar a URL /all que retorna todos os dispositivos de uma vez
-        console.log('📡 Buscando todos os dispositivos via /all...');
-        const response = await fetch(HUBITAT_DIRECT_URL);
-        
-        if (response.ok) {
-            const allDevicesData = await response.json();
-            console.log('📡 Dados recebidos da API /all:', allDevicesData);
-            
-            // Processar apenas os dispositivos solicitados
-            deviceIds.forEach(deviceId => {
-                const deviceData = allDevicesData.find(device => device.id.toString() === deviceId.toString());
-                
-                if (deviceData && deviceData.attributes) {
-                    const switchAttr = deviceData.attributes.find(attr => attr.name === 'switch');
-                    const state = switchAttr?.currentValue || switchAttr?.value || 'off';
-                    
-                    setStoredState(deviceId, state);
-                    updateDeviceUI(deviceId, state, true);
-                    console.log(`✅ Device ${deviceId}: ${state} (direto)`);
-                    
-                    devices[deviceId] = { state, success: true };
-                } else {
-                    console.warn(`⚠️ Device ${deviceId} não encontrado na resposta /all`);
-                    const storedState = getStoredState(deviceId) || 'off';
-                    updateDeviceUI(deviceId, storedState, true);
-                    devices[deviceId] = { state: storedState, success: false, error: 'Device not found in /all response' };
-                }
-            });
-        } else {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-    } catch (error) {
-        console.error('❌ Erro ao buscar dados via /all:', error);
-        
-        // Fallback: usar estados salvos para todos os dispositivos
-        deviceIds.forEach(deviceId => {
-            const storedState = getStoredState(deviceId) || 'off';
-            updateDeviceUI(deviceId, storedState, true);
-            devices[deviceId] = { state: storedState, success: false, error: error.message };
-        });
-    }
-    
-    return {
-        timestamp: new Date().toISOString(),
-        devices,
-        fallback: true
-    };
+    deviceIds.forEach(id => {
+        const state = getStoredState(id) || 'off';
+        updateDeviceUI(id, state, true);
+        devices[id] = { state, success: false, error: 'Direct polling disabled' };
+    });
+    return { timestamp: new Date().toISOString(), devices, fallback: true, disabled: true };
 }
 
 // Função para testar configurações do Hubitat
@@ -482,7 +429,7 @@ async function testHubitatConnection() {
     
     try {
         // Testar com um dispositivo conhecido (231)
-        const response = await fetch('/functions/polling?devices=231');
+    const response = await fetch(`${POLLING_URL}?devices=231`);
         console.log('🔧 Status da resposta:', response.status);
         console.log('🔧 Headers da resposta:', Object.fromEntries(response.headers.entries()));
         
@@ -510,25 +457,11 @@ async function testHubitatConnection() {
 
 // Helpers de URL para endpoints comuns da API
 function urlDeviceInfo(deviceId) {
-    if (isProduction) {
-        return `${HUBITAT_PROXY_URL}?device=${deviceId}`;
-    } else {
-        // Remover /all da URL base para consultar dispositivo específico
-        const baseUrl = HUBITAT_DIRECT_URL.replace('/all?access_token=', '?access_token=');
-        return `${baseUrl.split('?')[0]}/${deviceId}?access_token=${HUBITAT_ACCESS_TOKEN}`;
-    }
+    return `${HUBITAT_PROXY_URL}?device=${deviceId}`;
 }
 
 function urlSendCommand(deviceId, command, value) {
-    // SEMPRE usar API direta se estivermos em produção mas Functions não funcionam
-    // (será detectado automaticamente no primeiro erro)
-    
-    // Em desenvolvimento ou como fallback, usar URL direta do Hubitat para comandos
-    const baseUrl = HUBITAT_DIRECT_URL.split('/all?')[0]; // Remove /all?access_token=...
-    let url = `${baseUrl}/${deviceId}/${encodeURIComponent(command)}`;
-    if (value !== undefined) url += `/${encodeURIComponent(value)}`;
-    url += `?access_token=${HUBITAT_ACCESS_TOKEN}`;
-    return url;
+    return `${HUBITAT_PROXY_URL}?device=${deviceId}&command=${encodeURIComponent(command)}${value !== undefined ? `&value=${encodeURIComponent(value)}` : ''}`;
 }
 
 async function sendHubitatCommand(deviceId, command, value) {
@@ -566,25 +499,7 @@ async function sendHubitatCommand(deviceId, command, value) {
             }
         }
         
-        // Fallback para API direta do Hubitat
-        const url = urlSendCommand(deviceId, command, value);
-        console.log(`Enviando comando direto para o Hubitat: ${url}`);
-        
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        console.log('Comando enviado com sucesso via API direta');
-        
-        // Tenta parse JSON, mas aceita resposta vazia
-        try {
-            const text = await response.text();
-            return JSON.parse(text);
-        } catch {
-            return null; // Comando executado mas sem resposta JSON
-        }
+        throw new Error('Proxy indisponível e acesso direto desativado');
         
     } catch (error) {
         console.error('Erro ao enviar comando para o Hubitat:', error);
