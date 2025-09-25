@@ -67,18 +67,39 @@ function handleMasterLightToggle() {
 }
 
 function executeMasterLightToggle(action) {
-    const promises = ALL_LIGHT_IDS.map(id => {
-        return sendHubitatCommand(id, action).then(() => {
+    // Usar machine rules dos relay boards para otimização:
+    // Dispositivo 264: MasterONOFF-RelayBoard-01
+    // Button 1 (push 1) = Master ON 
+    // Button 2 (push 2) = Master OFF
+    
+    const deviceId = '264'; // MasterONOFF-RelayBoard-01
+    const buttonValue = action === 'on' ? '1' : '2'; // Button 1 = ON, Button 2 = OFF
+    
+    console.log(`🎯 Executando master ${action} via relay board otimizado (device ${deviceId}, button ${buttonValue})`);
+    
+    // Enviar comando otimizado para o relay board
+    const promise = sendHubitatCommand(deviceId, 'push', buttonValue);
+    
+    promise.then(() => {
+        console.log(`✅ Master light toggle ${action} enviado com sucesso via relay board`);
+        
+        // Atualizar estados locais de todos os dispositivos após comando bem-sucedido
+        ALL_LIGHT_IDS.forEach(id => {
             setStoredState(id, action);
         });
-    });
-
-    Promise.all(promises).then(() => {
-        console.log(`Master light toggle ${action} complete.`);
-        updateMasterLightToggleState();
+        
+        // Forçar atualização da UI após 1 segundo para dar tempo do relay board processar
+        setTimeout(() => {
+            updateMasterLightToggleState();
+            // Forçar polling para sincronizar estados reais
+            if (typeof updateDeviceStatesFromServer === 'function') {
+                updateDeviceStatesFromServer();
+            }
+        }, 1000);
+        
         hidePopup();
     }).catch(err => {
-        console.error(`Master light toggle ${action} failed:`, err);
+        console.error(`❌ Master light toggle ${action} falhou:`, err);
         hidePopup();
     });
 }
