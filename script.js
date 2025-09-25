@@ -117,20 +117,12 @@ function setRoomControlUI(el, state) {
     const ICON_OFF = 'images/icons/icon-small-light-off.svg';
     const normalized = state === 'on' ? 'on' : 'off';
     
-    console.log(`🎨 setRoomControlUI: state=${normalized}`);
-    
-    const oldState = el.dataset.state;
     el.dataset.state = normalized;
-    console.log(`🎨 Dataset atualizado: ${oldState} → ${normalized}`);
     
     const img = el.querySelector('.room-control-icon');
     if (img) {
         const newSrc = normalized === 'on' ? ICON_ON : ICON_OFF;
-        const oldSrc = img.src;
         img.src = newSrc;
-        console.log(`🎨 Ícone atualizado: ${oldSrc} → ${newSrc}`);
-    } else {
-        console.warn(`🎨 Ícone não encontrado no elemento`);
     }
 }
 
@@ -142,10 +134,8 @@ function getStoredState(deviceId) {
     try {
         const key = deviceStateKey(deviceId);
         const value = localStorage.getItem(key);
-        console.log(`📖 getStoredState: ${deviceId} → ${value} (key: ${key})`);
         return value;
     } catch (e) {
-        console.warn(`❌ Erro ao ler estado ${deviceId}:`, e);
         return null;
     }
 }
@@ -153,7 +143,6 @@ function getStoredState(deviceId) {
 function setStoredState(deviceId, state) {
     try {
         const key = deviceStateKey(deviceId);
-        console.log(`💾 setStoredState: ${deviceId} → ${state} (key: ${key})`);
         localStorage.setItem(key, state);
     } catch (e) {
         console.warn(`❌ Erro ao salvar estado ${deviceId}:`, e);
@@ -729,11 +718,8 @@ async function updateDeviceStatesFromServer() {
 }
 
 function updateDeviceUI(deviceId, state, forceUpdate = false) {
-    console.log(`🔍 updateDeviceUI chamada: device=${deviceId}, state=${state}, force=${forceUpdate}`);
-    
     // Verificar se o DOM está pronto
     if (document.readyState === 'loading') {
-        console.warn(`⚠️ DOM ainda carregando, adiando atualização do device ${deviceId}`);
         document.addEventListener('DOMContentLoaded', () => updateDeviceUI(deviceId, state, forceUpdate));
         return;
     }
@@ -742,27 +728,19 @@ function updateDeviceUI(deviceId, state, forceUpdate = false) {
     if (!forceUpdate) {
         const lastCommand = recentCommands.get(deviceId);
         if (lastCommand && (Date.now() - lastCommand < COMMAND_PROTECTION_MS)) {
-            console.log(`🛡️ Device ${deviceId} protegido por comando recente - ignorando polling`);
             return;
         }
     }
     
     // Atualizar controles de cômodo
     const roomControls = document.querySelectorAll(`[data-device-id="${deviceId}"]`);
-    console.log(`🔍 Controles encontrados para device ${deviceId}:`, roomControls.length);
     
-    roomControls.forEach((el, index) => {
-        console.log(`🔍 Controle ${index + 1}: classes=${el.className}, dataset=${JSON.stringify(el.dataset)}`);
+    roomControls.forEach((el) => {
         if (el.classList.contains('room-control')) {
             const currentState = el.dataset.state;
             if (currentState !== state || forceUpdate) {
-                console.log(`🔄 Atualizando device ${deviceId}: ${currentState} → ${state}${forceUpdate ? ' (forçado)' : ''}`);
                 setRoomControlUI(el, state);
-            } else {
-                console.log(`🔍 Device ${deviceId} já no estado correto: ${state}`);
             }
-        } else {
-            console.log(`🔍 Elemento não é room-control, ignorando`);
         }
     });
     
@@ -1015,16 +993,10 @@ async function loadAllDeviceStatesGlobally() {
             let storedState = 'off';
             try {
                 storedState = getStoredState(deviceId) || 'off';
-                console.log(`📦 Device ${deviceId}: estado=${storedState}`);
-            } catch (e) {
-                console.warn(`❌ Erro ao ler estado do ${deviceId}:`, e);
-            }
-            
-            try {
                 updateDeviceUI(deviceId, storedState, true); // forceUpdate = true
                 loadedCount++;
             } catch (e) {
-                console.warn(`❌ Erro ao atualizar UI do ${deviceId}:`, e);
+                console.warn(`❌ Erro ao processar ${deviceId}:`, e);
             }
             
             const progress = 20 + ((index + 1) / ALL_LIGHT_IDS.length) * 80;
@@ -1174,19 +1146,18 @@ async function loadAllDeviceStatesGlobally() {
                         }
                         
                         let state = 'off';
-                        console.log(`🔍 Device ${d.id} RAW:`, JSON.stringify(d, null, 2));
                         
                         if (Array.isArray(d.attributes)) {
-                            console.log(`🔍 Device ${d.id} - Attributes:`, d.attributes);
                             const sw = d.attributes.find(a => a.name === 'switch');
-                            console.log(`🔍 Device ${d.id} - Switch encontrado:`, sw);
-                            
                             if (sw) {
-                                console.log(`🔍 Device ${d.id} - currentValue: "${sw.currentValue}", value: "${sw.value}"`);
                                 state = (sw?.currentValue || sw?.value || 'off');
+                                // Log apenas se o valor for inesperado
+                                if (!sw.currentValue && !sw.value) {
+                                    console.warn(`⚠️ Device ${d.id}: switch sem valor`, sw);
+                                }
+                            } else {
+                                console.warn(`⚠️ Device ${d.id}: atributo 'switch' não encontrado`);
                             }
-                            
-                            console.log(`📋 Device ${d.id}: switch=${sw ? sw.currentValue || sw.value : 'não encontrado'} → state=${state}`);
                         } else {
                             console.warn(`⚠️ Device ${d.id}: attributes não é array:`, d.attributes);
                         }
@@ -1213,18 +1184,14 @@ async function loadAllDeviceStatesGlobally() {
         let processedCount = 0;
         
         deviceEntries.forEach(([deviceId, deviceData]) => {
-            console.log(`🔍 Processando device ${deviceId}:`, deviceData);
             if (deviceData.success) {
-                console.log(`💾 Salvando estado ${deviceId}: ${deviceData.state}`);
                 setStoredState(deviceId, deviceData.state);
-                console.log(`🎨 Atualizando UI ${deviceId}: ${deviceData.state}`);
                 updateDeviceUI(deviceId, deviceData.state, true); // forceUpdate = true
                 console.log(`✅ Device ${deviceId}: ${deviceData.state}`);
             } else {
                 console.warn(`⚠️ Falha no device ${deviceId}:`, deviceData.error);
                 // Usar estado salvo como fallback
                 const storedState = getStoredState(deviceId) || 'off';
-                console.log(`🔄 Usando fallback para ${deviceId}: ${storedState}`);
                 updateDeviceUI(deviceId, storedState, true); // forceUpdate = true
             }
             
