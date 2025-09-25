@@ -68,27 +68,30 @@ function handleMasterLightToggle() {
 
 function executeMasterLightToggle(action) {
     // Usar machine rules dos relay boards para otimização:
-    // Dispositivo 264: MasterONOFF-RelayBoard-01
-    // Button 1 (push 1) = Master ON 
-    // Button 2 (push 2) = Master OFF
+    // Dispositivos 264 e 265: MasterONOFF-RelayBoard-01 e 02
+    // Button 1 (push 1) = Master ON para ambos os relay boards
+    // Button 2 (push 2) = Master OFF para ambos os relay boards
     
-    const deviceId = '264'; // MasterONOFF-RelayBoard-01
+    const relayDevices = ['264', '265']; // Ambos os relay boards
     const buttonValue = action === 'on' ? '1' : '2'; // Button 1 = ON, Button 2 = OFF
     
-    console.log(`🎯 Executando master ${action} via relay board otimizado (device ${deviceId}, button ${buttonValue})`);
+    console.log(`🎯 Executando master ${action} via relay boards otimizados (devices ${relayDevices.join(', ')}, button ${buttonValue})`);
     
-    // Enviar comando otimizado para o relay board
-    const promise = sendHubitatCommand(deviceId, 'push', buttonValue);
+    // Enviar comandos para ambos os relay boards em paralelo
+    const promises = relayDevices.map(deviceId => {
+        console.log(`📡 Enviando push ${buttonValue} para device ${deviceId}`);
+        return sendHubitatCommand(deviceId, 'push', buttonValue);
+    });
     
-    promise.then(() => {
-        console.log(`✅ Master light toggle ${action} enviado com sucesso via relay board`);
+    Promise.all(promises).then(() => {
+        console.log(`✅ Master light toggle ${action} enviado com sucesso para ambos os relay boards`);
         
         // Atualizar estados locais de todos os dispositivos após comando bem-sucedido
         ALL_LIGHT_IDS.forEach(id => {
             setStoredState(id, action);
         });
         
-        // Forçar atualização da UI após 1 segundo para dar tempo do relay board processar
+        // Forçar atualização da UI após 1 segundo para dar tempo dos relay boards processarem
         setTimeout(() => {
             updateMasterLightToggleState();
             // Forçar polling para sincronizar estados reais
@@ -99,7 +102,7 @@ function executeMasterLightToggle(action) {
         
         hidePopup();
     }).catch(err => {
-        console.error(`❌ Master light toggle ${action} falhou:`, err);
+        console.error(`❌ Master light toggle ${action} falhou em um ou mais relay boards:`, err);
         hidePopup();
     });
 }
