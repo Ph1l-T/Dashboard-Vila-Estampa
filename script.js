@@ -725,6 +725,13 @@ async function updateDeviceStatesFromServer() {
 function updateDeviceUI(deviceId, state, forceUpdate = false) {
     console.log(`🔍 updateDeviceUI chamada: device=${deviceId}, state=${state}, force=${forceUpdate}`);
     
+    // Verificar se o DOM está pronto
+    if (document.readyState === 'loading') {
+        console.warn(`⚠️ DOM ainda carregando, adiando atualização do device ${deviceId}`);
+        document.addEventListener('DOMContentLoaded', () => updateDeviceUI(deviceId, state, forceUpdate));
+        return;
+    }
+    
     // Verificar se há comando recente que deve ser respeitado
     if (!forceUpdate) {
         const lastCommand = recentCommands.get(deviceId);
@@ -978,6 +985,8 @@ function updateProgress(percentage, text) {
 // Carregamento global de todos os estados dos dispositivos
 async function loadAllDeviceStatesGlobally() {
     console.log('🌍 Iniciando carregamento global de estados...');
+    console.log('🌍 ALL_LIGHT_IDS disponível:', !!ALL_LIGHT_IDS, 'Length:', ALL_LIGHT_IDS ? ALL_LIGHT_IDS.length : 'undefined');
+    console.log('🌍 isProduction:', isProduction);
     
     // Mobile e desktop usam EXATAMENTE o mesmo carregamento
     console.log('🌍 Carregamento universal (desktop e mobile idênticos)');
