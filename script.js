@@ -1435,6 +1435,21 @@ window.debugEletrize = {
             console.log(`  ${deviceId}: ${stored}`);
         });
     },
+    testSetState: (deviceId, state) => {
+        console.log(`🧪 Testando setState(${deviceId}, ${state})`);
+        setStoredState(deviceId, state);
+        updateDeviceUI(deviceId, state, true);
+        console.log(`✅ Teste completo`);
+    },
+    clearAllStates: () => {
+        console.log('🗑️ Limpando todos os estados salvos...');
+        ALL_LIGHT_IDS.forEach(deviceId => {
+            try {
+                localStorage.removeItem(deviceStateKey(deviceId));
+            } catch (e) {}
+        });
+        console.log('✅ Estados limpos');
+    },
     checkProtectedCommands: () => {
         console.log('🛡️ Comandos protegidos:');
         if (recentCommands.size === 0) {
