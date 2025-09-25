@@ -116,9 +116,22 @@ function setRoomControlUI(el, state) {
     const ICON_ON = 'images/icons/icon-small-light-on.svg';
     const ICON_OFF = 'images/icons/icon-small-light-off.svg';
     const normalized = state === 'on' ? 'on' : 'off';
+    
+    console.log(`🎨 setRoomControlUI: state=${normalized}`);
+    
+    const oldState = el.dataset.state;
     el.dataset.state = normalized;
+    console.log(`🎨 Dataset atualizado: ${oldState} → ${normalized}`);
+    
     const img = el.querySelector('.room-control-icon');
-    if (img) img.src = normalized === 'on' ? ICON_ON : ICON_OFF;
+    if (img) {
+        const newSrc = normalized === 'on' ? ICON_ON : ICON_OFF;
+        const oldSrc = img.src;
+        img.src = newSrc;
+        console.log(`🎨 Ícone atualizado: ${oldSrc} → ${newSrc}`);
+    } else {
+        console.warn(`🎨 Ícone não encontrado no elemento`);
+    }
 }
 
 function deviceStateKey(deviceId) {
@@ -710,6 +723,8 @@ async function updateDeviceStatesFromServer() {
 }
 
 function updateDeviceUI(deviceId, state, forceUpdate = false) {
+    console.log(`🔍 updateDeviceUI chamada: device=${deviceId}, state=${state}, force=${forceUpdate}`);
+    
     // Verificar se há comando recente que deve ser respeitado
     if (!forceUpdate) {
         const lastCommand = recentCommands.get(deviceId);
@@ -721,13 +736,20 @@ function updateDeviceUI(deviceId, state, forceUpdate = false) {
     
     // Atualizar controles de cômodo
     const roomControls = document.querySelectorAll(`[data-device-id="${deviceId}"]`);
-    roomControls.forEach(el => {
+    console.log(`🔍 Controles encontrados para device ${deviceId}:`, roomControls.length);
+    
+    roomControls.forEach((el, index) => {
+        console.log(`🔍 Controle ${index + 1}: classes=${el.className}, dataset=${JSON.stringify(el.dataset)}`);
         if (el.classList.contains('room-control')) {
             const currentState = el.dataset.state;
             if (currentState !== state || forceUpdate) {
                 console.log(`🔄 Atualizando device ${deviceId}: ${currentState} → ${state}${forceUpdate ? ' (forçado)' : ''}`);
                 setRoomControlUI(el, state);
+            } else {
+                console.log(`🔍 Device ${deviceId} já no estado correto: ${state}`);
             }
+        } else {
+            console.log(`🔍 Elemento não é room-control, ignorando`);
         }
     });
     
@@ -962,6 +984,7 @@ async function loadAllDeviceStatesGlobally() {
     
     if (!isProduction) {
         console.log('💻 Modo desenvolvimento - carregando do localStorage');
+        console.log('📋 Dispositivos a carregar:', ALL_LIGHT_IDS.length);
         updateProgress(20, 'Carregando estados salvos...');
         
         // Simular carregamento para melhor UX (mobile-friendly)
@@ -972,24 +995,28 @@ async function loadAllDeviceStatesGlobally() {
             console.warn('Promise fallback ativo');
         }
         
+        let loadedCount = 0;
         ALL_LIGHT_IDS.forEach((deviceId, index) => {
             let storedState = 'off';
             try {
                 storedState = getStoredState(deviceId) || 'off';
+                console.log(`📦 Device ${deviceId}: estado=${storedState}`);
             } catch (e) {
-                console.warn(`Erro ao ler estado do ${deviceId}:`, e);
+                console.warn(`❌ Erro ao ler estado do ${deviceId}:`, e);
             }
             
             try {
                 updateDeviceUI(deviceId, storedState, true); // forceUpdate = true
+                loadedCount++;
             } catch (e) {
-                console.warn(`Erro ao atualizar UI do ${deviceId}:`, e);
+                console.warn(`❌ Erro ao atualizar UI do ${deviceId}:`, e);
             }
             
             const progress = 20 + ((index + 1) / ALL_LIGHT_IDS.length) * 80;
             updateProgress(progress, `Dispositivo ${index + 1}/${ALL_LIGHT_IDS.length}...`);
         });
         
+        console.log(`✅ Carregamento completo: ${loadedCount}/${ALL_LIGHT_IDS.length} dispositivos`);
         updateProgress(100, 'Carregamento concluído!');
         return true;
     }
