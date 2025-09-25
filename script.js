@@ -1174,9 +1174,18 @@ async function loadAllDeviceStatesGlobally() {
                         }
                         
                         let state = 'off';
+                        console.log(`🔍 Device ${d.id} RAW:`, JSON.stringify(d, null, 2));
+                        
                         if (Array.isArray(d.attributes)) {
+                            console.log(`🔍 Device ${d.id} - Attributes:`, d.attributes);
                             const sw = d.attributes.find(a => a.name === 'switch');
-                            state = (sw?.currentValue || sw?.value || 'off');
+                            console.log(`🔍 Device ${d.id} - Switch encontrado:`, sw);
+                            
+                            if (sw) {
+                                console.log(`🔍 Device ${d.id} - currentValue: "${sw.currentValue}", value: "${sw.value}"`);
+                                state = (sw?.currentValue || sw?.value || 'off');
+                            }
+                            
                             console.log(`📋 Device ${d.id}: switch=${sw ? sw.currentValue || sw.value : 'não encontrado'} → state=${state}`);
                         } else {
                             console.warn(`⚠️ Device ${d.id}: attributes não é array:`, d.attributes);
