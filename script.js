@@ -288,6 +288,11 @@ function toggleDevice(el, deviceType) {
 
 // Detecta se está em produção (Cloudflare Pages) ou desenvolvimento
 const isProduction = !['localhost', '127.0.0.1', '::1'].includes(location.hostname);
+console.log('🔍 DEBUG PRODUÇÃO:', {
+    hostname: location.hostname,
+    isProduction: isProduction,
+    isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+});
 
 // Detectar dispositivos móveis
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -652,7 +657,18 @@ async function updateDeviceStatesFromServer() {
             ? `${POLLING_URL}?devices=${deviceIds}`
             : null; // Em dev, pular polling por enquanto
             
-        if (!pollingUrl) return;
+        console.log('🔄 POLLING DEBUG:', {
+            isProduction: isProduction,
+            hostname: location.hostname,
+            pollingUrl: pollingUrl,
+            deviceIds: deviceIds,
+            isMobile: isMobile
+        });
+            
+        if (!pollingUrl) {
+            console.log('❌ POLLING BLOQUEADO - não está em produção');
+            return;
+        }
         
         const response = await fetch(pollingUrl);
         if (!response.ok) throw new Error(`Polling failed: ${response.status}`);
@@ -835,62 +851,21 @@ function onHomeMasterClick(event, button) {
     // Atualizar UI imediatamente
     setMasterIcon(button, newCommand);
     
-    // Verificar se é comando para TODOS os dispositivos (usar relay board otimizado)
-    const isAllDevicesCommand = deviceIds.length === ALL_LIGHT_IDS.length && 
-        deviceIds.every(id => ALL_LIGHT_IDS.includes(id));
+    // Enviar comandos para todos os dispositivos (master dos ambientes mantém comportamento original)
+    const promises = deviceIds.map(deviceId => {
+        // Marcar comando recente
+        recentCommands.set(deviceId, Date.now());
+        setStoredState(deviceId, newCommand);
+        return sendHubitatCommand(deviceId, newCommand);
+    });
     
-    if (isAllDevicesCommand) {
-        // Usar sistema otimizado dos relay boards para comando global
-        console.log('🎯 Usando relay board otimizado para comando global');
-        
-        const relayDeviceId = '264'; // MasterONOFF-RelayBoard-01
-        const buttonValue = newCommand === 'on' ? '1' : '2'; // Button 1 = ON, Button 2 = OFF
-        
-        const promise = sendHubitatCommand(relayDeviceId, 'push', buttonValue);
-        
-        promise.then(() => {
-            console.log(`✅ Master ${newCommand} enviado via relay board`);
-            
-            // Atualizar estados locais de todos os dispositivos
-            ALL_LIGHT_IDS.forEach(id => {
-                setStoredState(id, newCommand);
-            });
-            
-            // Forçar polling após 1 segundo para sincronizar
-            setTimeout(() => {
-                if (typeof updateDeviceStatesFromServer === 'function') {
-                    updateDeviceStatesFromServer();
-                }
-            }, 1000);
-            
-        }).catch(err => {
-            console.error(`❌ Master relay board falhou:`, err);
-        }).finally(() => {
-            // Remover loading após comandos
-            setTimeout(() => {
-                setMasterButtonLoading(button, false);
-            }, 1000);
-        });
-        
-    } else {
-        // Comando para dispositivos específicos - usar método tradicional
-        console.log('🔄 Usando comandos individuais para dispositivos específicos');
-        
-        const promises = deviceIds.map(deviceId => {
-            // Marcar comando recente
-            recentCommands.set(deviceId, Date.now());
-            setStoredState(deviceId, newCommand);
-            return sendHubitatCommand(deviceId, newCommand);
-        });
-        
-        // Aguardar conclusão de todos os comandos
-        Promise.allSettled(promises).finally(() => {
-            // Remover loading após comandos
-            setTimeout(() => {
-                setMasterButtonLoading(button, false);
-            }, 1000);
-        });
-    }
+    // Aguardar conclusão de todos os comandos
+    Promise.allSettled(promises).finally(() => {
+        // Remover loading após comandos
+        setTimeout(() => {
+            setMasterButtonLoading(button, false);
+        }, 1000); // 1 segundo de delay para feedback visual
+    });
 }
 
 // Função especial para atualizar estados após comandos master
@@ -1706,7 +1681,7 @@ function initSimpleMode() {
                     console.error('❌ Erro ao iniciar polling no modo simples:', e);
                 }
             } else {
-                console.log('💻 Modo desenvolvimento - polling não iniciado');
+                console.log('💻 Modo desenvolvimento - polling não iniciado no modo simples');
             }
             
             updateProgress(100, 'Modo simples com polling ativo!');
@@ -1805,8 +1780,18 @@ function initializeApp() {
                         // Iniciar polling se estiver em produção
                         if (isProduction) {
                             var pollingDelay = 3000;
-                            console.log('Iniciando polling em ' + (pollingDelay/1000) + ' segundos (universal)');
+                            console.log('✅ INICIANDO POLLING em ' + (pollingDelay/1000) + ' segundos (universal)', {
+                                isProduction: isProduction,
+                                hostname: location.hostname,
+                                isMobile: isMobile
+                            });
                             setTimeout(startPolling, pollingDelay);
+                        } else {
+                            console.log('❌ POLLING NÃO INICIADO - não está em produção:', {
+                                isProduction: isProduction,
+                                hostname: location.hostname,
+                                isMobile: isMobile
+                            });
                         }
                         
                         console.log('Aplicação totalmente inicializada!');
