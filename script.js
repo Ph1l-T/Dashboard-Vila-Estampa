@@ -361,9 +361,8 @@ safeLog('=== AMBIENTE DETECTADO ===', {
     isIOS,
     userAgent: navigator.userAgent.substring(0, 60) + '...'
 });
-// Endpoints de Functions (sem prefixo /functions após remoção de _routes.json)
-const HUBITAT_PROXY_URL = '/hubitat-proxy';
-const POLLING_URL = '/polling';
+const HUBITAT_PROXY_URL = '/functions/hubitat-proxy';
+const POLLING_URL = '/functions/polling';
 const HUBITAT_DIRECT_URL = 'https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/172/devices/all?access_token=beddf703-c860-47bf-a6df-3df6ccc98138';
 const HUBITAT_ACCESS_TOKEN = 'beddf703-c860-47bf-a6df-3df6ccc98138';
 
@@ -483,7 +482,7 @@ async function testHubitatConnection() {
     
     try {
         // Testar com um dispositivo conhecido (231)
-    const response = await fetch('/polling?devices=231');
+        const response = await fetch('/functions/polling?devices=231');
         console.log('🔧 Status da resposta:', response.status);
         console.log('🔧 Headers da resposta:', Object.fromEntries(response.headers.entries()));
         
@@ -721,9 +720,28 @@ async function updateDeviceStatesFromServer() {
         if (!response.ok) throw new Error(`Polling failed: ${response.status}`);
         
         const data = await response.json();
-        
+
+        // Normalizar se vier no formato novo { success, data:[...] }
+        let devicesMap = data.devices;
+        if (!devicesMap && Array.isArray(data.data)) {
+            devicesMap = {};
+            data.data.forEach(d => {
+                if (!d || !d.id) return;
+                let state = 'off';
+                if (Array.isArray(d.attributes)) {
+                    const sw = d.attributes.find(a => a.name === 'switch');
+                    state = (sw?.currentValue || sw?.value || 'off');
+                }
+                devicesMap[d.id] = { state, success: true };
+            });
+        }
+        if (!devicesMap) {
+            console.warn('Formato inesperado de resposta no polling:', data);
+            return;
+        }
+
         // Atualizar UI com os novos estados (respeitando comandos pendentes)
-        Object.entries(data.devices).forEach(([deviceId, deviceData]) => {
+        Object.entries(devicesMap).forEach(([deviceId, deviceData]) => {
             if (deviceData.success) {
                 // Só atualizar localStorage se o estado mudou
                 const currentStored = getStoredState(deviceId);
@@ -1168,11 +1186,38 @@ async function loadAllDeviceStatesGlobally() {
             throw new Error(`Resposta inválida do servidor: ${jsonError.message}`);
         }
         console.log('📡 Estados recebidos:', data);
-        
+
+        // Normalização do formato de resposta:
+        // Formato antigo esperado: { devices: { id: { state, success } } }
+        // Novo formato (Cloudflare Function refatorada): { success:true, data:[ { id, attributes:[{name:'switch', currentValue:'on'}] } ] }
+        if (!data.devices) {
+            try {
+                if (Array.isArray(data.data)) {
+                    const mapped = {};
+                    data.data.forEach(d => {
+                        if (!d || !d.id) return;
+                        let state = 'off';
+                        if (Array.isArray(d.attributes)) {
+                            const sw = d.attributes.find(a => a.name === 'switch');
+                            state = (sw?.currentValue || sw?.value || 'off');
+                        }
+                        mapped[d.id] = { state, success: true };
+                    });
+                    data.devices = mapped;
+                    console.log('🔄 Resposta normalizada para formato devices (', Object.keys(mapped).length, 'dispositivos )');
+                } else {
+                    throw new Error('Formato de resposta inesperado: falta campo devices e data[]');
+                }
+            } catch (normError) {
+                console.error('❌ Falha ao normalizar resposta:', normError);
+                throw normError;
+            }
+        }
+
         updateProgress(70, 'Processando estados...');
-        
+
         // Processar dispositivos com progresso
-        const deviceEntries = Object.entries(data.devices);
+        const deviceEntries = Object.entries(data.devices || {});
         let processedCount = 0;
         
         deviceEntries.forEach(([deviceId, deviceData]) => {
@@ -1535,7 +1580,7 @@ window.debugEletrize = {
     testMobileApi: async () => {
         console.log('🧪 Testando APIs para mobile...');
         try {
-            const testUrl = isProduction ? '/polling?devices=366' : '#test';
+            const testUrl = isProduction ? '/functions/polling?devices=366' : '#test';
             // Configurar timeout compatível
             const fetchConfig = { 
                 method: 'GET',
