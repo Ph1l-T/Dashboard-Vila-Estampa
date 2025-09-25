@@ -852,45 +852,6 @@ function onHomeMasterClick(event, button) {
     });
 }
 
-// Função para o botão master da página de cenários
-function handleMasterLightToggle() {
-    const button = document.getElementById('master-light-toggle-btn');
-    if (!button) return;
-    
-    // Verificar se já está carregando
-    if (button.dataset.loading === 'true') {
-        return;
-    }
-    
-    // Usar todos os IDs de luzes
-    const deviceIds = ALL_LIGHT_IDS;
-    
-    // Determinar comando baseado no estado atual
-    const currentState = anyOn(deviceIds) ? 'on' : 'off';
-    const newCommand = currentState === 'on' ? 'off' : 'on';
-    
-    // Ativar loading visual
-    setMasterButtonLoading(button, true);
-    
-    // Enviar comandos para todos os dispositivos
-    const promises = deviceIds.map(deviceId => {
-        // Marcar comando recente
-        recentCommands.set(deviceId, Date.now());
-        setStoredState(deviceId, newCommand);
-        return sendHubitatCommand(deviceId, newCommand);
-    });
-    
-    // Aguardar conclusão de todos os comandos
-    Promise.allSettled(promises).finally(() => {
-        // Remover loading após comandos
-        setTimeout(() => {
-            setMasterButtonLoading(button, false);
-            // Atualizar estado visual do botão
-            updateMasterLightToggleState();
-        }, 1000); // 1 segundo de delay para feedback visual
-    });
-}
-
 // Função especial para atualizar estados após comandos master
 function updateStatesAfterMasterCommand(deviceIds, command) {
     console.log(`🎯 Atualizando estados após master ${command} para:`, deviceIds);
