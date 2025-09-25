@@ -666,10 +666,18 @@ async function updateDeviceStatesFromServer() {
             data.data.forEach(d => {
                 if (!d || !d.id) return;
                 let state = 'off';
+                
                 if (Array.isArray(d.attributes)) {
+                    // Formato antigo: attributes é array
                     const sw = d.attributes.find(a => a.name === 'switch');
                     state = (sw?.currentValue || sw?.value || 'off');
+                } else if (d.attributes && typeof d.attributes === 'object') {
+                    // Formato atual: attributes é objeto
+                    if (d.attributes.switch !== undefined) {
+                        state = d.attributes.switch;
+                    }
                 }
+                
                 devicesMap[d.id] = { state, success: true };
             });
         }
@@ -1148,18 +1156,21 @@ async function loadAllDeviceStatesGlobally() {
                         let state = 'off';
                         
                         if (Array.isArray(d.attributes)) {
+                            // Formato antigo: attributes é array de objetos
                             const sw = d.attributes.find(a => a.name === 'switch');
                             if (sw) {
                                 state = (sw?.currentValue || sw?.value || 'off');
-                                // Log apenas se o valor for inesperado
-                                if (!sw.currentValue && !sw.value) {
-                                    console.warn(`⚠️ Device ${d.id}: switch sem valor`, sw);
-                                }
+                            }
+                        } else if (d.attributes && typeof d.attributes === 'object') {
+                            // Formato atual: attributes é objeto direto com propriedades
+                            if (d.attributes.switch !== undefined) {
+                                state = d.attributes.switch;
+                                console.log(`📋 Device ${d.id}: switch=${state}`);
                             } else {
-                                console.warn(`⚠️ Device ${d.id}: atributo 'switch' não encontrado`);
+                                console.warn(`⚠️ Device ${d.id}: atributo 'switch' não encontrado em`, Object.keys(d.attributes));
                             }
                         } else {
-                            console.warn(`⚠️ Device ${d.id}: attributes não é array:`, d.attributes);
+                            console.warn(`⚠️ Device ${d.id}: attributes inválido:`, d.attributes);
                         }
                         
                         mapped[d.id] = { state, success: true };
