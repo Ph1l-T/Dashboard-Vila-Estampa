@@ -1,5 +1,5 @@
-// CACHE DESABILITADO TEMPORARIAMENTE PARA DEBUG
-const CACHE_NAME = 'eletrize-no-cache-v' + Date.now();
+// 🎉 VERSÃO 1.0.0 - MARCO DE PRODUÇÃO
+const CACHE_NAME = 'eletrize-v1.0.0-' + Date.now();
 const DISABLE_CACHE = true; // Flag para desabilitar cache completamente
 
 console.log('🚫 SERVICE WORKER: Cache desabilitado para debug de problemas');

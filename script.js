@@ -338,7 +338,7 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 const ENABLE_DEBUG_LOGS = true; // Logs habilitados em desktop e mobile
 
 // Sistema de detecção de cache desatualizado para mobile (TEMPORARIAMENTE DESABILITADO)
-const APP_VERSION = '2025.01.23.002'; // Incrementar a cada deploy importante
+const APP_VERSION = '1.0.0'; // 🎉 MARCO v1.0 - SISTEMA TOTALMENTE FUNCIONAL
 (function() {
     if (false && isMobile) { // DESABILITADO para debug
         try {
