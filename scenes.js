@@ -1,17 +1,4 @@
-// IDs atualizados para cobrir todas as luzes dos ambientes
-const ALL_LIGHT_IDS = [
-  '231','232','233','234','235', // Escritório
-  '236','237',                   // Projetos
-  '238','239','240',             // Programação
-  '241','242','243','244',       // Sinuca
-  '245','246',                   // Piscina
-  '248','249','250',             // Eletrize Solar
-  '251','252',                   // Gourmet
-  '253',                         // Home
-  '254','255','256','257','258', // Funcionários
-  '259','260',                   // Cinema
-  '261','262','263'              // Recepção
-];
+// ALL_LIGHT_IDS agora está definido em script.js (carregado primeiro)
 const ALL_CURTAIN_IDS = ['38', '39', '40', '42', '43'];
 let masterConfirmCallback = null;
 
