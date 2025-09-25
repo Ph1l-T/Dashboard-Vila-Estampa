@@ -675,6 +675,9 @@ async function updateDeviceStatesFromServer() {
                     // Formato atual: attributes é objeto
                     if (d.attributes.switch !== undefined) {
                         state = d.attributes.switch;
+                    } else {
+                        // Pular dispositivos sem switch (botões, sensores, etc.)
+                        return;
                     }
                 }
                 
@@ -1167,7 +1170,8 @@ async function loadAllDeviceStatesGlobally() {
                                 state = d.attributes.switch;
                                 console.log(`📋 Device ${d.id}: switch=${state}`);
                             } else {
-                                console.warn(`⚠️ Device ${d.id}: atributo 'switch' não encontrado em`, Object.keys(d.attributes));
+                                console.log(`🔘 Device ${d.id}: não é lâmpada (sem atributo 'switch'), pulando...`);
+                                return; // Pular dispositivos sem switch (botões, sensores, etc.)
                             }
                         } else {
                             console.warn(`⚠️ Device ${d.id}: attributes inválido:`, d.attributes);
