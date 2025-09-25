@@ -287,9 +287,12 @@ function toggleDevice(el, deviceType) {
 // --- Controle do Hubitat ---
 
 // Detecta se está em produção (Cloudflare Pages) ou desenvolvimento
-const isProduction = !['localhost', '127.0.0.1', '::1'].includes(location.hostname);
-console.log('🔍 DEBUG PRODUÇÃO:', {
+const isProductionOriginal = !['localhost', '127.0.0.1', '::1'].includes(location.hostname);
+// TEMPORÁRIO: Forçar produção para debug mobile
+const isProduction = true; 
+console.log('🔍 DEBUG PRODUÇÃO (FORÇADO):', {
     hostname: location.hostname,
+    isProductionOriginal: isProductionOriginal,
     isProduction: isProduction,
     isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 });
@@ -958,15 +961,21 @@ function updateProgress(percentage, text) {
 async function loadAllDeviceStatesGlobally() {
     console.log('🌍 Iniciando carregamento global de estados...');
     console.log('🌍 ALL_LIGHT_IDS disponível:', !!ALL_LIGHT_IDS, 'Length:', ALL_LIGHT_IDS ? ALL_LIGHT_IDS.length : 'undefined');
-    console.log('🌍 isProduction:', isProduction);
+    console.log('🌍 DEBUG CARREGAMENTO:', {
+        isProduction: isProduction,
+        hostname: location.hostname,
+        isMobile: isMobile,
+        userAgent: navigator.userAgent.substring(0, 100)
+    });
     
     // Mobile e desktop usam EXATAMENTE o mesmo carregamento
     console.log('🌍 Carregamento universal (desktop e mobile idênticos)');
     
     if (!isProduction) {
-        console.log('💻 Modo desenvolvimento - carregando do localStorage');
+        console.log('💻 MODO DESENVOLVIMENTO ATIVO - carregando do localStorage');
+        console.log('💻 ISSO PODE SER O PROBLEMA NO MOBILE!');
         console.log('📋 Dispositivos a carregar:', ALL_LIGHT_IDS.length);
-        updateProgress(20, 'Carregando estados salvos...');
+        updateProgress(20, 'Modo DEV - Estados salvos...');
         
         // Simular carregamento para melhor UX (mobile-friendly)
         try {
@@ -997,10 +1006,12 @@ async function loadAllDeviceStatesGlobally() {
     }
     
     try {
+        console.log('🌍 MODO PRODUÇÃO ATIVO - buscando do servidor');
         updateProgress(10, 'Conectando com servidor...');
         
         const deviceIds = ALL_LIGHT_IDS.join(',');
-        console.log(`📡 Buscando estados de ${ALL_LIGHT_IDS.length} dispositivos...`);
+        console.log(`📡 Buscando estados de ${ALL_LIGHT_IDS.length} dispositivos no servidor...`);
+        console.log('📡 URL será:', `${POLLING_URL}?devices=${deviceIds}`);
         
         updateProgress(30, 'Enviando solicitação...');
         
