@@ -140,17 +140,23 @@ function deviceStateKey(deviceId) {
 
 function getStoredState(deviceId) {
     try {
-        return localStorage.getItem(deviceStateKey(deviceId));
+        const key = deviceStateKey(deviceId);
+        const value = localStorage.getItem(key);
+        console.log(`📖 getStoredState: ${deviceId} → ${value} (key: ${key})`);
+        return value;
     } catch (e) {
+        console.warn(`❌ Erro ao ler estado ${deviceId}:`, e);
         return null;
     }
 }
 
 function setStoredState(deviceId, state) {
     try {
-        localStorage.setItem(deviceStateKey(deviceId), state);
+        const key = deviceStateKey(deviceId);
+        console.log(`💾 setStoredState: ${deviceId} → ${state} (key: ${key})`);
+        localStorage.setItem(key, state);
     } catch (e) {
-        // ignore
+        console.warn(`❌ Erro ao salvar estado ${deviceId}:`, e);
     }
 }
 
@@ -1159,18 +1165,28 @@ async function loadAllDeviceStatesGlobally() {
         if (!data.devices) {
             try {
                 if (Array.isArray(data.data)) {
+                    console.log('🔄 Normalizando', data.data.length, 'dispositivos do formato novo...');
                     const mapped = {};
-                    data.data.forEach(d => {
-                        if (!d || !d.id) return;
+                    data.data.forEach((d, index) => {
+                        if (!d || !d.id) {
+                            console.warn(`⚠️ Dispositivo ${index} inválido:`, d);
+                            return;
+                        }
+                        
                         let state = 'off';
                         if (Array.isArray(d.attributes)) {
                             const sw = d.attributes.find(a => a.name === 'switch');
                             state = (sw?.currentValue || sw?.value || 'off');
+                            console.log(`📋 Device ${d.id}: switch=${sw ? sw.currentValue || sw.value : 'não encontrado'} → state=${state}`);
+                        } else {
+                            console.warn(`⚠️ Device ${d.id}: attributes não é array:`, d.attributes);
                         }
+                        
                         mapped[d.id] = { state, success: true };
                     });
                     data.devices = mapped;
                     console.log('🔄 Resposta normalizada para formato devices (', Object.keys(mapped).length, 'dispositivos )');
+                    console.log('🔍 Estados finais mapeados:', mapped);
                 } else {
                     throw new Error('Formato de resposta inesperado: falta campo devices e data[]');
                 }
@@ -1184,17 +1200,22 @@ async function loadAllDeviceStatesGlobally() {
 
         // Processar dispositivos com progresso
         const deviceEntries = Object.entries(data.devices || {});
+        console.log(`🔍 Processando ${deviceEntries.length} dispositivos...`);
         let processedCount = 0;
         
         deviceEntries.forEach(([deviceId, deviceData]) => {
+            console.log(`🔍 Processando device ${deviceId}:`, deviceData);
             if (deviceData.success) {
+                console.log(`💾 Salvando estado ${deviceId}: ${deviceData.state}`);
                 setStoredState(deviceId, deviceData.state);
+                console.log(`🎨 Atualizando UI ${deviceId}: ${deviceData.state}`);
                 updateDeviceUI(deviceId, deviceData.state, true); // forceUpdate = true
                 console.log(`✅ Device ${deviceId}: ${deviceData.state}`);
             } else {
                 console.warn(`⚠️ Falha no device ${deviceId}:`, deviceData.error);
                 // Usar estado salvo como fallback
                 const storedState = getStoredState(deviceId) || 'off';
+                console.log(`🔄 Usando fallback para ${deviceId}: ${storedState}`);
                 updateDeviceUI(deviceId, storedState, true); // forceUpdate = true
             }
             
