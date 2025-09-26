@@ -1972,9 +1972,12 @@ html, body {
         grid-template-columns: repeat(3, 1fr) !important; /* Reunião: 3 luzes */
     }
     
-    .entrada-page .lights-container,
+    .entrada-page .lights-container {
+        grid-template-columns: 1fr !important; /* Entrada: 1 luz ocupa toda a linha */
+    }
+    
     .vitrine-page .lights-container {
-        grid-template-columns: repeat(3, 1fr) !important; /* Entrada: 1 luz, Vitrine: 3 luzes */
+        grid-template-columns: repeat(3, 1fr) !important; /* Vitrine: 3 luzes */
     }
     
     .garden-page .lights-container,
