@@ -782,6 +782,13 @@ html, body {
     align-items: center;
 }
 
+/* Grid específico para páginas com só cortinas */
+.controls-grid:has(.control-card-curtain:only-child) {
+    grid-template-columns: 1fr;
+    grid-auto-rows: min-content;
+    align-items: start;
+}
+
 .control-card {
     background: rgba(255, 255, 255, 0.1);
     -webkit-backdrop-filter: blur(10px);
@@ -818,6 +825,114 @@ html, body {
 
 .control-card.large {
     grid-column: span 2;
+}
+
+/* Controles de cortina no mesmo container dos botões de luz */
+.control-card-curtain {
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    color: white;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 200;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.2s ease, transform 0.08s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    height: 130px; /* Altura fixa para cortinas */
+    width: 100%; /* Largura adaptativa */
+    grid-column: span 2; /* Ocupar toda a largura disponível */
+    position: relative;
+}
+
+.control-card-curtain:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Título da cortina */
+.curtain-card-title {
+    font-size: 18px;
+    font-weight: 300;
+    margin-bottom: 8px;
+    color: #fff;
+    text-align: center;
+}
+
+/* Container dos botões dentro do card */
+.curtain-card-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+    max-width: 280px;
+}
+
+/* Botões individuais da cortina */
+.curtain-card-btn {
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    padding: 0;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.curtain-card-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px) scale(1.02);
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+}
+
+.curtain-card-btn:active {
+    transform: scale(0.95);
+}
+
+.curtain-card-btn img {
+    width: 45%;
+    height: 45%;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+}
+
+/* Separador entre botões */
+.curtain-card-separator {
+    border-right: 2px solid rgba(255, 255, 255, 0.3);
+    height: 50px;
+    opacity: 0.6;
+}
+
+/* Botão pause específico */
+.curtain-card-pause {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.curtain-card-pause-line {
+    border-radius: 8px;
+    background-color: #fff;
+    width: 6px;
+    height: 24px;
+    opacity: 0.9;
 }
 
 .control-icon {
@@ -1203,3 +1318,816 @@ html, body {
 }
 
 /* Debug mobile visual - REMOVIDO (compatibilidade resolvida) */
+
+/* Novo design de controles de cortina baseado no Figma */
+.curtain-control-figma {
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    box-sizing: border-box;
+    height: clamp(110px, 15vw, 134px);
+    overflow: hidden;
+    text-align: center;
+    color: #fff;
+    font-family: 'Raleway', sans-serif;
+    margin: 14px 0;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.curtain-figma-title {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: clamp(18px, 4vw, 25px);
+    font-weight: 200;
+    display: inline-block;
+    width: calc(100% - 40px);
+    height: 28px;
+    text-align: center;
+}
+
+.curtain-figma-controls {
+    position: absolute;
+    top: 41px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 19px;
+    background: rgba(255, 255, 255, 0.08);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-sizing: border-box;
+    width: calc(100% - 40px);
+    max-width: 330px;
+    height: clamp(65px, 10vw, 80px);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 clamp(10px, 2vw, 15px);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.curtain-figma-separator {
+    border-right: 2px solid #fff;
+    height: 74px;
+    opacity: 0.3;
+}
+
+.curtain-figma-btn {
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    width: 90px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    padding: 0;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.curtain-figma-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px) scale(1.02);
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+}
+
+.curtain-figma-btn:active {
+    transform: scale(0.95);
+}
+
+.curtain-figma-btn img {
+    width: 50%;
+    height: 50%;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+}
+
+.curtain-figma-pause {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.curtain-pause-line {
+    border-radius: 10px;
+    background-color: #fff;
+    width: clamp(8px, 1.5vw, 11px);
+    height: clamp(28px, 4vw, 36px);
+    opacity: 0.9;
+}
+
+/* Responsividade aprimorada com glassmorphism */
+.curtain-figma-separator {
+    border-right: 2px solid rgba(255, 255, 255, 0.3);
+    height: calc(100% - 20px);
+    opacity: 0.6;
+}
+
+/* Ajustes finos para diferentes tamanhos de tela */
+@media (max-width: 480px) {
+    .curtain-control-figma {
+        margin: 8px 0;
+    }
+    
+    .curtain-figma-controls {
+        width: calc(100% - 20px);
+    }
+    
+    .curtain-figma-separator {
+        height: calc(100% - 15px);
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    .curtain-control-figma {
+        margin: 12px 0;
+    }
+}
+
+@media (min-width: 769px) {
+    .curtain-control-figma {
+        margin: 14px 0;
+    }
+}
+
+/* Media Queries para botões de controle das cortinas */
+/* Mobile pequeno - até 320px */
+@media (max-width: 320px) {
+    .curtain-figma-btn {
+        width: 65px;
+        height: 65px;
+        border-radius: 10px;
+    }
+    
+    .curtain-figma-btn img {
+        width: 45%;
+        height: 45%;
+    }
+    
+    .curtain-pause-line {
+        width: 6px;
+        height: 24px;
+    }
+}
+
+/* Mobile - 321px a 480px */
+@media (min-width: 321px) and (max-width: 480px) {
+    .curtain-figma-btn {
+        width: 75px;
+        height: 75px;
+        border-radius: 11px;
+    }
+    
+    .curtain-figma-btn img {
+        width: 48%;
+        height: 48%;
+    }
+    
+    .curtain-pause-line {
+        width: 8px;
+        height: 28px;
+    }
+}
+
+/* Tablet pequeno - 481px a 768px */
+@media (min-width: 481px) and (max-width: 768px) {
+    .curtain-figma-btn {
+        width: 85px;
+        height: 85px;
+        border-radius: 12px;
+    }
+    
+    .curtain-figma-btn img {
+        width: 50%;
+        height: 50%;
+    }
+    
+    .curtain-pause-line {
+        width: 9px;
+        height: 32px;
+    }
+}
+
+/* Tablet grande - 769px a 1024px */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .curtain-figma-btn {
+        width: 90px;
+        height: 90px;
+        border-radius: 12px;
+    }
+    
+    .curtain-figma-btn img {
+        width: 50%;
+        height: 50%;
+    }
+    
+    .curtain-pause-line {
+        width: 10px;
+        height: 34px;
+    }
+}
+
+/* Desktop - 1025px a 1440px */
+@media (min-width: 1025px) and (max-width: 1440px) {
+    .curtain-figma-btn {
+        width: 95px;
+        height: 95px;
+        border-radius: 13px;
+    }
+    
+    .curtain-figma-btn img {
+        width: 52%;
+        height: 52%;
+    }
+    
+    .curtain-pause-line {
+        width: 11px;
+        height: 36px;
+    }
+}
+
+/* Desktop grande - acima de 1440px */
+@media (min-width: 1441px) {
+    .curtain-figma-btn {
+        width: 100px;
+        height: 100px;
+        border-radius: 14px;
+    }
+    
+    .curtain-figma-btn img {
+        width: 54%;
+        height: 54%;
+    }
+    
+    .curtain-pause-line {
+        width: 12px;
+        height: 38px;
+    }
+}
+
+/* Media Queries para controles de cortina no grid */
+/* Mobile pequeno - até 320px */
+@media (max-width: 320px) {
+    .curtain-card-btn {
+        width: 55px;
+        height: 55px;
+        border-radius: 10px;
+    }
+    
+    .curtain-card-btn img {
+        width: 40%;
+        height: 40%;
+    }
+    
+    .curtain-card-pause-line {
+        width: 5px;
+        height: 20px;
+    }
+    
+    .curtain-card-controls {
+        gap: 10px;
+        max-width: 200px;
+    }
+    
+    .curtain-card-separator {
+        height: 40px;
+    }
+}
+
+/* Mobile - 321px a 480px */
+@media (min-width: 321px) and (max-width: 480px) {
+    .curtain-card-btn {
+        width: 60px;
+        height: 60px;
+        border-radius: 11px;
+    }
+    
+    .curtain-card-btn img {
+        width: 42%;
+        height: 42%;
+    }
+    
+    .curtain-card-pause-line {
+        width: 5px;
+        height: 22px;
+    }
+    
+    .curtain-card-controls {
+        gap: 12px;
+        max-width: 220px;
+    }
+    
+    .curtain-card-separator {
+        height: 45px;
+    }
+}
+
+/* Tablet pequeno - 481px a 768px */
+@media (min-width: 481px) and (max-width: 768px) {
+    .curtain-card-btn {
+        width: 65px;
+        height: 65px;
+        border-radius: 12px;
+    }
+    
+    .curtain-card-btn img {
+        width: 44%;
+        height: 44%;
+    }
+    
+    .curtain-card-pause-line {
+        width: 6px;
+        height: 24px;
+    }
+    
+    .curtain-card-controls {
+        gap: 13px;
+        max-width: 240px;
+    }
+    
+    .curtain-card-separator {
+        height: 48px;
+    }
+}
+
+/* Tablet grande - 769px a 1024px */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .curtain-card-btn {
+        width: 70px;
+        height: 70px;
+        border-radius: 12px;
+    }
+    
+    .curtain-card-btn img {
+        width: 45%;
+        height: 45%;
+    }
+    
+    .curtain-card-pause-line {
+        width: 6px;
+        height: 24px;
+    }
+    
+    .curtain-card-controls {
+        gap: 15px;
+        max-width: 280px;
+    }
+    
+    .curtain-card-separator {
+        height: 50px;
+    }
+}
+
+/* Desktop - 1025px a 1440px */
+@media (min-width: 1025px) and (max-width: 1440px) {
+    .curtain-card-btn {
+        width: 75px;
+        height: 75px;
+        border-radius: 13px;
+    }
+    
+    .curtain-card-btn img {
+        width: 46%;
+        height: 46%;
+    }
+    
+    .curtain-card-pause-line {
+        width: 7px;
+        height: 26px;
+    }
+    
+    .curtain-card-controls {
+        gap: 16px;
+        max-width: 300px;
+    }
+    
+    .curtain-card-separator {
+        height: 52px;
+    }
+}
+
+/* Desktop grande - acima de 1440px */
+@media (min-width: 1441px) {
+    .curtain-card-btn {
+        width: 80px;
+        height: 80px;
+        border-radius: 14px;
+    }
+    
+    .curtain-card-btn img {
+        width: 48%;
+        height: 48%;
+    }
+    
+    .curtain-card-pause-line {
+        width: 8px;
+        height: 28px;
+    }
+    
+    .curtain-card-controls {
+        gap: 18px;
+        max-width: 320px;
+    }
+    
+    .curtain-card-separator {
+        height: 55px;
+    }
+}
+
+/* === CONTAINERS SEPARADOS PARA TODAS AS PÁGINAS === */
+/* Container wrapper principal que organiza luzes e cortinas para todos os ambientes */
+.garden-page .garden-controls-wrapper,
+.reuniao-page .reuniao-controls-wrapper,
+.cafe-page .cafe-controls-wrapper,
+.entrada-page .entrada-controls-wrapper,
+.vitrine-page .vitrine-controls-wrapper {
+    position: absolute;
+    top: 115px;
+    left: 21px;
+    right: 21px;
+    bottom: 84px; /* navbar height */
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+    padding-bottom: 20px;
+}
+
+/* Desativar posicionamento absolute dos grids dentro dos wrappers de todos os ambientes */
+.garden-page .garden-controls-wrapper .controls-grid,
+.reuniao-page .reuniao-controls-wrapper .controls-grid,
+.cafe-page .cafe-controls-wrapper .controls-grid,
+.entrada-page .entrada-controls-wrapper .controls-grid,
+.vitrine-page .vitrine-controls-wrapper .controls-grid {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+}
+
+/* Sobrescrever grid-column dos cards de cortina em todas as páginas */
+.garden-page .control-card-curtain,
+.reuniao-page .control-card-curtain,
+.cafe-page .control-card-curtain {
+    grid-column: span 1 !important; /* Sempre 1 coluna nos novos layouts */
+}
+
+/* Container dos botões de luz para todos os ambientes */
+.garden-page .lights-container,
+.reuniao-page .lights-container,
+.entrada-page .lights-container,
+.vitrine-page .lights-container {
+    display: grid;
+    grid-template-columns: 1fr; /* Padrão mobile: 1 coluna */
+    grid-auto-rows: 131px;
+    gap: 10px;
+    align-items: start;
+    flex-shrink: 0;
+    position: relative !important; /* Override controls-grid absolute positioning */
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+}
+
+/* Container dos botões de cortina para ambientes que têm cortinas */
+.garden-page .curtains-container,
+.reuniao-page .curtains-container,
+.cafe-page .curtains-container {
+    display: grid;
+    grid-template-columns: 1fr; /* Padrão mobile: 1 coluna */
+    grid-auto-rows: 140px; /* Altura base ajustada para botões 80px */
+    gap: 10px;
+    align-items: start;
+    flex-shrink: 0;
+    position: relative !important; /* Override controls-grid absolute positioning */
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+}
+
+/* Layout responsivo - menor que 600px (mobile) para todos os ambientes */
+@media (max-width: 599px) {
+    .garden-page .garden-controls-wrapper,
+    .reuniao-page .reuniao-controls-wrapper,
+    .cafe-page .cafe-controls-wrapper,
+    .entrada-page .entrada-controls-wrapper,
+    .vitrine-page .vitrine-controls-wrapper {
+        gap: 10px;
+        align-items: stretch;
+    }
+    
+    /* Container de luzes: uma coluna */
+    .garden-page .lights-container,
+    .reuniao-page .lights-container,
+    .entrada-page .lights-container,
+    .vitrine-page .lights-container {
+        grid-template-columns: 1fr !important;
+        grid-auto-rows: 120px;
+        width: 100%;
+        margin-bottom: 0; /* Garante que não haja sobreposição */
+    }
+    
+    /* Container de cortinas: uma coluna (abaixo das luzes) */
+    .garden-page .curtains-container,
+    .reuniao-page .curtains-container,
+    .cafe-page .curtains-container {
+        grid-template-columns: 1fr !important;
+        grid-auto-rows: 140px; /* Altura ajustada para botões 80px */
+        width: 100%;
+        margin-top: 0; /* Garante que não haja sobreposição */
+    }
+    
+    .garden-page .control-card-curtain {
+        grid-column: span 1 !important;
+        height: 140px; /* Altura ajustada para botões 80px */
+        width: 100%;
+    }
+}
+
+/* Layout responsivo - maior que 600px (tablet/desktop) para todos os ambientes */
+@media (min-width: 600px) {
+    .garden-page .garden-controls-wrapper,
+    .reuniao-page .reuniao-controls-wrapper,
+    .cafe-page .cafe-controls-wrapper,
+    .entrada-page .entrada-controls-wrapper,
+    .vitrine-page .vitrine-controls-wrapper {
+        gap: 15px;
+        align-items: stretch;
+    }
+    
+    /* Container de luzes: grid adaptável baseado no número de luzes */
+    .garden-page .lights-container {
+        grid-template-columns: repeat(3, 1fr) !important; /* Garden: 3 luzes */
+    }
+    
+    .reuniao-page .lights-container {
+        grid-template-columns: repeat(3, 1fr) !important; /* Reunião: 3 luzes */
+    }
+    
+    .entrada-page .lights-container,
+    .vitrine-page .lights-container {
+        grid-template-columns: repeat(3, 1fr) !important; /* Entrada: 1 luz, Vitrine: 3 luzes */
+    }
+    
+    .garden-page .lights-container,
+    .reuniao-page .lights-container,
+    .entrada-page .lights-container,
+    .vitrine-page .lights-container {
+        width: 100%;
+        margin-bottom: 0; /* Garante que não haja sobreposição */
+    }
+    
+    /* Container de cortinas: duas colunas, uma linha (abaixo das luzes) */
+    .garden-page .curtains-container,
+    .reuniao-page .curtains-container {
+        grid-template-columns: repeat(2, 1fr) !important; /* 2 cortinas */
+    }
+    
+    .cafe-page .curtains-container {
+        grid-template-columns: 1fr !important; /* Café: só 1 cortina */
+    }
+    
+    .garden-page .curtains-container,
+    .reuniao-page .curtains-container,
+    .cafe-page .curtains-container {
+        grid-auto-rows: 140px; /* Altura ajustada para botões 80px */
+        width: 100%;
+        margin-top: 0; /* Garante que não haja sobreposição */
+    }
+    
+    .garden-page .control-card-curtain {
+        grid-column: span 1 !important;
+        height: 140px; /* Altura ajustada para botões 80px */
+        width: 100%;
+    }
+}
+
+/* Estilos para os controles de cortina em todos os ambientes */
+.garden-page .curtain-card-btn,
+.reuniao-page .curtain-card-btn,
+.cafe-page .curtain-card-btn {
+    width: 100px; /* Largura fixa */
+    height: 80px; /* Altura fixa */
+    border-radius: 14px;
+    flex-shrink: 0; /* Impede que diminua */
+}
+
+.garden-page .curtain-card-controls,
+.reuniao-page .curtain-card-controls,
+.cafe-page .curtain-card-controls {
+    gap: 8px; /* Espaçamento fixo entre botões */
+    max-width: 100%; /* Remover limitação de largura */
+    width: 100%; /* Ocupar toda a largura disponível */
+    padding: 0 20px; /* Adicionar padding lateral */
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Garantir centralização sempre */
+}
+
+.garden-page .curtain-card-separator,
+.reuniao-page .curtain-card-separator,
+.cafe-page .curtain-card-separator {
+    height: calc(60px + 2vw); /* Altura responsiva */
+    min-height: 60px;
+    max-height: 80px;
+}
+
+.garden-page .curtain-card-pause-line,
+.reuniao-page .curtain-card-pause-line,
+.cafe-page .curtain-card-pause-line {
+    width: calc(8px + 0.5vw); /* Largura responsiva */
+    height: calc(28px + 1vw); /* Altura responsiva */
+    min-width: 8px;
+    max-width: 12px;
+    min-height: 28px;
+    max-height: 36px;
+}
+
+.garden-page .curtain-card-title,
+.reuniao-page .curtain-card-title,
+.cafe-page .curtain-card-title {
+    font-size: 20px;
+    margin-bottom: 12px;
+    font-weight: 300;
+}
+
+.garden-page .curtain-card-btn img,
+.reuniao-page .curtain-card-btn img,
+.cafe-page .curtain-card-btn img {
+    width: 50% !important;
+    height: 50% !important;
+    object-fit: contain;
+}
+
+/* Ajustar ícones de luz para diferentes resoluções em todos os ambientes */
+@media (max-width: 599px) {
+    .garden-page .control-icon,
+    .reuniao-page .control-icon,
+    .entrada-page .control-icon,
+    .vitrine-page .control-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .garden-page .control-label,
+    .reuniao-page .control-label,
+    .entrada-page .control-label,
+    .vitrine-page .control-label {
+        font-size: 18px;
+    }
+    
+    /* Ajustar altura dos cards de luz em mobile */
+    .garden-page .control-card,
+    .reuniao-page .control-card,
+    .entrada-page .control-card,
+    .vitrine-page .control-card {
+        height: 120px;
+    }
+    
+    /* Controles de cortina em mobile para todos os ambientes */
+    .garden-page .curtain-card-btn,
+    .reuniao-page .curtain-card-btn,
+    .cafe-page .curtain-card-btn {
+        min-width: 100px !important; /* Largura mínima respeitada */
+        width: 100px !important;
+        height: 80px !important;
+        flex: 0 0 100px; /* Não cresce, não diminui, base 100px */
+    }
+    
+    .garden-page .curtain-card-controls,
+    .reuniao-page .curtain-card-controls,
+    .cafe-page .curtain-card-controls {
+        gap: 8px !important;
+        padding: 0 15px !important;
+        justify-content: center !important; /* Centralizar botões */
+    }
+    
+    .garden-page .control-card-curtain,
+    .reuniao-page .control-card-curtain,
+    .cafe-page .control-card-curtain {
+        height: 140px !important; /* Altura ajustada para botões 80px */
+    }
+}
+
+@media (min-width: 600px) {
+    .garden-page .control-icon,
+    .reuniao-page .control-icon,
+    .entrada-page .control-icon,
+    .vitrine-page .control-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .garden-page .control-label,
+    .reuniao-page .control-label,
+    .entrada-page .control-label,
+    .vitrine-page .control-label {
+        font-size: 16px;
+    }
+    
+    /* Manter altura padrão dos cards de luz */
+    .garden-page .control-card,
+    .reuniao-page .control-card,
+    .entrada-page .control-card,
+    .vitrine-page .control-card {
+        height: 131px;
+    }
+    
+    /* Controles de cortina em desktop para todos os ambientes */
+    .garden-page .curtain-card-btn,
+    .reuniao-page .curtain-card-btn,
+    .cafe-page .curtain-card-btn {
+        width: 100px !important; /* Largura fixa */
+        height: 80px !important; /* Altura fixa */
+        flex: 0 0 auto;
+    }
+    
+    .garden-page .curtain-card-controls,
+    .reuniao-page .curtain-card-controls,
+    .cafe-page .curtain-card-controls {
+        gap: 8px !important; /* Espaçamento fixo */
+        padding: 0 30px !important;
+        justify-content: center !important; /* Centralizar botões */
+    }
+    
+    .garden-page .control-card-curtain,
+    .reuniao-page .control-card-curtain,
+    .cafe-page .control-card-curtain {
+        height: 140px !important; /* Altura ajustada para botões 80px */
+    }
+}
+
+@media (min-width: 900px) {
+    .garden-page .control-icon,
+    .reuniao-page .control-icon,
+    .entrada-page .control-icon,
+    .vitrine-page .control-icon {
+        width: 55px;
+        height: 55px;
+    }
+    
+    .garden-page .control-label,
+    .reuniao-page .control-label,
+    .entrada-page .control-label,
+    .vitrine-page .control-label {
+        font-size: 18px;
+    }
+    
+    /* Controles de cortina em telas grandes para todos os ambientes */
+    .garden-page .curtain-card-btn,
+    .reuniao-page .curtain-card-btn,
+    .cafe-page .curtain-card-btn {
+        width: 100px !important; /* Largura fixa */
+        height: 80px !important; /* Altura fixa */
+        border-radius: 18px !important;
+        flex: 0 0 auto;
+    }
+    
+    .garden-page .curtain-card-controls,
+    .reuniao-page .curtain-card-controls,
+    .cafe-page .curtain-card-controls {
+        gap: 8px !important; /* Espaçamento fixo */
+        padding: 0 40px !important;
+        justify-content: center !important; /* Centralizar botões */
+    }
+    
+    .garden-page .control-card-curtain,
+    .reuniao-page .control-card-curtain,
+    .cafe-page .control-card-curtain {
+        height: 140px !important; /* Altura ajustada para botões 80px */
+    }
+    
+    .garden-page .curtain-card-title {
+        font-size: 22px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .garden-page .curtain-card-separator {
+        height: 70px !important;
+    }
+    
+    .garden-page .curtain-card-pause-line {
+        width: 10px !important;
+        height: 32px !important;
+    }
+}

@@ -72,7 +72,8 @@ function toggleTvIcon(el) {
 function toggleRoomControl(el) {
     const ICON_ON = 'images/icons/icon-small-light-on.svg';
     const ICON_OFF = 'images/icons/icon-small-light-off.svg';
-    const img = el.querySelector('.room-control-icon');
+    // Suporta tanto room-control-icon quanto control-icon
+    const img = el.querySelector('.room-control-icon, .control-icon');
     const isOff = (el.dataset.state || 'off') === 'off';
     const newState = isOff ? 'on' : 'off';
     const deviceId = el.dataset.deviceId;
