@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 2000 2000">
+  <!-- Generator: Adobe Illustrator 29.7.1, SVG Export Plug-In . SVG Version: 2.1.1 Build 8)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: none;
+        stroke-width: 30px;
+      }
+
+      .st0, .st1 {
+        stroke: #fff;
+        stroke-miterlimit: 10;
+      }
+
+      .st1 {
+        fill: #fff;
+        opacity: .5;
+      }
+    </style>
+  </defs>
+  <g id="Camada_2">
+    <rect class="st1" x="327.69" y="460.28" width="1291.2" height="957.54"/>
+  </g>
+  <g id="Camada_1">
+    <rect class="st0" x="215.36" y="290.2" width="1539.78" height="170.08"/>
+    <rect class="st0" x="297.67" y="1424.57" width="1351.24" height="101.29" rx="36.14" ry="36.14"/>
+    <line class="st0" x1="327.69" y1="472.76" x2="327.69" y2="1420.09"/>
+    <line class="st0" x1="1618.89" y1="471.76" x2="1618.89" y2="1415.55"/>
+    <line class="st0" x1="1680.31" y1="1285.72" x2="1680.22" y2="460.28"/>
+    <circle class="st0" cx="1680.22" cy="1331.88" r="46.16"/>
+    <rect class="st0" x="354.76" y="1526.67" width="1234.28" height="89.24"/>
+  </g>
+</svg>

@@ -822,6 +822,37 @@ function anyOn(deviceIds) {
     return (deviceIds || []).some(id => (getStoredState(id) || 'off') === 'on');
 }
 
+// Função auxiliar para verificar se alguma cortina está aberta
+function anyCurtainOpen(curtainIds) {
+    // Para cortinas, assumimos que começam fechadas e precisamos verificar estado
+    // Por enquanto, vamos usar uma lógica simples baseada em comandos recentes
+    return (curtainIds || []).some(id => {
+        const lastCommand = getLastCurtainCommand(id);
+        return lastCommand === 'open';
+    });
+}
+
+// Função para obter o último comando de cortina
+function getLastCurtainCommand(curtainId) {
+    // Buscar no localStorage ou usar um estado padrão
+    return localStorage.getItem(`curtain_${curtainId}_state`) || 'close';
+}
+
+// Função para armazenar o estado da cortina
+function setCurtainState(curtainId, state) {
+    localStorage.setItem(`curtain_${curtainId}_state`, state);
+}
+
+// Função para obter estado da cortina
+function getCurtainState(curtainId) {
+    try {
+        return localStorage.getItem(`curtain_${curtainId}_state`) || 'closed';
+    } catch (error) {
+        console.error('❌ Erro ao obter estado da cortina:', error);
+        return 'closed';
+    }
+}
+
 function setMasterIcon(btn, state, forceUpdate = false) {
     // Não atualizar se estiver com comando pendente (exceto se forçado)
     if (!forceUpdate && btn.dataset.pending === 'true') {
@@ -843,10 +874,63 @@ function setMasterIcon(btn, state, forceUpdate = false) {
 }
 
 function initHomeMasters() {
+    // Inicializar botões master de luzes
     document.querySelectorAll('.room-master-btn').forEach(btn => {
         const ids = (btn.dataset.deviceIds || '').split(',').filter(Boolean);
         const state = anyOn(ids) ? 'on' : 'off';
         setMasterIcon(btn, state, true); // forçar na inicialização
+    });
+    
+    // Inicializar botões master de cortinas
+    document.querySelectorAll('.room-curtain-master-btn').forEach(btn => {
+        const curtainIds = (btn.dataset.curtainIds || '').split(',').filter(Boolean);
+        const state = anyCurtainOpen(curtainIds) ? 'open' : 'close';
+        setCurtainMasterIcon(btn, state, true); // forçar na inicialização
+    });
+}
+
+// Função para definir o ícone do botão master de cortinas
+function setCurtainMasterIcon(btn, state, forceUpdate = false) {
+    // Não atualizar se estiver com comando pendente (exceto se forçado)
+    if (!forceUpdate && btn.dataset.pending === 'true') {
+        console.log('🔒 Curtain master button pendente, ignorando atualização');
+        return;
+    }
+    
+    const img = btn.querySelector('img');
+    if (!img) return;
+    
+    const newSrc = (state === 'open') ? 'images/icons/curtain-open.svg' : 'images/icons/curtain-closed.svg';
+    const currentSrc = img.src;
+    
+    if (!currentSrc.includes(newSrc.split('/').pop())) {
+        img.src = newSrc;
+        btn.dataset.state = state;
+        console.log(`🎨 Curtain master icon atualizado: ${state}`);
+    }
+}
+
+// Função para definir o estado de loading do botão master de cortinas
+function setCurtainMasterButtonLoading(btn, loading) {
+    btn.dataset.loading = loading ? 'true' : 'false';
+    if (loading) {
+        btn.classList.add('loading');
+        btn.dataset.pending = 'true';
+    } else {
+        btn.classList.remove('loading');
+        btn.dataset.pending = 'false';
+    }
+}
+
+// Função para atualizar ícones das cortinas individuais
+function updateIndividualCurtainButtons(curtainIds, command) {
+    curtainIds.forEach(curtainId => {
+        const button = document.querySelector(`[data-device-id="${curtainId}"]`);
+        if (button && button.querySelector('.device-icon')) {
+            const icon = button.querySelector('.device-icon');
+            icon.src = command === 'open' ? 'images/icons/curtain-open.svg' : 'images/icons/curtain-closed.svg';
+            icon.alt = command === 'open' ? 'Cortina Aberta' : 'Cortina Fechada';
+        }
     });
 }
 
@@ -895,6 +979,59 @@ function onHomeMasterClick(event, button) {
         // Remover loading após comandos
         setTimeout(() => {
             setMasterButtonLoading(button, false);
+        }, 1000); // 1 segundo de delay para feedback visual
+    });
+}
+
+// Função chamada pelo onclick dos botões master de cortinas na home
+function onHomeCurtainMasterClick(event, button) {
+    console.log('🖱️ onHomeCurtainMasterClick chamada!', button);
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Verificar se já está carregando
+    if (button.dataset.loading === 'true') {
+        console.log('⏸️ Botão de cortina já está carregando, ignorando clique');
+        return;
+    }
+    
+    const curtainIds = (button.dataset.curtainIds || '').split(',').filter(Boolean);
+    console.log('🔍 Curtain IDs encontrados:', curtainIds);
+    
+    if (curtainIds.length === 0) {
+        console.log('❌ Nenhum curtain ID encontrado');
+        return;
+    }
+    
+    // Determinar comando baseado no estado atual das cortinas
+    const currentState = anyCurtainOpen(curtainIds) ? 'open' : 'closed';
+    const newCommand = currentState === 'open' ? 'close' : 'open';
+    console.log('🎯 Comando de cortina determinado:', currentState, '→', newCommand);
+    
+    // Ativar loading visual
+    console.log('🔄 Ativando loading visual no botão de cortina...');
+    setCurtainMasterButtonLoading(button, true);
+    
+    // Atualizar UI imediatamente
+    setCurtainMasterIcon(button, newCommand);
+    
+    // Atualizar ícones dos botões individuais imediatamente
+    updateIndividualCurtainButtons(curtainIds, newCommand);
+    
+    // Enviar comandos para todas as cortinas
+    const promises = curtainIds.map(curtainId => {
+        // Marcar comando recente
+        recentCommands.set(curtainId, Date.now());
+        // Armazenar o estado da cortina
+        setCurtainState(curtainId, newCommand);
+        return sendHubitatCommand(curtainId, newCommand);
+    });
+    
+    // Aguardar conclusão de todos os comandos
+    Promise.allSettled(promises).finally(() => {
+        // Remover loading após comandos
+        setTimeout(() => {
+            setCurtainMasterButtonLoading(button, false);
         }, 1000); // 1 segundo de delay para feedback visual
     });
 }

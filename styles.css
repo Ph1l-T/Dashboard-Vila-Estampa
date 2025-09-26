@@ -174,6 +174,60 @@
     float: none !important;
 }
 
+/* Botão Master para Cortinas */
+.room-curtain-master-btn {
+    position: absolute;
+    bottom: 16px;
+    left: 88px; /* Posicionado ao lado do botão de luz (72px + 16px margin) */
+    width: 72px;
+    height: 72px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    z-index: 11;
+    transition: transform .08s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+.room-curtain-master-btn:hover:not(.loading) { 
+    transform: scale(1.04); 
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.room-curtain-master-btn:active:not(.loading) { 
+    transform: translateY(2px) scale(0.98);
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.room-curtain-master-btn img { 
+    width: 56px !important; 
+    height: 56px !important; 
+    filter: brightness(0) invert(1);
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    object-fit: contain;
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    float: none !important;
+}
+
 /* Estados de loading para botões master */
 .room-master-btn.loading {
     pointer-events: none;
@@ -190,9 +244,35 @@
     transition: all 0.2s ease !important;
 }
 
+/* Estados de loading para botões master das cortinas */
+.room-curtain-master-btn.loading {
+    pointer-events: none;
+    opacity: 0.6 !important;
+    position: absolute !important;
+    bottom: 16px !important;
+    left: 88px !important;
+    transform: translateY(2px) scale(0.95) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.2s ease !important;
+}
+
 /* Remover spinner - agora usa efeito pressionado */
 
 .room-master-btn.loading img {
+    opacity: 0.4 !important;
+    filter: brightness(0) invert(1) brightness(0.7) !important;
+    transform: none !important;
+    display: block;
+    margin: 0;
+    padding: 0;
+    object-fit: contain;
+}
+
+.room-curtain-master-btn.loading img {
     opacity: 0.4 !important;
     filter: brightness(0) invert(1) brightness(0.7) !important;
     transform: none !important;
@@ -217,6 +297,14 @@
 /* Garantir que hover/active não funcionem durante loading */
 .room-master-btn.loading:hover,
 .room-master-btn.loading:active {
+    transform: translateY(2px) scale(0.95) !important;
+    opacity: 0.6 !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.room-curtain-master-btn.loading:hover,
+.room-curtain-master-btn.loading:active {
     transform: translateY(2px) scale(0.95) !important;
     opacity: 0.6 !important;
     background: rgba(255, 255, 255, 0.08) !important;

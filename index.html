@@ -650,14 +650,25 @@
                     'cafe': [],
                     'garagem': []
                 };
+                const roomCurtains = {
+                    'entrada': [],
+                    'garden': ['21','22'],
+                    'reuniao': ['39','40'],
+                    'vitrine': [],
+                    'cafe': ['38'],
+                    'garagem': []
+                };
                 list.innerHTML = visible.map(r => {
                     const hasPhoto = Boolean(photoMap[r.route]);
                     const ids = roomDevices[r.route] || [];
+                    const curtainIds = roomCurtains[r.route] || [];
+                    const hasCurtains = curtainIds.length > 0;
                     return `
                     <div class="room-card ${hasPhoto ? 'has-photo' : ''}">
                         ${hasPhoto ? `<img src="${photoMap[r.route]}" alt="${r.name}">` : ''}
                         <span>${r.name}</span>
                         <button class="room-master-btn" data-route="${r.route}" data-device-ids="${(ids||[]).join(',')}" onclick="onHomeMasterClick(event,this)" aria-label="Master"><img class="room-master-icon" src="images/icons/icon-small-light-off.svg" alt="Master"></button>
+                        ${hasCurtains ? `<button class="room-curtain-master-btn" data-route="${r.route}" data-curtain-ids="${curtainIds.join(',')}" onclick="onHomeCurtainMasterClick(event,this)" aria-label="Curtain Master"><img class="room-curtain-master-icon" src="images/icons/curtain-closed.svg" alt="Cortinas"></button>` : ''}
                         <button class="room-card-link" onclick="spaNavigate('${r.route}')"></button>
                     </div>`;
                 }).join('');
