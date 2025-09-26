@@ -835,7 +835,8 @@ function anyCurtainOpen(curtainIds) {
 // Função para obter o último comando de cortina
 function getLastCurtainCommand(curtainId) {
     // Buscar no localStorage ou usar um estado padrão
-    return localStorage.getItem(`curtain_${curtainId}_state`) || 'close';
+    const state = localStorage.getItem(`curtain_${curtainId}_state`) || 'closed';
+    return state === 'closed' ? 'close' : 'open'; // normalizar para comando
 }
 
 // Função para armazenar o estado da cortina
@@ -1004,16 +1005,17 @@ function onHomeCurtainMasterClick(event, button) {
     }
     
     // Determinar comando baseado no estado atual das cortinas
+    console.log('🔍 Verificando estados individuais das cortinas:', curtainIds.map(id => ({id, state: getCurtainState(id)})));
     const currentState = anyCurtainOpen(curtainIds) ? 'open' : 'closed';
     const newCommand = currentState === 'open' ? 'close' : 'open';
     console.log('🎯 Comando de cortina determinado:', currentState, '→', newCommand);
     
+    // Atualizar UI imediatamente (antes do loading)
+    setCurtainMasterIcon(button, newCommand, true); // forçar atualização
+    
     // Ativar loading visual
     console.log('🔄 Ativando loading visual no botão de cortina...');
     setCurtainMasterButtonLoading(button, true);
-    
-    // Atualizar UI imediatamente
-    setCurtainMasterIcon(button, newCommand);
     
     // Atualizar ícones dos botões individuais imediatamente
     updateIndividualCurtainButtons(curtainIds, newCommand);

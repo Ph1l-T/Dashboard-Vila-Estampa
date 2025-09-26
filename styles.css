@@ -207,7 +207,7 @@
 }
 
 .room-curtain-master-btn:active:not(.loading) { 
-    transform: translateY(2px) scale(0.98);
+    transform: scale(0.96);
     background: rgba(255, 255, 255, 0.2);
     border-color: rgba(255, 255, 255, 0.4);
 }
@@ -251,7 +251,7 @@
     opacity: 0.6 !important;
     position: absolute !important;
     bottom: 16px !important;
-    left: 88px !important;
+    left: 103px !important;
     transform: translateY(2px) scale(0.95) !important;
     background: rgba(255, 255, 255, 0.08) !important;
     border-color: rgba(255, 255, 255, 0.15) !important;
