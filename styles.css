@@ -178,7 +178,7 @@
 .room-curtain-master-btn {
     position: absolute;
     bottom: 16px;
-    left: 88px; /* Posicionado ao lado do botão de luz (72px + 16px margin) */
+    left: 103px; /* Posicionado com 15px de distância do botão de luz (16px + 72px + 15px) */
     width: 72px;
     height: 72px;
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -195,6 +195,7 @@
     margin: 0;
     box-sizing: border-box;
     z-index: 11;
+    transform-origin: center center; /* Garante que transformações sejam do centro */
     transition: transform .08s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
 
