@@ -513,15 +513,12 @@ function renderCurtainControlCard(curtain, environment) {
             <div class="curtain-tile__actions">
                 <button class="curtain-tile__btn" data-device-id="${deviceId}" onclick="curtainAction(this, 'open')" aria-label="Abrir ${title}">
                     <img src="images/icons/arrow-up.svg" alt="Abrir">
-                    <span>Abrir</span>
                 </button>
                 <button class="curtain-tile__btn" data-device-id="${deviceId}" onclick="curtainAction(this, 'stop')" aria-label="Parar ${title}">
                     <div class="curtain-tile__icon-pause"><span></span><span></span></div>
-                    <span>Pausar</span>
                 </button>
                 <button class="curtain-tile__btn" data-device-id="${deviceId}" onclick="curtainAction(this, 'close')" aria-label="Fechar ${title}">
                     <img src="images/icons/arrow-down.svg" alt="Fechar">
-                    <span>Fechar</span>
                 </button>
             </div>
         </article>`;

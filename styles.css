@@ -2343,15 +2343,11 @@ body.app-info-open {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 12px;
+    padding: 16px 12px;
+    min-height: 56px;
     border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.16);
     background: rgba(0, 0, 0, 0.35);
-    color: #f3f3f3;
-    font-size: 0.85rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
     cursor: pointer;
     transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
@@ -2407,26 +2403,25 @@ body.app-info-open {
     }
 }
 
-/* Tablet - mantém texto mas ajusta layout */
+/* Tablet - ajustes específicos */
 @media (max-width: 768px) and (min-width: 521px) {
     .curtain-tile__btn {
-        height: 50px;
-        min-height: 50px;
-        padding: 12px 10px;
-        gap: 4px;
+        min-height: 52px;
+        padding: 14px 10px;
     }
     
     .curtain-tile__btn img {
-        width: 20px;
-        height: 20px;
+        width: 22px;
+        height: 22px;
     }
     
-    .curtain-tile__btn span {
-        font-size: 0.75rem;
+    .curtain-tile__icon-pause {
+        width: 22px;
+        height: 22px;
     }
 }
 
-/* Mobile - remove texto e aumenta altura */
+/* Mobile - ajustes específicos para tela pequena */
 @media (max-width: 520px) {
     .curtain-tile__actions {
         grid-template-columns: 1fr;
@@ -2440,32 +2435,25 @@ body.app-info-open {
         height: 64px;
         min-height: 64px;
         padding: 18px 12px;
-        gap: 0;
-    }
-    
-    .curtain-tile__btn span {
-        display: none; /* Remove o texto em mobile */
     }
     
     .curtain-tile__btn img {
-        width: 26px;
-        height: 26px;
-        margin: 0; /* Remove margens para centralizar perfeitamente */
+        width: 28px;
+        height: 28px;
     }
     
     .curtain-tile__icon-pause {
-        margin: 0; /* Remove margens do ícone de pause */
-        width: 26px;
-        height: 26px;
+        width: 28px;
+        height: 28px;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 4px; /* Reduz o gap entre as barras */
+        gap: 4px;
     }
     
     .curtain-tile__icon-pause span {
-        width: 4px;
-        height: 18px;
+        width: 5px;
+        height: 20px;
     }
 }
 
