@@ -2407,13 +2407,65 @@ body.app-info-open {
     }
 }
 
+/* Tablet - mantém texto mas ajusta layout */
+@media (max-width: 768px) and (min-width: 521px) {
+    .curtain-tile__btn {
+        height: 50px;
+        min-height: 50px;
+        padding: 12px 10px;
+        gap: 4px;
+    }
+    
+    .curtain-tile__btn img {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .curtain-tile__btn span {
+        font-size: 0.75rem;
+    }
+}
+
+/* Mobile - remove texto e aumenta altura */
 @media (max-width: 520px) {
     .curtain-tile__actions {
         grid-template-columns: 1fr;
+        gap: 8px;
     }
+    
     .curtain-tile__btn {
-        flex-direction: row;
-        justify-content: flex-start;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 64px;
+        min-height: 64px;
+        padding: 18px 12px;
+        gap: 0;
+    }
+    
+    .curtain-tile__btn span {
+        display: none; /* Remove o texto em mobile */
+    }
+    
+    .curtain-tile__btn img {
+        width: 26px;
+        height: 26px;
+        margin: 0; /* Remove margens para centralizar perfeitamente */
+    }
+    
+    .curtain-tile__icon-pause {
+        margin: 0; /* Remove margens do ícone de pause */
+        width: 26px;
+        height: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px; /* Reduz o gap entre as barras */
+    }
+    
+    .curtain-tile__icon-pause span {
+        width: 4px;
+        height: 18px;
     }
 }
 
