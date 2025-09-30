@@ -66,7 +66,31 @@
     margin-top: 20px;
 }
 
-/* Lista de cÃƒÂ´modos na Home */
+/* Lista de cÃ´modos na Home */
+.rooms-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    margin-top: 0;
+}
+
+/* Responsivo: duas colunas em tablets/desktop */
+@media (min-width: 768px) {
+    .rooms-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        align-items: stretch;
+        padding: 0 16px;
+    }
+
+    .room-card {
+        width: 100%;
+    }
+}
+
+/* Container principal das cortinas */
 .curtains-section {
     width: 100%;
     margin-top: 15px;
@@ -1728,29 +1752,6 @@ html, body {
     left: auto !important;
     right: auto !important;
     bottom: auto !important;
-}
-
-/* Container principal das cortinas - seção separada */
-.curtains-section {
-    width: 100%;
-    margin-top: 15px;
-}
-
-/* Container da seção de cortinas */
-.curtains-section {
-    width: 100%;
-    margin-top: 15px;
-}
-
-/* Override para .controls-grid dentro de .curtains-section */
-.curtains-section .controls-grid {
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
-    bottom: auto !important;
-    width: 100% !important;
-    height: auto !important;
 }
 
 /* Layout responsivo para cortinas em telas maiores */
