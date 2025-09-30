@@ -495,7 +495,7 @@
             key: 'cafe',
             name: 'Café',
             curtains: [
-                { deviceId: '38', title: 'Cortina Cafe' }
+                { deviceId: '38', title: 'Cortina Corredor' }
             ]
         }
     ];
@@ -854,35 +854,31 @@ curtains: () => `
 
         <div class="controls-grid curtains-container">
 
-        <div class="control-card-curtain" data-device-id="42" data-no-sync="true">
+        <article class="curtain-tile" data-device-id="42" data-environment="Garden">
 
-            <div class="curtain-card-title">Cortina Esquerda</div>
+            <header class="curtain-tile__header">
 
-            <div class="curtain-card-controls">
+                <span class="curtain-tile__env">Garden</span>
 
-                <button class="curtain-card-btn" data-device-id="42" onclick="curtainAction(this, 'open')">
+                <h3 class="curtain-tile__title">Cortina Esquerda</h3>
+
+            </header>
+
+            <div class="curtain-tile__actions">
+
+                <button class="curtain-tile__btn" data-device-id="42" onclick="curtainAction(this, 'open')" aria-label="Abrir Cortina Esquerda">
 
                     <img src="images/icons/arrow-up.svg" alt="Abrir">
 
                 </button>
 
-                <div class="curtain-card-separator"></div>
+                <button class="curtain-tile__btn" data-device-id="42" onclick="curtainAction(this, 'stop')" aria-label="Parar Cortina Esquerda">
 
-                <button class="curtain-card-btn" data-device-id="42" onclick="curtainAction(this, 'stop')">
-
-                    <div class="curtain-card-pause">
-
-                        <div class="curtain-card-pause-line"></div>
-
-                        <div class="curtain-card-pause-line"></div>
-
-                    </div>
+                    <div class="curtain-tile__icon-pause"><span></span><span></span></div>
 
                 </button>
 
-                <div class="curtain-card-separator"></div>
-
-                <button class="curtain-card-btn" data-device-id="42" onclick="curtainAction(this, 'close')">
+                <button class="curtain-tile__btn" data-device-id="42" onclick="curtainAction(this, 'close')" aria-label="Fechar Cortina Esquerda">
 
                     <img src="images/icons/arrow-down.svg" alt="Fechar">
 
@@ -890,39 +886,35 @@ curtains: () => `
 
             </div>
 
-        </div>
+        </article>
 
         
 
-        <div class="control-card-curtain" data-device-id="43" data-no-sync="true">
+        <article class="curtain-tile" data-device-id="43" data-environment="Garden">
 
-            <div class="curtain-card-title">Cortina Direita</div>
+            <header class="curtain-tile__header">
 
-            <div class="curtain-card-controls">
+                <span class="curtain-tile__env">Garden</span>
 
-                <button class="curtain-card-btn" data-device-id="43" onclick="curtainAction(this, 'open')">
+                <h3 class="curtain-tile__title">Cortina Direita</h3>
+
+            </header>
+
+            <div class="curtain-tile__actions">
+
+                <button class="curtain-tile__btn" data-device-id="43" onclick="curtainAction(this, 'open')" aria-label="Abrir Cortina Direita">
 
                     <img src="images/icons/arrow-up.svg" alt="Abrir">
 
                 </button>
 
-                <div class="curtain-card-separator"></div>
+                <button class="curtain-tile__btn" data-device-id="43" onclick="curtainAction(this, 'stop')" aria-label="Parar Cortina Direita">
 
-                <button class="curtain-card-btn" data-device-id="43" onclick="curtainAction(this, 'stop')">
-
-                    <div class="curtain-card-pause">
-
-                        <div class="curtain-card-pause-line"></div>
-
-                        <div class="curtain-card-pause-line"></div>
-
-                    </div>
+                    <div class="curtain-tile__icon-pause"><span></span><span></span></div>
 
                 </button>
 
-                <div class="curtain-card-separator"></div>
-
-                <button class="curtain-card-btn" data-device-id="43" onclick="curtainAction(this, 'close')">
+                <button class="curtain-tile__btn" data-device-id="43" onclick="curtainAction(this, 'close')" aria-label="Fechar Cortina Direita">
 
                     <img src="images/icons/arrow-down.svg" alt="Fechar">
 
@@ -930,7 +922,7 @@ curtains: () => `
 
             </div>
 
-        </div>
+        </article>
 
     </div>
 
@@ -994,35 +986,31 @@ curtains: () => `
 
         <div class="controls-grid curtains-container">
 
-            <div class="control-card-curtain" data-device-id="39" data-no-sync="true">
+            <article class="curtain-tile" data-device-id="39" data-environment="Reunião">
 
-                <div class="curtain-card-title">Cortina Interna</div>
+                <header class="curtain-tile__header">
 
-                <div class="curtain-card-controls">
+                    <span class="curtain-tile__env">Reunião</span>
 
-                    <button class="curtain-card-btn" data-device-id="39" onclick="curtainAction(this, 'open')">
+                    <h3 class="curtain-tile__title">Cortina Interna</h3>
+
+                </header>
+
+                <div class="curtain-tile__actions">
+
+                    <button class="curtain-tile__btn" data-device-id="39" onclick="curtainAction(this, 'open')" aria-label="Abrir Cortina Interna">
 
                         <img src="images/icons/arrow-left.svg" alt="Abrir">
 
                     </button>
 
-                    <div class="curtain-card-separator"></div>
+                    <button class="curtain-tile__btn" data-device-id="39" onclick="curtainAction(this, 'stop')" aria-label="Parar Cortina Interna">
 
-                    <button class="curtain-card-btn" data-device-id="39" onclick="curtainAction(this, 'stop')">
-
-                        <div class="curtain-card-pause">
-
-                            <div class="curtain-card-pause-line"></div>
-
-                            <div class="curtain-card-pause-line"></div>
-
-                        </div>
+                        <div class="curtain-tile__icon-pause"><span></span><span></span></div>
 
                     </button>
 
-                    <div class="curtain-card-separator"></div>
-
-                    <button class="curtain-card-btn" data-device-id="39" onclick="curtainAction(this, 'close')">
+                    <button class="curtain-tile__btn" data-device-id="39" onclick="curtainAction(this, 'close')" aria-label="Fechar Cortina Interna">
 
                         <img src="images/icons/arrow-right.svg" alt="Fechar">
 
@@ -1030,37 +1018,33 @@ curtains: () => `
 
                 </div>
 
-            </div>
+            </article>
 
-            <div class="control-card-curtain" data-device-id="40" data-no-sync="true">
+            <article class="curtain-tile" data-device-id="40" data-environment="Reunião">
 
-                <div class="curtain-card-title">Cortina Externa</div>
+                <header class="curtain-tile__header">
 
-                <div class="curtain-card-controls">
+                    <span class="curtain-tile__env">Reunião</span>
 
-                    <button class="curtain-card-btn" data-device-id="40" onclick="curtainAction(this, 'open')">
+                    <h3 class="curtain-tile__title">Cortina Externa</h3>
+
+                </header>
+
+                <div class="curtain-tile__actions">
+
+                    <button class="curtain-tile__btn" data-device-id="40" onclick="curtainAction(this, 'open')" aria-label="Abrir Cortina Externa">
 
                         <img src="images/icons/arrow-up.svg" alt="Abrir">
 
                     </button>
 
-                    <div class="curtain-card-separator"></div>
+                    <button class="curtain-tile__btn" data-device-id="40" onclick="curtainAction(this, 'stop')" aria-label="Parar Cortina Externa">
 
-                    <button class="curtain-card-btn" data-device-id="40" onclick="curtainAction(this, 'stop')">
-
-                        <div class="curtain-card-pause">
-
-                            <div class="curtain-card-pause-line"></div>
-
-                            <div class="curtain-card-pause-line"></div>
-
-                        </div>
+                        <div class="curtain-tile__icon-pause"><span></span><span></span></div>
 
                     </button>
 
-                    <div class="curtain-card-separator"></div>
-
-                    <button class="curtain-card-btn" data-device-id="40" onclick="curtainAction(this, 'close')">
+                    <button class="curtain-tile__btn" data-device-id="40" onclick="curtainAction(this, 'close')" aria-label="Fechar Cortina Externa">
 
                         <img src="images/icons/arrow-down.svg" alt="Fechar">
 
@@ -1068,7 +1052,7 @@ curtains: () => `
 
                 </div>
 
-            </div>
+            </article>
 
         </div>
 
@@ -1102,35 +1086,31 @@ curtains: () => `
 
         <div class="controls-grid curtains-container">
 
-            <div class="control-card-curtain" data-device-id="38" data-no-sync="true">
+            <article class="curtain-tile" data-device-id="38" data-environment="Café">
 
-                <div class="curtain-card-title">Cortina Café</div>
+                <header class="curtain-tile__header">
 
-                <div class="curtain-card-controls">
+                    <span class="curtain-tile__env">Café</span>
 
-                    <button class="curtain-card-btn" data-device-id="38" onclick="curtainAction(this, 'open')">
+                    <h3 class="curtain-tile__title">Cortina Corredor</h3>
+
+                </header>
+
+                <div class="curtain-tile__actions">
+
+                    <button class="curtain-tile__btn" data-device-id="38" onclick="curtainAction(this, 'open')" aria-label="Abrir Cortina Corredor">
 
                         <img src="images/icons/arrow-up.svg" alt="Abrir">
 
                     </button>
 
-                    <div class="curtain-card-separator"></div>
+                    <button class="curtain-tile__btn" data-device-id="38" onclick="curtainAction(this, 'stop')" aria-label="Parar Cortina Corredor">
 
-                    <button class="curtain-card-btn" data-device-id="38" onclick="curtainAction(this, 'stop')">
-
-                        <div class="curtain-card-pause">
-
-                            <div class="curtain-card-pause-line"></div>
-
-                            <div class="curtain-card-pause-line"></div>
-
-                        </div>
+                        <div class="curtain-tile__icon-pause"><span></span><span></span></div>
 
                     </button>
 
-                    <div class="curtain-card-separator"></div>
-
-                    <button class="curtain-card-btn" data-device-id="38" onclick="curtainAction(this, 'close')">
+                    <button class="curtain-tile__btn" data-device-id="38" onclick="curtainAction(this, 'close')" aria-label="Fechar Cortina Corredor">
 
                         <img src="images/icons/arrow-down.svg" alt="Fechar">
 
@@ -1138,7 +1118,7 @@ curtains: () => `
 
                 </div>
 
-            </div>
+            </article>
 
         </div>
 
