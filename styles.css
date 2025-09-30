@@ -67,46 +67,50 @@
 }
 
 /* Lista de cÃƒÂ´modos na Home */
-.rooms-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    margin-top: 0;
-}
-
-/* Responsivo: duas colunas em tablets/desktop */
-@media (min-width: 768px) {
-    .rooms-list {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-        align-items: stretch;
-        padding: 0 16px;
-    }
-    .room-card {
-        width: 100%;
-    }
-}
-
-.room-card {
+.curtains-section {
     width: 100%;
-    height: 300px;
-    background: #222;
-    position: relative;
-    overflow: hidden;
+    margin-top: 15px;
+}
+
+/* Override para .controls-grid dentro de .curtains-section */
+.curtains-section .controls-grid {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    gap: 12px;
+}
+
+/* Container dos botões de cortina para ambientes que têm cortinas */
+.garden-page .curtains-container,
+.reuniao-page .curtains-container,
+.cafe-page .curtains-container {
+    display: grid;
+    grid-template-columns: 1fr; /* Padrão mobile: 1 coluna */
+    grid-auto-rows: minmax(160px, auto); /* Permite altura variável sem sobreposição */
+    gap: 12px;
+    align-items: start;
+    flex-shrink: 0;
+    position: relative !important; /* Override controls-grid absolute positioning */
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
 }
 
 .room-card img {
-    position: absolute;
-    left: 0;
-    top: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    z-index: 0;
+    transition: opacity 0.3s ease;
+}
+
+.room-card img:hover {
     opacity: 0.85;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s ease;
 }
 
 .room-card span {
@@ -1732,14 +1736,44 @@ html, body {
     margin-top: 15px;
 }
 
+/* Container da seção de cortinas */
+.curtains-section {
+    width: 100%;
+    margin-top: 15px;
+}
+
+/* Override para .controls-grid dentro de .curtains-section */
+.curtains-section .controls-grid {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    height: auto !important;
+}
+
+/* Layout responsivo para cortinas em telas maiores */
+@media (min-width: 521px) {
+    .garden-page .curtains-section .curtains-container,
+    .reuniao-page .curtains-section .curtains-container {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 15px !important;
+    }
+    
+    .cafe-page .curtains-section .curtains-container {
+        grid-template-columns: 1fr !important;
+    }
+}
+
 /* Container dos botÃµes de cortina para ambientes que tÃªm cortinas */
 .garden-page .curtains-container,
 .reuniao-page .curtains-container,
 .cafe-page .curtains-container {
     display: grid;
     grid-template-columns: 1fr; /* PadrÃ£o mobile: 1 coluna */
-    grid-auto-rows: 140px; /* Altura base ajustada para botÃµes 80px */
-    gap: 10px;
+    grid-auto-rows: minmax(160px, auto);
+    gap: 12px;
     align-items: start;
     flex-shrink: 0;
     position: relative !important; /* Override controls-grid absolute positioning */
@@ -1756,7 +1790,7 @@ html, body {
     .cafe-page .cafe-controls-wrapper,
     .entrada-page .entrada-controls-wrapper,
     .vitrine-page .vitrine-controls-wrapper {
-        gap: 10px;
+        gap: 12px;
         align-items: stretch;
     }
     
@@ -1767,6 +1801,7 @@ html, body {
     .vitrine-page .lights-container {
         grid-template-columns: 1fr !important;
         grid-auto-rows: 120px;
+        gap: 12px;
         width: 100%;
         margin-bottom: 0; /* Garante que nÃ£o haja sobreposiÃ§Ã£o */
     }
@@ -1776,15 +1811,10 @@ html, body {
     .reuniao-page .curtains-container,
     .cafe-page .curtains-container {
         grid-template-columns: 1fr !important;
-        grid-auto-rows: 140px; /* Altura ajustada para botÃµes 80px */
+        grid-auto-rows: auto;
+        gap: 12px;
         width: 100%;
         margin-top: 0; /* Garante que nÃ£o haja sobreposiÃ§Ã£o */
-    }
-    
-    .garden-page .control-card-curtain {
-        grid-column: span 1 !important;
-        height: 140px; /* Altura ajustada para botÃµes 80px */
-        width: 100%;
     }
 }
 
@@ -1827,7 +1857,8 @@ html, body {
     /* Container de cortinas: duas colunas, uma linha (abaixo das luzes) */
     .garden-page .curtains-container,
     .reuniao-page .curtains-container {
-        grid-template-columns: repeat(2, 1fr) !important; /* 2 cortinas */
+        grid-template-columns: repeat(2, 1fr) !important; /* 2 cortinas lado a lado */
+        gap: 15px;
     }
     
     .cafe-page .curtains-container {
@@ -2397,6 +2428,7 @@ body.app-info-open {
     }
     .curtain-tile__actions {
         grid-template-columns: repeat(3, minmax(0, auto));
+        gap: 12px;
     }
 }
 
@@ -2422,7 +2454,7 @@ body.app-info-open {
 @media (max-width: 520px) {
     .curtain-tile__actions {
         grid-template-columns: 1fr;
-        gap: 8px;
+        gap: 12px;
     }
     
     .curtain-tile__btn {
