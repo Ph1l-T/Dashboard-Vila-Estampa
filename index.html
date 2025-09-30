@@ -703,17 +703,34 @@ function renderCurtainSection(section) {
     const pages = {
 
 curtains: () => `
-    <div class="curtain-dashboard">
-        <header class="curtain-hero">
-            <div class="curtain-hero__status">Controle Central de Cortinas</div>
-            <h1 class="curtain-hero__title">Ambientes inteligentes Vila Estampa</h1>
-            <p class="curtain-hero__hint">Acesse cada cortina para abrir, pausar ou fechar rapidamente.</p>
-        </header>
-        <div class="curtain-layout">
-            ${CURTAIN_SECTIONS.map(renderCurtainSection).join('')}
-        </div>
-    </div>
-`,
+
+            <div class="top-bar-custom"></div>
+
+            <main class="container">
+
+                <div class="page active">
+
+                    <h1 class="page-title fixed-header" style="display:flex;justify-content:center;align-items:center;">
+
+                        <button class="app-logo-trigger" type="button" aria-label="Abrir informacoes do aplicativo">
+
+                            <img src="images/icons/Vila-Estampa.svg" alt="Vila Estampa" />
+
+                        </button>
+
+                    </h1>
+
+                    <div class="curtain-layout">
+
+                        ${CURTAIN_SECTIONS.map(renderCurtainSection).join('')}
+
+                    </div>
+
+                </div>
+
+            </main>
+
+        `,
 
         scenes: () => `
 

@@ -2247,9 +2247,16 @@ body.app-info-open {
 }
 
 .curtain-layout {
+    position: absolute;
+    top: 130px;
+    left: 0;
+    right: 0;
+    bottom: 97px;
+    padding: 20px;
+    overflow-y: auto;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-    gap: clamp(18px, 3vw, 32px);
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: clamp(15px, 3vw, 25px);
     align-content: start;
 }
 
@@ -2386,13 +2393,10 @@ body.app-info-open {
 }
 
 @media (max-width: 768px) {
-    .curtain-dashboard {
-        padding: 24px 18px 120px;
-        gap: 28px;
-    }
     .curtain-layout {
         grid-template-columns: 1fr;
         gap: 22px;
+        padding: 15px;
     }
     .curtain-section {
         padding: 24px 20px;
