@@ -850,11 +850,10 @@ curtains: () => `
 
         
 
-        <!-- Container dos botões de cortina -->
-
-        <div class="controls-grid curtains-container">
-
-        <article class="curtain-tile" data-device-id="42" data-environment="Garden">
+        <!-- Container dos controles de cortina -->
+        <div class="curtains-section">
+            <div class="controls-grid curtains-container">
+                <article class="curtain-tile" data-device-id="42" data-environment="Garden">
 
             <header class="curtain-tile__header">
 
@@ -922,10 +921,10 @@ curtains: () => `
 
             </div>
 
-        </article>
-
+                </article>
+            </div>
+        </div>
     </div>
-
 </div>
 
         `,
@@ -982,11 +981,10 @@ curtains: () => `
 
         
 
-        <!-- Container de Cortinas -->
-
-        <div class="controls-grid curtains-container">
-
-            <article class="curtain-tile" data-device-id="39" data-environment="Reunião">
+        <!-- Container dos controles de cortina -->
+        <div class="curtains-section">
+            <div class="controls-grid curtains-container">
+                <article class="curtain-tile" data-device-id="39" data-environment="Reunião">
 
                 <header class="curtain-tile__header">
 
@@ -1018,46 +1016,44 @@ curtains: () => `
 
                 </div>
 
-            </article>
+                </article>
+                
+                <article class="curtain-tile" data-device-id="40" data-environment="Reunião">
 
-            <article class="curtain-tile" data-device-id="40" data-environment="Reunião">
+                    <header class="curtain-tile__header">
 
-                <header class="curtain-tile__header">
+                        <span class="curtain-tile__env">Reunião</span>
 
-                    <span class="curtain-tile__env">Reunião</span>
+                        <h3 class="curtain-tile__title">Cortina Externa</h3>
 
-                    <h3 class="curtain-tile__title">Cortina Externa</h3>
+                    </header>
 
-                </header>
+                    <div class="curtain-tile__actions">
 
-                <div class="curtain-tile__actions">
+                        <button class="curtain-tile__btn" data-device-id="40" onclick="curtainAction(this, 'open')" aria-label="Abrir Cortina Externa">
 
-                    <button class="curtain-tile__btn" data-device-id="40" onclick="curtainAction(this, 'open')" aria-label="Abrir Cortina Externa">
+                            <img src="images/icons/arrow-up.svg" alt="Abrir">
 
-                        <img src="images/icons/arrow-up.svg" alt="Abrir">
+                        </button>
 
-                    </button>
+                        <button class="curtain-tile__btn" data-device-id="40" onclick="curtainAction(this, 'stop')" aria-label="Parar Cortina Externa">
 
-                    <button class="curtain-tile__btn" data-device-id="40" onclick="curtainAction(this, 'stop')" aria-label="Parar Cortina Externa">
+                            <div class="curtain-tile__icon-pause"><span></span><span></span></div>
 
-                        <div class="curtain-tile__icon-pause"><span></span><span></span></div>
+                        </button>
 
-                    </button>
+                        <button class="curtain-tile__btn" data-device-id="40" onclick="curtainAction(this, 'close')" aria-label="Fechar Cortina Externa">
 
-                    <button class="curtain-tile__btn" data-device-id="40" onclick="curtainAction(this, 'close')" aria-label="Fechar Cortina Externa">
+                            <img src="images/icons/arrow-down.svg" alt="Fechar">
 
-                        <img src="images/icons/arrow-down.svg" alt="Fechar">
+                        </button>
 
-                    </button>
+                    </div>
 
-                </div>
-
-            </article>
-
+                </article>
+            </div>
         </div>
-
     </div>
-
 </div>
 
         `,

@@ -1726,6 +1726,12 @@ html, body {
     bottom: auto !important;
 }
 
+/* Container principal das cortinas - seção separada */
+.curtains-section {
+    width: 100%;
+    margin-top: 15px;
+}
+
 /* Container dos botÃµes de cortina para ambientes que tÃªm cortinas */
 .garden-page .curtains-container,
 .reuniao-page .curtains-container,
