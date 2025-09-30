@@ -485,7 +485,7 @@
         },
         {
             key: 'reuniao',
-            name: 'Reuniao',
+            name: 'Reunião',
             curtains: [
                 { deviceId: '39', title: 'Cortina Interna' },
                 { deviceId: '40', title: 'Cortina Externa' }
@@ -493,7 +493,7 @@
         },
         {
             key: 'cafe',
-            name: 'Cafe',
+            name: 'Café',
             curtains: [
                 { deviceId: '38', title: 'Cortina Cafe' }
             ]
@@ -527,13 +527,10 @@ function renderCurtainControlCard(curtain, environment) {
 
 
 function renderCurtainSection(section) {
-    const curtainCount = section.curtains.length;
-    const label = curtainCount === 1 ? '1 cortina' : `${curtainCount} cortinas`;
     return `
         <section class="curtain-section" data-section="${section.key}">
             <header class="curtain-section__header">
                 <div class="curtain-section__badge">${section.name}</div>
-                <p class="curtain-section__meta">${label}</p>
             </header>
             <div class="curtain-section__grid">
                 ${section.curtains.map(curtain => renderCurtainControlCard(curtain, section.name)).join('')}

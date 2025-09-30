@@ -2272,22 +2272,13 @@ body.app-info-open {
 }
 
 .curtain-section__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 16px;
+    margin-bottom: 4px;
 }
 
 .curtain-section__badge {
-    font-size: clamp(1.2rem, 2vw, 1.5rem);
+    font-size: clamp(1.4rem, 2.5vw, 1.8rem);
     font-weight: 600;
-}
-
-.curtain-section__meta {
-    margin: 0;
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.55);
-    white-space: nowrap;
+    color: #ffffff;
 }
 
 .curtain-section__grid {
