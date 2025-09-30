@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Camada_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 2000 2000">
+  <!-- Generator: Adobe Illustrator 29.7.1, SVG Export Plug-In . SVG Version: 2.1.1 Build 8)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: none;
+        stroke: #fff;
+        stroke-miterlimit: 10;
+        stroke-width: 150px;
+      }
+    </style>
+  </defs>
+  <rect class="st0" x="314.63" y="320.42" width="1370.73" height="1370.73" rx="150.58" ry="150.58"/>
+  <line class="st0" x1="1000.12" y1="340.33" x2="999.88" y2="1691.16"/>
+  <line class="st0" x1="301.54" y1="1000" x2="1698.46" y2="1000"/>
+</svg>

@@ -1,4 +1,4 @@
-/* Fileira de Ã­cones nos cards de cÃ´modos */
+﻿/* Fileira de ícones nos cards de cômodos */
 .room-icons-row {
     position: absolute;
     left: 30px;
@@ -14,7 +14,7 @@
     top: 90px;
     left: 21px; /* Alinha com as margens dos containers */
     right: 21px; /* Alinha com as margens dos containers */
-    width: auto; /* Largura automática baseada em left/right */
+    width: auto; /* Largura automÃ¡tica baseada em left/right */
     height: 3px;
     background: #fff;
     border-radius: 2px;
@@ -57,16 +57,16 @@
     }
 }
 
-/* Espaço no final dos ambientes (removida a barra preta) */
+/* EspaÃ§o no final dos ambientes (removida a barra preta) */
 .rooms-list::after {
     content: '';
     display: block;
     width: 100%;
-    height: 20px; /* Apenas um pequeno espaço no final */
+    height: 20px; /* Apenas um pequeno espaÃ§o no final */
     margin-top: 20px;
 }
 
-/* Lista de cÃ´modos na Home */
+/* Lista de cÃƒÂ´modos na Home */
 .rooms-list {
     display: flex;
     flex-direction: column;
@@ -188,11 +188,11 @@
     float: none !important;
 }
 
-/* Botão Master para Cortinas */
+/* BotÃ£o Master para Cortinas */
 .room-curtain-master-btn {
     position: absolute;
     bottom: 16px;
-    left: 103px; /* Posicionado com 15px de distância do botão de luz (16px + 72px + 15px) */
+    left: 103px; /* Posicionado com 15px de distÃ¢ncia do botÃ£o de luz (16px + 72px + 15px) */
     width: 72px;
     height: 72px;
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -209,7 +209,7 @@
     margin: 0;
     box-sizing: border-box;
     z-index: 11;
-    transform-origin: center center; /* Garante que transformações sejam do centro */
+    transform-origin: center center; /* Garante que transformaÃ§Ãµes sejam do centro */
     transition: transform .08s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
 
@@ -243,7 +243,7 @@
     float: none !important;
 }
 
-/* Estados de loading para botões master */
+/* Estados de loading para botÃµes master */
 .room-master-btn.loading {
     pointer-events: none;
     opacity: 0.6 !important;
@@ -259,7 +259,7 @@
     transition: all 0.2s ease !important;
 }
 
-/* Estados de loading para botões master das cortinas */
+/* Estados de loading para botÃµes master das cortinas */
 .room-curtain-master-btn.loading {
     pointer-events: none;
     opacity: 0.6 !important;
@@ -302,14 +302,14 @@
     100% { transform: rotate(360deg); }
 }
 
-/* Previne movimento do botão master durante loading e mantém efeito pressionado */
+/* Previne movimento do botÃ£o master durante loading e mantÃ©m efeito pressionado */
 .room-master-btn.loading {
     will-change: auto !important;
     backface-visibility: hidden;
     contain: layout style paint !important;
 }
 
-/* Garantir que hover/active não funcionem durante loading */
+/* Garantir que hover/active nÃ£o funcionem durante loading */
 .room-master-btn.loading:hover,
 .room-master-btn.loading:active {
     transform: translateY(2px) scale(0.95) !important;
@@ -326,7 +326,7 @@
     border-color: rgba(255, 255, 255, 0.15) !important;
 }
 
-/* Loading para botão master da página de cenários */
+/* Loading para botÃ£o master da pÃ¡gina de cenÃ¡rios */
 .scene-control-card.loading {
     pointer-events: none;
     opacity: 0.6;
@@ -352,7 +352,6 @@
     box-shadow: 0 4px 16px rgba(0,0,0,0.25);
 }
 
-
 .page-title {
     text-align: center;
     color: #fff;
@@ -366,7 +365,7 @@
     gap: 0.5em;
 }
 
-/* Fixa o título principal no cabeçalho para não se mover ao rolar */
+/* Fixa o tÃ­tulo principal no cabeÃ§alho para nÃ£o se mover ao rolar */
 .page-title.fixed-header {
     position: fixed;
     top: 45px;
@@ -395,8 +394,6 @@
     height: 45px;
     transform: translate(10px, 10px);
 }
-
-
 
 /* Estilos base */
 * {
@@ -427,7 +424,7 @@ html, body {
     padding-bottom: 97px; /* Espaço para a barra de navegação fixa (77px altura + 20px margem) */
 }
 
-/* Estilos das pÃ¡ginas */
+/* Estilos das páginas */
 .page {
     display: none;
     opacity: 0;
@@ -467,18 +464,18 @@ html, body {
     box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Tablet/desktop layout: ajustar espaçamento mantendo a barra fixa */
+/* Tablet/desktop layout: ajustar espaÃ§amento mantendo a barra fixa */
 @media (min-width: 768px) {
     .navbar {
         bottom: 0;              /* manter fixo na base */
         padding: 0 30px;       /* mais padding nas laterais */
     }
-    /* Ajustar espaço inferior para o conteúdo não sobrepor a navbar */
+    /* Ajustar espaÃ§o inferior para o conteÃºdo nÃ£o sobrepor a navbar */
     .container {
-        padding-bottom: 130px;  /* Aumentado para garantir visibilidade do último card */
+        padding-bottom: 130px;  /* Aumentado para garantir visibilidade do Ãºltimo card */
     }
     .page {
-        padding-bottom: 130px;  /* Aumentado para garantir visibilidade do último card */
+        padding-bottom: 130px;  /* Aumentado para garantir visibilidade do Ãºltimo card */
     }
     .controls-grid {
         bottom: 97px;           /* evitar sobreposição na grade de páginas internas */
@@ -598,184 +595,8 @@ html, body {
     z-index: 2;
 }
 
-
-/* Página de Cortinas - Design Minimalista Modo Escuro */
-.curtains-main {
-    width: 100%;
-    height: calc(100vh - 115px);
-    position: absolute;
-    left: 0;
-    top: 115px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background: #101010;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
-    padding: 20px;
-    z-index: 1;
-}
-
-.curtain-room {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease;
-    width: 100%;
-    max-width: 600px;
-    height: 300px;
-    display: flex;
-    flex-direction: column;
-}
-
-.curtain-room:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.room-info {
-    padding: 20px 25px 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.room-info h2 {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 500;
-    color: #ffffff;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.curtain-list {
-    padding: 0;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.curtain-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 25px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    transition: background-color 0.2s ease;
-    flex: 1;
-}
-
-.curtain-item:last-child {
-    border-bottom: none;
-}
-
-.curtain-item:hover {
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.curtain-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.curtain-name {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: #ffffff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.curtain-controls {
-    display: flex;
-    gap: 8px;
-}
-
-.btn-minimal {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 12px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-}
-
-.btn-minimal:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.btn-minimal:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.btn-minimal img {
-    width: 18px;
-    height: 18px;
-    opacity: 0.8;
-    transition: opacity 0.2s ease;
-    filter: brightness(0) invert(1);
-}
-
-.btn-minimal:hover img {
-    opacity: 1;
-}
-
-/* Mobile Responsive */
-@media (max-width: 768px) {
-    .curtains-main {
-        height: calc(100vh - 115px);
-        padding: 15px;
-    }
-    
-    .curtain-room {
-        width: 100%;
-        max-width: 100%;
-        height: 280px;
-    }
-
-    .room-info, .curtain-item {
-        padding: 20px;
-    }
-    
-    .curtain-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
-    
-    .curtain-controls {
-        width: 100%;
-        justify-content: center;
-    }
-    
-    .btn-minimal {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .btn-minimal img {
-        width: 20px;
-        height: 20px;
-    }
-}
-
-/* Controles de cortina minimalistas para páginas individuais */
+/* PÃ¡gina de Cortinas - Design Minimalista Modo Escuro */
+/* Controles de cortina minimalistas para pÃ¡ginas individuais */
 .curtain-control-minimal {
     display: flex;
     align-items: center;
@@ -868,7 +689,7 @@ html, body {
 .back-btn img {
     width: 32px;
     height: 32px;
-    filter: brightness(0) invert(1); /* Torna o ícone branco */
+    filter: brightness(0) invert(1); /* Torna o Ã­cone branco */
 }
 
 .controls-grid {
@@ -885,7 +706,7 @@ html, body {
     align-items: center;
 }
 
-/* Grid específico para páginas com só cortinas */
+/* Grid especÃ­fico para pÃ¡ginas com sÃ³ cortinas */
 .controls-grid:has(.control-card-curtain:only-child) {
     grid-template-columns: 1fr;
     grid-auto-rows: min-content;
@@ -918,7 +739,7 @@ html, body {
     background: rgba(255, 255, 255, 0.2);
 }
 
-/* AparÃªncia de pressionado quando ligado */
+/* AparÃƒÂªncia de pressionado quando ligado */
 .control-card[data-state="on"] {
     transform: translateY(2px);
     background: rgba(255, 255, 255, 0.18);
@@ -930,7 +751,7 @@ html, body {
     grid-column: span 2;
 }
 
-/* Controles de cortina no mesmo container dos botões de luz */
+/* Controles de cortina no mesmo container dos botÃµes de luz */
 .control-card-curtain {
     background: rgba(255, 255, 255, 0.1);
     -webkit-backdrop-filter: blur(10px);
@@ -943,24 +764,18 @@ html, body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    gap: 8px;
     color: white;
     font-family: 'Raleway', sans-serif;
     font-weight: 200;
-    cursor: pointer;
     text-align: center;
-    transition: background 0.2s ease, transform 0.08s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    height: 130px; /* Altura fixa para cortinas */
+    height: 150px; /* Altura aumentada para melhor acomodação */
     width: 100%; /* Largura adaptativa */
-    grid-column: span 2; /* Ocupar toda a largura disponível */
+    grid-column: span 2; /* Ocupar toda a largura disponÃ­vel */
     position: relative;
 }
 
-.control-card-curtain:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-/* Título da cortina */
+/* TÃ­tulo da cortina */
 .curtain-card-title {
     font-size: 18px;
     font-weight: 300;
@@ -969,7 +784,7 @@ html, body {
     text-align: center;
 }
 
-/* Container dos botões dentro do card */
+/* Container dos botÃµes dentro do card */
 .curtain-card-controls {
     display: flex;
     align-items: center;
@@ -979,7 +794,7 @@ html, body {
     max-width: 280px;
 }
 
-/* Botões individuais da cortina */
+/* BotÃµes individuais da cortina */
 .curtain-card-btn {
     background: rgba(255, 255, 255, 0.1);
     -webkit-backdrop-filter: blur(8px);
@@ -1015,14 +830,14 @@ html, body {
     filter: brightness(0) invert(1);
 }
 
-/* Separador entre botões */
+/* Separador entre botÃµes */
 .curtain-card-separator {
     border-right: 2px solid rgba(255, 255, 255, 0.3);
     height: 50px;
     opacity: 0.6;
 }
 
-/* Botão pause específico */
+/* BotÃ£o pause especÃ­fico */
 .curtain-card-pause {
     display: flex;
     align-items: center;
@@ -1091,7 +906,7 @@ html, body {
     /* background-color: rgba(255, 0, 0, 0.1); */
 }
 
-/* Botões pequenos dos cômodos na Home: efeito pressionado quando ligados */
+/* BotÃµes pequenos dos cÃ´modos na Home: efeito pressionado quando ligados */
 .icon-toggle-light,
 .icon-toggle-tv,
 .icon-toggle-shader,
@@ -1108,7 +923,6 @@ html, body {
     transform: translateY(2px) scale(0.96);
     filter: drop-shadow(0 2px 0 rgba(0,0,0,0.45)) brightness(1.1);
 }
-
 
 /* Placeholder rooms: hide legacy images and icon rows on Home */
 #home-page .room-card:not(.has-photo) > img { display: none !important; }
@@ -1147,7 +961,7 @@ html, body {
     transition: background 0.2s ease, transform 0.08s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-/* Botão especial para o Jardim na Entrada */
+/* BotÃ£o especial para o Jardim na Entrada */
 #home-page ~ .page-container .room-controls-list .room-control[data-device-id="17"] {
     height: 110px;
     flex-direction: column;
@@ -1184,7 +998,7 @@ html, body {
 .room-control-label { font-size: 18px; }
 
 /* Home quick toggle (long-press) */
-/* estilos do botão rápido de master on/off removidos */
+/* estilos do botÃ£o rÃ¡pido de master on/off removidos */
 /* Curtain controls (large buttons with icons) */
 .curtain-control {
   flex-direction: column;
@@ -1392,7 +1206,7 @@ html, body {
     opacity: 0.7;
 }
 
-/* Animações */
+/* AnimaÃ§Ãµes */
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -1424,22 +1238,22 @@ html, body {
 
 /* Novo design de controles de cortina baseado no Figma */
 .curtain-control-figma {
-    width: 100%;
-    max-width: 400px;
+    flex: 1 1 280px;
+    max-width: 320px;
     position: relative;
-    background: rgba(255, 255, 255, 0.1);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(16, 16, 16, 0.85);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 16px;
     box-sizing: border-box;
-    height: clamp(110px, 15vw, 134px);
+    min-height: clamp(120px, 16vw, 150px);
     overflow: hidden;
     text-align: center;
     color: #fff;
     font-family: 'Raleway', sans-serif;
-    margin: 14px 0;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    margin: 0;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
 }
 
 .curtain-figma-title {
@@ -1461,61 +1275,63 @@ html, body {
     left: 50%;
     transform: translateX(-50%);
     border-radius: 19px;
-    background: rgba(255, 255, 255, 0.08);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(10, 10, 10, 0.65);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
     box-sizing: border-box;
-    width: calc(100% - 40px);
-    max-width: 330px;
-    height: clamp(65px, 10vw, 80px);
+    width: calc(100% - 36px);
+    max-width: 340px;
+    height: clamp(68px, 10vw, 86px);
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 clamp(10px, 2vw, 15px);
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    padding: 0 clamp(12px, 2vw, 18px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 .curtain-figma-separator {
-    border-right: 2px solid #fff;
-    height: 74px;
-    opacity: 0.3;
+    border-right: 2px solid rgba(255, 255, 255, 0.4);
+    height: calc(100% - 14px);
+    opacity: 0.5;
 }
 
 .curtain-figma-btn {
-    background: rgba(255, 255, 255, 0.1);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    width: 90px;
-    height: 90px;
+    background: rgba(0, 0, 0, 0.55);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 14px;
+    width: 92px;
+    height: 92px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.25s ease;
     padding: 0;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
 }
 
 .curtain-figma-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(20, 20, 20, 0.75);
+    border-color: rgba(255, 255, 255, 0.22);
     transform: translateY(-1px) scale(1.02);
-    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
 }
 
 .curtain-figma-btn:active {
-    transform: scale(0.95);
+    transform: scale(0.96);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 .curtain-figma-btn img {
     width: 50%;
     height: 50%;
     object-fit: contain;
-    filter: brightness(0) invert(1);
+    opacity: 0.9;
+    transition: opacity 0.2s ease;
 }
 
 .curtain-figma-pause {
@@ -1567,8 +1383,8 @@ html, body {
     }
 }
 
-/* Media Queries para botões de controle das cortinas */
-/* Mobile pequeno - até 320px */
+/* Media Queries para botÃµes de controle das cortinas */
+/* Mobile pequeno - atÃ© 320px */
 @media (max-width: 320px) {
     .curtain-figma-btn {
         width: 65px;
@@ -1683,7 +1499,7 @@ html, body {
 }
 
 /* Media Queries para controles de cortina no grid */
-/* Mobile pequeno - até 320px */
+/* Mobile pequeno - atÃ© 320px */
 @media (max-width: 320px) {
     .curtain-card-btn {
         width: 55px;
@@ -1851,7 +1667,7 @@ html, body {
     }
 }
 
-/* === CONTAINERS SEPARADOS PARA TODAS AS PÁGINAS === */
+/* === CONTAINERS SEPARADOS PARA TODAS AS PÃGINAS === */
 /* Container wrapper principal que organiza luzes e cortinas para todos os ambientes */
 .garden-page .garden-controls-wrapper,
 .reuniao-page .reuniao-controls-wrapper,
@@ -1885,20 +1701,20 @@ html, body {
     width: 100% !important;
 }
 
-/* Sobrescrever grid-column dos cards de cortina em todas as páginas */
+/* Sobrescrever grid-column dos cards de cortina em todas as pÃ¡ginas */
 .garden-page .control-card-curtain,
 .reuniao-page .control-card-curtain,
 .cafe-page .control-card-curtain {
     grid-column: span 1 !important; /* Sempre 1 coluna nos novos layouts */
 }
 
-/* Container dos botões de luz para todos os ambientes */
+/* Container dos botÃµes de luz para todos os ambientes */
 .garden-page .lights-container,
 .reuniao-page .lights-container,
 .entrada-page .lights-container,
 .vitrine-page .lights-container {
     display: grid;
-    grid-template-columns: 1fr; /* Padrão mobile: 1 coluna */
+    grid-template-columns: 1fr; /* PadrÃ£o mobile: 1 coluna */
     grid-auto-rows: 131px;
     gap: 10px;
     align-items: start;
@@ -1910,13 +1726,13 @@ html, body {
     bottom: auto !important;
 }
 
-/* Container dos botões de cortina para ambientes que têm cortinas */
+/* Container dos botÃµes de cortina para ambientes que tÃªm cortinas */
 .garden-page .curtains-container,
 .reuniao-page .curtains-container,
 .cafe-page .curtains-container {
     display: grid;
-    grid-template-columns: 1fr; /* Padrão mobile: 1 coluna */
-    grid-auto-rows: 140px; /* Altura base ajustada para botões 80px */
+    grid-template-columns: 1fr; /* PadrÃ£o mobile: 1 coluna */
+    grid-auto-rows: 140px; /* Altura base ajustada para botÃµes 80px */
     gap: 10px;
     align-items: start;
     flex-shrink: 0;
@@ -1946,7 +1762,7 @@ html, body {
         grid-template-columns: 1fr !important;
         grid-auto-rows: 120px;
         width: 100%;
-        margin-bottom: 0; /* Garante que não haja sobreposição */
+        margin-bottom: 0; /* Garante que nÃ£o haja sobreposiÃ§Ã£o */
     }
     
     /* Container de cortinas: uma coluna (abaixo das luzes) */
@@ -1954,14 +1770,14 @@ html, body {
     .reuniao-page .curtains-container,
     .cafe-page .curtains-container {
         grid-template-columns: 1fr !important;
-        grid-auto-rows: 140px; /* Altura ajustada para botões 80px */
+        grid-auto-rows: 140px; /* Altura ajustada para botÃµes 80px */
         width: 100%;
-        margin-top: 0; /* Garante que não haja sobreposição */
+        margin-top: 0; /* Garante que nÃ£o haja sobreposiÃ§Ã£o */
     }
     
     .garden-page .control-card-curtain {
         grid-column: span 1 !important;
-        height: 140px; /* Altura ajustada para botões 80px */
+        height: 140px; /* Altura ajustada para botÃµes 80px */
         width: 100%;
     }
 }
@@ -1977,13 +1793,13 @@ html, body {
         align-items: stretch;
     }
     
-    /* Container de luzes: grid adaptável baseado no número de luzes */
+    /* Container de luzes: grid adaptÃ¡vel baseado no nÃºmero de luzes */
     .garden-page .lights-container {
         grid-template-columns: repeat(3, 1fr) !important; /* Garden: 3 luzes */
     }
     
     .reuniao-page .lights-container {
-        grid-template-columns: repeat(3, 1fr) !important; /* Reunião: 3 luzes */
+        grid-template-columns: repeat(3, 1fr) !important; /* ReuniÃ£o: 3 luzes */
     }
     
     .entrada-page .lights-container {
@@ -1999,7 +1815,7 @@ html, body {
     .entrada-page .lights-container,
     .vitrine-page .lights-container {
         width: 100%;
-        margin-bottom: 0; /* Garante que não haja sobreposição */
+        margin-bottom: 0; /* Garante que nÃ£o haja sobreposiÃ§Ã£o */
     }
     
     /* Container de cortinas: duas colunas, uma linha (abaixo das luzes) */
@@ -2009,20 +1825,20 @@ html, body {
     }
     
     .cafe-page .curtains-container {
-        grid-template-columns: 1fr !important; /* Café: só 1 cortina */
+        grid-template-columns: 1fr !important; /* CafÃ©: sÃ³ 1 cortina */
     }
     
     .garden-page .curtains-container,
     .reuniao-page .curtains-container,
     .cafe-page .curtains-container {
-        grid-auto-rows: 140px; /* Altura ajustada para botões 80px */
+        grid-auto-rows: 140px; /* Altura ajustada para botÃµes 80px */
         width: 100%;
-        margin-top: 0; /* Garante que não haja sobreposição */
+        margin-top: 0; /* Garante que nÃ£o haja sobreposiÃ§Ã£o */
     }
     
     .garden-page .control-card-curtain {
         grid-column: span 1 !important;
-        height: 140px; /* Altura ajustada para botões 80px */
+        height: 140px; /* Altura ajustada para botÃµes 80px */
         width: 100%;
     }
 }
@@ -2040,9 +1856,9 @@ html, body {
 .garden-page .curtain-card-controls,
 .reuniao-page .curtain-card-controls,
 .cafe-page .curtain-card-controls {
-    gap: 8px; /* Espaçamento fixo entre botões */
+    gap: 8px; /* EspaÃ§amento fixo entre botÃµes */
     max-width: 100%; /* Remover limitação de largura */
-    width: 100%; /* Ocupar toda a largura disponível */
+    width: 100%; /* Ocupar toda a largura disponÃ­vel */
     padding: 0 20px; /* Adicionar padding lateral */
     box-sizing: border-box;
     display: flex;
@@ -2085,7 +1901,7 @@ html, body {
     object-fit: contain;
 }
 
-/* Ajustar ícones de luz para diferentes resoluções em todos os ambientes */
+/* Ajustar Ã­cones de luz para diferentes resoluÃ§Ãµes em todos os ambientes */
 @media (max-width: 599px) {
     .garden-page .control-icon,
     .reuniao-page .control-icon,
@@ -2114,10 +1930,10 @@ html, body {
     .garden-page .curtain-card-btn,
     .reuniao-page .curtain-card-btn,
     .cafe-page .curtain-card-btn {
-        min-width: 100px !important; /* Largura mínima respeitada */
+        min-width: 100px !important; /* Largura mÃ­nima respeitada */
         width: 100px !important;
         height: 80px !important;
-        flex: 0 0 100px; /* Não cresce, não diminui, base 100px */
+        flex: 0 0 100px; /* NÃ£o cresce, nÃ£o diminui, base 100px */
     }
     
     .garden-page .curtain-card-controls,
@@ -2125,13 +1941,13 @@ html, body {
     .cafe-page .curtain-card-controls {
         gap: 8px !important;
         padding: 0 15px !important;
-        justify-content: center !important; /* Centralizar botões */
+        justify-content: center !important; /* Centralizar botÃµes */
     }
     
     .garden-page .control-card-curtain,
     .reuniao-page .control-card-curtain,
     .cafe-page .control-card-curtain {
-        height: 140px !important; /* Altura ajustada para botões 80px */
+        height: 140px !important; /* Altura ajustada para botÃµes 80px */
     }
 }
 
@@ -2151,7 +1967,7 @@ html, body {
         font-size: 16px;
     }
     
-    /* Manter altura padrão dos cards de luz */
+    /* Manter altura padrÃ£o dos cards de luz */
     .garden-page .control-card,
     .reuniao-page .control-card,
     .entrada-page .control-card,
@@ -2171,15 +1987,15 @@ html, body {
     .garden-page .curtain-card-controls,
     .reuniao-page .curtain-card-controls,
     .cafe-page .curtain-card-controls {
-        gap: 8px !important; /* Espaçamento fixo */
+        gap: 8px !important; /* EspaÃ§amento fixo */
         padding: 0 30px !important;
-        justify-content: center !important; /* Centralizar botões */
+        justify-content: center !important; /* Centralizar botÃµes */
     }
     
     .garden-page .control-card-curtain,
     .reuniao-page .control-card-curtain,
     .cafe-page .control-card-curtain {
-        height: 140px !important; /* Altura ajustada para botões 80px */
+        height: 140px !important; /* Altura ajustada para botÃµes 80px */
     }
 }
 
@@ -2212,15 +2028,15 @@ html, body {
     .garden-page .curtain-card-controls,
     .reuniao-page .curtain-card-controls,
     .cafe-page .curtain-card-controls {
-        gap: 8px !important; /* Espaçamento fixo */
+        gap: 8px !important; /* EspaÃ§amento fixo */
         padding: 0 40px !important;
-        justify-content: center !important; /* Centralizar botões */
+        justify-content: center !important; /* Centralizar botÃµes */
     }
     
     .garden-page .control-card-curtain,
     .reuniao-page .control-card-curtain,
     .cafe-page .control-card-curtain {
-        height: 140px !important; /* Altura ajustada para botões 80px */
+        height: 140px !important; /* Altura ajustada para botÃµes 80px */
     }
     
     .garden-page .curtain-card-title {
@@ -2237,3 +2053,363 @@ html, body {
         height: 32px !important;
     }
 }
+
+/* App info menu */
+.app-logo-trigger {
+    background: transparent;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.app-logo-trigger:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.55);
+    outline-offset: 6px;
+}
+
+.app-info-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    background: rgba(5, 5, 5, 0.65);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    z-index: 1200;
+}
+
+.app-info-overlay.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.app-info-dialog {
+    width: min(420px, 92vw);
+    background: rgba(12, 12, 12, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+    color: #fff;
+    padding: 32px 28px;
+    position: relative;
+    overflow: hidden;
+}
+
+.app-info-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 36px;
+    height: 36px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.app-info-close:hover {
+    background: rgba(255, 255, 255, 0.18);
+    transform: scale(1.05);
+}
+
+.app-info-close:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 3px;
+}
+
+.app-info-header {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.app-info-logo {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+    flex-shrink: 0;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+.app-info-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.app-info-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.app-info-subtitle {
+    margin: 0;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.app-info-content {
+    margin-bottom: 24px;
+}
+
+.app-info-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+}
+
+.app-info-list li {
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 0.95rem;
+}
+
+.app-info-footer {
+    text-align: center;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+body.app-info-open {
+    overflow: hidden;
+}
+
+
+/* Curtains dashboard */
+.curtain-dashboard {
+    position: absolute;
+    top: 115px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 32px clamp(20px, 4vw, 48px) 140px;
+    background: linear-gradient(180deg, rgba(11,11,11,0.95) 0%, rgba(8,8,8,0.92) 55%, rgba(8,8,8,0.88) 100%);
+    overflow-y: auto;
+    color: #f7f7f7;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+}
+
+.curtain-hero {
+    max-width: 760px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.curtain-hero__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.curtain-hero__title {
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: 600;
+    margin: 0;
+    color: #ffffff;
+}
+
+.curtain-hero__hint {
+    margin: 0;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.curtain-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: clamp(18px, 3vw, 32px);
+    align-content: start;
+}
+
+.curtain-section {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 28px clamp(22px, 2.5vw, 32px);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    box-shadow: 0 24px 50px -35px rgba(0, 0, 0, 0.8);
+}
+
+.curtain-section__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+}
+
+.curtain-section__badge {
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+    font-weight: 600;
+}
+
+.curtain-section__meta {
+    margin: 0;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.55);
+    white-space: nowrap;
+}
+
+.curtain-section__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+}
+
+.curtain-tile {
+    background: linear-gradient(150deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    padding: 22px clamp(18px, 2vw, 26px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: 0 18px 45px -25px rgba(0, 0, 0, 0.7);
+}
+
+.curtain-tile__header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.curtain-tile__env {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.curtain-tile__title {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.curtain-tile__subtitle {
+    margin: 0;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.curtain-tile__actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.curtain-tile__btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(0, 0, 0, 0.35);
+    color: #f3f3f3;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.curtain-tile__btn img {
+    width: 22px;
+    height: 22px;
+    filter: brightness(0) invert(1);
+}
+
+.curtain-tile__btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.28);
+    transform: translateY(-2px);
+}
+
+.curtain-tile__btn:active {
+    transform: translateY(0);
+}
+
+.curtain-tile__icon-pause {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.curtain-tile__icon-pause span {
+    display: block;
+    width: 6px;
+    height: 22px;
+    border-radius: 4px;
+    background: #ffffff;
+}
+
+@media (max-width: 1024px) {
+    .curtain-layout {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .curtain-dashboard {
+        padding: 24px 18px 120px;
+        gap: 28px;
+    }
+    .curtain-layout {
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+    .curtain-section {
+        padding: 24px 20px;
+        gap: 20px;
+    }
+    .curtain-tile__actions {
+        grid-template-columns: repeat(3, minmax(0, auto));
+    }
+}
+
+@media (max-width: 520px) {
+    .curtain-tile__actions {
+        grid-template-columns: 1fr;
+    }
+    .curtain-tile__btn {
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+}
+
