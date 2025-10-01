@@ -801,12 +801,17 @@ function updateDeviceUI(deviceId, state, forceUpdate = false) {
     
     // Atualizar controles de cômodo
     const roomControls = document.querySelectorAll(`[data-device-id="${deviceId}"]`);
+    console.log(`🔧 updateDeviceUI(${deviceId}, ${state}) - Encontrados ${roomControls.length} controles`);
     
-    roomControls.forEach((el) => {
+    roomControls.forEach((el, index) => {
+        console.log(`🔧 Controle ${index + 1}: classes=${el.className}, currentState=${el.dataset.state}`);
         if (el.classList.contains('room-control')) {
             const currentState = el.dataset.state;
             if (currentState !== state || forceUpdate) {
+                console.log(`🔄 Atualizando controle ${deviceId}: ${currentState} → ${state}`);
                 setRoomControlUI(el, state);
+            } else {
+                console.log(`✓ Controle ${deviceId} já está no estado correto: ${state}`);
             }
         }
     });
@@ -1573,7 +1578,7 @@ function setupDomObserver() {
                     
                     if (controls.length > 0 || node.matches?.('.room-control[data-device-id], .room-master-btn[data-device-ids]')) {
                         needsUpdate = true;
-                        console.log('🔍 Novos controles adicionados ao DOM, sincronizando estados...');
+                        console.log('🔍 Novos controles adicionados ao DOM, inicializando página de cômodo...');
                     }
                 }
             });
@@ -1582,7 +1587,9 @@ function setupDomObserver() {
         if (needsUpdate) {
             // Aguardar um pouco para DOM estar estável
             setTimeout(() => {
-                syncAllVisibleControls();
+                console.log('🔄 DOM estabilizado, inicializando controles de cômodo...');
+                initRoomPage(); // Inicializar página de cômodo primeiro
+                syncAllVisibleControls(); // Depois sincronizar todos os controles
             }, 50);
         }
     });
@@ -2026,9 +2033,13 @@ function initializeApp() {
                         // Configurar observador DOM
                         setupDomObserver();
                         
-                        // Sincronizar controles já existentes
+                        // Inicializar página de cômodo e sincronizar controles já existentes
                         var syncDelay = 100;
-                        setTimeout(syncAllVisibleControls, syncDelay);
+                        setTimeout(() => {
+                            console.log('🏠 Inicializando controles de cômodos na inicialização...');
+                            initRoomPage(); // Inicializar página de cômodo
+                            syncAllVisibleControls(); // Sincronizar todos os controles
+                        }, syncDelay);
                         
                         // Iniciar polling se estiver em produção
                         if (isProduction) {
