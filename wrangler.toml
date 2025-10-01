@@ -1,0 +1,26 @@
+name = "dashboard-vila-estampa"
+main = "functions/_worker.js"
+compatibility_date = "2023-10-01"
+
+[env.production.vars]
+# As variáveis sensíveis devem ser definidas via: wrangler secret put NOME_DA_VARIAVEL
+# HUBITAT_ACCESS_TOKEN = "será definido via secret"
+# HUBITAT_BASE_URL = "será definido via secret" 
+# HUBITAT_FULL_URL = "será definido via secret"
+# WEBHOOK_SHARED_SECRET = "será definido via secret"
+
+[[env.production.routes]]
+pattern = "dashboard-vila-estampa.seu-dominio.com/*"
+zone_name = "seu-dominio.com"
+
+[build]
+command = ""
+
+[assets]
+# Servir arquivos estáticos da raiz do projeto
+directory = "./"
+exclude = ["functions/**", "*.toml", "*.json", ".git/**", ".vscode/**"]
+
+[functions]
+# Functions do Cloudflare Pages
+directory = "functions"
