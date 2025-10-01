@@ -1,23 +1,13 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Vila Estampa</title>
-
     <link rel="stylesheet" href="fonts-raleway.css">
-
     <link rel="icon" href="images/pwa/app-icon-192.png" type="image/png">
-
     <link rel="manifest" href="manifest.json">
-
     <meta name="theme-color" content="#1C1C1C">
-
     <link rel="apple-touch-icon" href="images/pwa/app-icon-192.png">
 
     <script>
@@ -29,81 +19,44 @@
     </script>
 
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-
     <meta http-equiv="Pragma" content="no-cache">
-
     <meta http-equiv="Expires" content="0">
-
     <script>
-
         // LIMPEZA AGRESSIVA DE CACHE - TODOS OS DISPOSITIVOS
-
         (function() {
-
             console.log('🧹 INICIANDO LIMPEZA TOTAL DE CACHE...');
-
             
-
             var timestamp = new Date().getTime();
-
             var randomId = Math.random().toString(36).substr(2, 12);
-
             var cacheBuster = timestamp + '_' + randomId;
-
             var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
             
-
             console.log('🧹 Cache buster gerado:', cacheBuster);
-
             console.log('🧹 Dispositivo móvel:', isMobile);
-
             
-
             // 1. LIMPAR TODOS OS STORAGES
-
             try {
-
                 console.log('🧹 Limpando localStorage...');
-
                 // Manter apenas configurações críticas
-
                 var criticalKeys = ['hubitat_host', 'hubitat_token'];
-
                 var backup = {};
-
                 criticalKeys.forEach(function(key) {
-
                     if (localStorage.getItem(key)) {
-
                         backup[key] = localStorage.getItem(key);
-
                     }
-
                 });
-
                 
-
                 localStorage.clear();
-
                 
-
                 // Restaurar configurações críticas
-
                 Object.keys(backup).forEach(function(key) {
-
                     localStorage.setItem(key, backup[key]);
-
                 });
-
                 
-
                 console.log('🧹 localStorage limpo e restaurado');
-
             } catch(e) {
-
                 console.warn('⚠️ Erro ao limpar localStorage:', e);
-
             }
 
             
@@ -123,77 +76,42 @@
             
 
             // 2. FORÇAR RELOAD DE CACHE DO NAVEGADOR
-
             if ('caches' in window) {
-
                 console.log('🧹 Limpando cache do navegador...');
-
                 caches.keys().then(function(cacheNames) {
-
                     return Promise.all(
-
                         cacheNames.map(function(cacheName) {
-
                             console.log('🧹 Deletando cache:', cacheName);
-
                             return caches.delete(cacheName);
-
                         })
-
                     );
-
                 }).then(function() {
-
                     console.log('✅ Cache do navegador limpo');
-
                 }).catch(function(e) {
-
                     console.warn('⚠️ Erro ao limpar cache:', e);
-
                 });
-
             }
-
             
-
             // 3. MARCAR NOVA VERSÃO E CACHE BUSTER
-
             try {
-
                 localStorage.setItem('app_cache_version', cacheBuster);
-
                 localStorage.setItem('last_cache_clear', timestamp);
-
                 localStorage.setItem('force_reload_flag', 'true');
-
                 console.log('✅ Nova versão marcada:', cacheBuster);
-
             } catch(e) {
-
                 console.warn('⚠️ localStorage indisponível para cache busting');
-
             }
 
             
-
             // 4. FORÇAR RELOAD SE NECESSÁRIO
-
             var forceReload = localStorage.getItem('force_reload_flag');
-
             if (forceReload === 'true') {
-
                 localStorage.removeItem('force_reload_flag');
-
                 console.log('🔄 Flag de reload detectada - será recarregado após carregamento');
-
             }
-
             
-
             console.log('✅ Limpeza de cache concluída');
-
         })();
-
     </script>
 
     <style>
@@ -203,55 +121,30 @@
         .room-card-link{position:absolute;left:0;top:0;width:100%;height:100%;z-index:10;background:transparent;border:none;cursor:pointer}
 
     </style>
-
     </head>
-
 <body>
 
-
-
     <!-- Tela de Loading Global -->
-
     <div id="global-loader" class="global-loader">
-
         <div class="loader-content">
-
             <div class="loader-logo">
-
                 <img src="images/icons/Vila-Estampa.svg" alt="Vila Estampa" width="80" height="80">
-
             </div>
-
             <div class="loader-spinner"></div>
-
             <div class="loader-text">Carregando estados dos dispositivos...</div>
-
             <div class="loader-progress">
-
                 <div class="progress-bar">
-
                     <div id="progress-fill" class="progress-fill"></div>
-
                 </div>
-
                 <div id="progress-text" class="progress-text">0%</div>
-
             </div>
-
         </div>
-
     </div>
 
-
-
     <!-- SPA root -->
-
     <div id="spa-root"></div>
 
-
-
     <!-- Confirmation Popup -->
-
     <div class="popup-overlay" id="confirmation-popup">
 
         <div class="popup-dialog">
@@ -269,8 +162,6 @@
         </div>
 
     </div>
-
-
 
     <!-- App Info Popup -->
 
@@ -318,8 +209,6 @@
 
     </div>
 
-
-
     <!-- Navbar fixa SPA -->
 
     <nav class="navbar" id="spa-navbar">
@@ -355,8 +244,6 @@
         </div>
 
     </nav>
-
-
 
     <script>
 
@@ -450,8 +337,6 @@
 
     const spaRoot = document.getElementById('spa-root');
 
-
-
     // Fotos dos cards por rota (reaproveitadas como fundo das páginas internas)
 
     const ROOM_PHOTOS = {
@@ -467,12 +352,6 @@
         cafe: 'images/Images/Photo-cafe.jpg'
 
     };
-
-
-
-
-
-
 
     const CURTAIN_SECTIONS = [
         {
@@ -500,7 +379,6 @@
         }
     ];
 
-
 function renderCurtainControlCard(curtain, environment) {
     const { deviceId, title, description } = curtain;
     return `
@@ -524,8 +402,6 @@ function renderCurtainControlCard(curtain, environment) {
         </article>`;
 }
 
-
-
 function renderCurtainSection(section) {
     return `
         <section class="curtain-section" data-section="${section.key}">
@@ -538,14 +414,6 @@ function renderCurtainSection(section) {
         </section>`;
 }
 
-
-
-
-
-
-
-
-
     const APP_INFO_VERSION = '1.0';
 
     const APP_INFO_VISIBLE_CLASS = 'is-visible';
@@ -556,8 +424,6 @@ function renderCurtainSection(section) {
 
     let appInfoReturnFocusElement = null;
 
-
-
     function updateAppInfoVersion() {
 
         if (appInfoVersionLabel) {
@@ -567,8 +433,6 @@ function renderCurtainSection(section) {
         }
 
     }
-
-
 
     function openAppInfoMenu() {
 
@@ -602,8 +466,6 @@ function renderCurtainSection(section) {
 
     }
 
-
-
     function closeAppInfoMenu() {
 
         if (!appInfoOverlay) return;
@@ -622,8 +484,6 @@ function renderCurtainSection(section) {
 
     }
 
-
-
     function handleAppLogoTrigger(event) {
 
         event.preventDefault();
@@ -631,8 +491,6 @@ function renderCurtainSection(section) {
         openAppInfoMenu();
 
     }
-
-
 
     function setupAppInfoMenu() {
 
@@ -646,8 +504,6 @@ function renderCurtainSection(section) {
 
     }
 
-
-
     function initializeAppInfoMenu() {
 
         if (!appInfoOverlay) return;
@@ -657,8 +513,6 @@ function renderCurtainSection(section) {
         appInfoOverlay.dataset.ready = 'true';
 
         updateAppInfoVersion();
-
-
 
         appInfoOverlay.addEventListener('click', event => {
 
@@ -670,8 +524,6 @@ function renderCurtainSection(section) {
 
         });
 
-
-
         const closeBtn = appInfoOverlay.querySelector('.app-info-close');
 
         if (closeBtn) {
@@ -679,8 +531,6 @@ function renderCurtainSection(section) {
             closeBtn.addEventListener('click', closeAppInfoMenu);
 
         }
-
-
 
         document.addEventListener('keydown', event => {
 
@@ -791,12 +641,6 @@ curtains: () => `
             </main>
 
         `,
-
-
-
-
-
-
 
         garden: () => `
 
@@ -929,8 +773,6 @@ curtains: () => `
 
         `,
 
-
-
         reuniao: () => `
 
 <div class="top-bar-custom"></div>
@@ -1058,8 +900,6 @@ curtains: () => `
 
         `,
 
-
-
         cafe: () => `
 
 <div class="top-bar-custom"></div>
@@ -1124,12 +964,6 @@ curtains: () => `
 
         `,
 
-
-
-
-
-
-
         entrada: () => `
 
 <div class="top-bar-custom"></div>
@@ -1167,8 +1001,6 @@ curtains: () => `
 </div>
 
         `,
-
-
 
         vitrine: () => `
 
@@ -1224,8 +1056,6 @@ curtains: () => `
 
         `,
 
-
-
         garagem: () => `
 
 <div class="top-bar-custom"></div>
@@ -1250,21 +1080,13 @@ curtains: () => `
 
         `,
 
-
-
-
-
     };
-
-
 
     function spaNavigate(page) {
 
         window.location.hash = page;
 
     }
-
-
 
     function renderSpa() {
 
@@ -1275,8 +1097,6 @@ curtains: () => `
         spaRoot.innerHTML = pages[page]();
 
         setupAppInfoMenu();
-
-
 
         // Constrói a lista de cômodos na Home
 
@@ -1378,8 +1198,6 @@ curtains: () => `
 
         }
 
-
-
         // Define o fundo da página interna com a mesma foto do card
 
         (function setPageBackground(route){
@@ -1401,8 +1219,6 @@ curtains: () => `
             }
 
         })(page);
-
-
 
         // Atualiza navbar (ativo + indicador)
 
@@ -1440,8 +1256,6 @@ curtains: () => `
 
         }
 
-
-
         // Inicializa botões dos cômodos nas páginas internas
 
         if (['entrada','vitrine','garden','reuniao','cafe','garagem'].includes(page)) {
@@ -1449,8 +1263,6 @@ curtains: () => `
             if (typeof initRoomPage === 'function') initRoomPage();
 
         }
-
-
 
         // Atualiza o botão master na página de cenários
 
@@ -1461,8 +1273,6 @@ curtains: () => `
         }
 
     }
-
-
 
     // Home: Master On/Off por ambiente (funções movidas para script.js)
 
@@ -1610,8 +1420,6 @@ curtains: () => `
 
     };
 
-
-
     // Função para recalcular posição do page selector
 
     function updatePageSelectorPosition() {
@@ -1635,8 +1443,6 @@ curtains: () => `
         }
 
     }
-
-
 
     window.addEventListener('hashchange', renderSpa);
 
@@ -1668,8 +1474,6 @@ curtains: () => `
 
     });
 
-
-
     // Listeners para recalcular page selector ao rotacionar/redimensionar
 
     window.addEventListener('resize', () => {
@@ -1681,8 +1485,6 @@ curtains: () => `
         window.resizeTimeout = setTimeout(updatePageSelectorPosition, 100);
 
     });
-
-
 
     window.addEventListener('orientationchange', () => {
 
