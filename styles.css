@@ -443,6 +443,14 @@ html, body {
     background-repeat: no-repeat;
 }
 
+/* Permitir scroll no body apenas para página de cenários em modo retrato mobile */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    body:has([data-page="scenes"].active) {
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+}
+
 :root {
     --glass-bg: rgba(255, 255, 255, 0.05);
     --glass-bg-hover: rgba(255, 255, 255, 0.08);
@@ -2646,6 +2654,47 @@ body.app-info-open {
 .curtains-section::-webkit-scrollbar,
 .page::-webkit-scrollbar {
     display: none;
+}
+
+/* 📱 Scroll na página de cenários - apenas modo retrato mobile */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    /* Permitir scroll vertical na página de cenários */
+    .main-container:has([data-page="scenes"].active) {
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    
+    /* Container da página de cenários deve permitir scroll */
+    [data-page="scenes"] .container {
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 100vh;
+        padding-bottom: 100px; /* Espaço extra para navegação */
+    }
+    
+    /* Grid de controles pode expandir verticalmente */
+    [data-page="scenes"] .controls-grid {
+        position: relative !important;
+        top: 130px !important;
+        min-height: auto;
+        height: auto;
+        overflow: visible;
+    }
+    
+    /* Garantir que scrollbars permaneçam ocultas mesmo com scroll ativo */
+    .main-container:has([data-page="scenes"].active)::-webkit-scrollbar,
+    [data-page="scenes"] .container::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+    }
+    
+    /* Para Firefox - manter scrollbars ocultas */
+    .main-container:has([data-page="scenes"].active),
+    [data-page="scenes"] .container {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
 }
 
 /* Estilos específicos para modais de erro */
