@@ -123,10 +123,14 @@ function setRoomControlUI(el, state) {
     
     el.dataset.state = normalized;
     
-    const img = el.querySelector('.room-control-icon');
+    // Suporta tanto room-control-icon quanto control-icon (mesmo seletor do toggleRoomControl)
+    const img = el.querySelector('.room-control-icon, .control-icon');
     if (img) {
         const newSrc = normalized === 'on' ? ICON_ON : ICON_OFF;
+        console.log(`🔧 setRoomControlUI: Atualizando imagem ${img.src} → ${newSrc} (estado: ${state})`);
         img.src = newSrc;
+    } else {
+        console.warn(`⚠️ setRoomControlUI: Imagem não encontrada para elemento com classes: ${el.className}`);
     }
 }
 
@@ -176,15 +180,17 @@ async function refreshRoomControlFromHubitat(el) {
 function initRoomPage() {
     console.log('🏠 Inicializando página de cômodo...');
     const controls = document.querySelectorAll('.room-control[data-device-id]:not([data-no-sync="true"])');
+    console.log(`🏠 Encontrados ${controls.length} controles de cômodo para inicializar`);
     
-    controls.forEach(el => {
+    controls.forEach((el, index) => {
         const deviceId = el.dataset.deviceId;
         // SEMPRE usar estado salvo do carregamento global
         const savedState = getStoredState(deviceId);
         const fallbackState = el.dataset.state || 'off';
         const finalState = savedState !== null ? savedState : fallbackState;
         
-        console.log(`🔄 Controle ${deviceId}: salvo="${savedState}", fallback="${fallbackState}", final="${finalState}"`);
+        console.log(`🔄 Controle ${index + 1}/${controls.length} - ID:${deviceId}, classes:"${el.className}"`);
+        console.log(`   → salvo="${savedState}", fallback="${fallbackState}", final="${finalState}"`);
         setRoomControlUI(el, finalState);
     });
     
@@ -804,15 +810,19 @@ function updateDeviceUI(deviceId, state, forceUpdate = false) {
     console.log(`🔧 updateDeviceUI(${deviceId}, ${state}) - Encontrados ${roomControls.length} controles`);
     
     roomControls.forEach((el, index) => {
-        console.log(`🔧 Controle ${index + 1}: classes=${el.className}, currentState=${el.dataset.state}`);
+        console.log(`🔧 Controle ${index + 1}: classes="${el.className}", currentState="${el.dataset.state}"`);
         if (el.classList.contains('room-control')) {
             const currentState = el.dataset.state;
             if (currentState !== state || forceUpdate) {
-                console.log(`🔄 Atualizando controle ${deviceId}: ${currentState} → ${state}`);
+                console.log(`🔄 Atualizando controle ${deviceId}: "${currentState}" → "${state}" (force=${forceUpdate})`);
                 setRoomControlUI(el, state);
+                // Salvar o estado atualizado
+                setStoredState(deviceId, state);
             } else {
-                console.log(`✓ Controle ${deviceId} já está no estado correto: ${state}`);
+                console.log(`✓ Controle ${deviceId} já está no estado correto: "${state}"`);
             }
+        } else {
+            console.log(`⚠️ Elemento encontrado mas não é room-control: ${el.className}`);
         }
     });
     
@@ -1619,16 +1629,21 @@ function syncAllVisibleControls(forceMasterUpdate = false) {
     // Sincronizar controles de cômodo
     const roomControls = document.querySelectorAll('.room-control[data-device-id]');
     let updatedControls = 0;
+    console.log(`🔄 Encontrados ${roomControls.length} controles para sincronizar`);
     
-    roomControls.forEach(el => {
+    roomControls.forEach((el, index) => {
         const deviceId = el.dataset.deviceId;
         const savedState = getStoredState(deviceId);
         const currentState = el.dataset.state;
         
+        console.log(`🔄 Sync ${index + 1}/${roomControls.length} - ID:${deviceId}, atual:"${currentState}", salvo:"${savedState}"`);
+        
         if (savedState && currentState !== savedState) {
-            console.log(`🔄 Sincronizando controle ${deviceId}: ${currentState} → ${savedState}`);
+            console.log(`🔄 Atualizando controle ${deviceId}: ${currentState} → ${savedState}`);
             setRoomControlUI(el, savedState);
             updatedControls++;
+        } else if (savedState) {
+            console.log(`✓ Controle ${deviceId} já está sincronizado`);
         }
     });
     
