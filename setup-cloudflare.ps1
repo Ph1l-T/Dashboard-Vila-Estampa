@@ -31,11 +31,7 @@ Write-Host "2️⃣ HUBITAT_BASE_URL (ex: http://192.168.1.100/apps/api/123/devi
 wrangler secret put HUBITAT_BASE_URL
 
 Write-Host ""
-Write-Host "3️⃣ HUBITAT_FULL_URL (ex: http://192.168.1.100):" -ForegroundColor White
-wrangler secret put HUBITAT_FULL_URL
-
-Write-Host ""
-Write-Host "4️⃣ WEBHOOK_SHARED_SECRET (chave secreta para webhooks):" -ForegroundColor White
+Write-Host "3️⃣ WEBHOOK_SHARED_SECRET (chave secreta para webhooks):" -ForegroundColor White
 wrangler secret put WEBHOOK_SHARED_SECRET
 
 Write-Host ""

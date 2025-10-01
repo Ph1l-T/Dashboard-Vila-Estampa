@@ -16,14 +16,12 @@ wrangler login
 ```bash
 wrangler secret put HUBITAT_ACCESS_TOKEN
 wrangler secret put HUBITAT_BASE_URL
-wrangler secret put HUBITAT_FULL_URL
 wrangler secret put WEBHOOK_SHARED_SECRET
 ```
 
 ### Exemplos das variáveis:
 - **HUBITAT_ACCESS_TOKEN**: Token de acesso do Hubitat (ex: `abc123-def456-ghi789`)
 - **HUBITAT_BASE_URL**: URL base para comandos (ex: `http://192.168.1.100/apps/api/123/devices`)
-- **HUBITAT_FULL_URL**: URL completa do hub (ex: `http://192.168.1.100`)
 - **WEBHOOK_SHARED_SECRET**: Chave secreta para webhooks (ex: `minha-chave-super-secreta`)
 
 ## Deploy
