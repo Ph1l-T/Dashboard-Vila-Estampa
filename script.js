@@ -200,7 +200,10 @@ function initRoomPage() {
     });
     
     // Forçar atualização de botões master também
-    setTimeout(updateAllMasterButtons, 50);
+    setTimeout(() => {
+        updateAllMasterButtons();
+        updateAllCurtainMasterButtons();
+    }, 50);
 
     // Rename label on Sinuca page: Iluminação -> Bar (UI-only)
     try {
@@ -835,6 +838,7 @@ function updateDeviceUI(deviceId, state, forceUpdate = false) {
     
     // Atualizar botões master da home após qualquer mudança de dispositivo
     updateAllMasterButtons();
+    updateAllCurtainMasterButtons();
 }
 
 function updateAllMasterButtons() {
@@ -848,6 +852,20 @@ function updateAllMasterButtons() {
     });
 }
 
+function updateAllCurtainMasterButtons() {
+    const curtainMasterButtons = document.querySelectorAll('.room-curtain-master-btn');
+    curtainMasterButtons.forEach(btn => {
+        const curtainIds = (btn.dataset.curtainIds || '').split(',').filter(Boolean);
+        if (curtainIds.length > 0) {
+            // Determinar estado baseado nas cortinas do ambiente
+            const hasAnyOpen = anyCurtainOpen(curtainIds);
+            const masterState = hasAnyOpen ? 'close' : 'open'; // Se alguma está aberta, mostrar fechar; se todas fechadas, mostrar abrir
+            setCurtainMasterIcon(btn, hasAnyOpen ? 'open' : 'closed', false);
+            console.log(`🪟 Botão master cortinas atualizado - Ambiente: ${curtainIds.join(',')}, Estado: ${hasAnyOpen ? 'tem abertas' : 'todas fechadas'}, Ícone: ${hasAnyOpen ? 'open' : 'closed'}`);
+        }
+    });
+}
+
 // Funções auxiliares para botões master (movidas do HTML)
 function anyOn(deviceIds) {
     return (deviceIds || []).some(id => (getStoredState(id) || 'off') === 'on');
@@ -855,18 +873,24 @@ function anyOn(deviceIds) {
 
 // Função auxiliar para verificar se alguma cortina está aberta
 function anyCurtainOpen(curtainIds) {
-    // Para cortinas, assumimos que começam fechadas e precisamos verificar estado
-    // Por enquanto, vamos usar uma lógica simples baseada em comandos recentes
+    // Verifica se alguma cortina do grupo está aberta
     return (curtainIds || []).some(id => {
-        const lastCommand = getLastCurtainCommand(id);
-        return lastCommand === 'open';
+        const state = getCurtainState(id);
+        console.log(`🔍 Cortina ${id}: estado = ${state}`);
+        return state === 'open';
     });
+}
+
+// Função para obter o estado atual da cortina
+function getCurtainState(curtainId) {
+    // Buscar no localStorage ou usar um estado padrão
+    const state = localStorage.getItem(`curtain_${curtainId}_state`) || 'closed';
+    return state; // retorna 'open' ou 'closed'
 }
 
 // Função para obter o último comando de cortina
 function getLastCurtainCommand(curtainId) {
-    // Buscar no localStorage ou usar um estado padrão
-    const state = localStorage.getItem(`curtain_${curtainId}_state`) || 'closed';
+    const state = getCurtainState(curtainId);
     return state === 'closed' ? 'close' : 'open'; // normalizar para comando
 }
 
@@ -1200,6 +1224,7 @@ async function loadAllDeviceStatesGlobally() {
         
         console.log(`✅ Carregamento completo: ${loadedCount}/${ALL_LIGHT_IDS.length} dispositivos`);
         updateProgress(100, 'Carregamento concluído!');
+        updateAllCurtainMasterButtons();
         return true;
     }
     
@@ -1461,6 +1486,7 @@ async function loadAllDeviceStatesGlobally() {
         // Forçar atualização de todos os botões master após carregamento
         setTimeout(() => {
             updateAllMasterButtons();
+            updateAllCurtainMasterButtons();
             console.log('🔄 Botões master atualizados após carregamento global');
         }, 100);
         
