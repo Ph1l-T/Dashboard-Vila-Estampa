@@ -43,25 +43,12 @@ function hidePopup() {
     masterConfirmCallback = null;
 }
 
-function updateMasterLightToggleState() {
-    const btn = document.getElementById('master-light-toggle-btn');
-    if (!btn) return;
-
-    const icon = document.getElementById('master-light-toggle-icon');
-    const label = document.getElementById('master-light-toggle-label');
-
-    const areAnyLightsOn = ALL_LIGHT_IDS.some(id => (getStoredState(id) || 'off') === 'on');
-
-    if (areAnyLightsOn) {
-        btn.dataset.action = 'off';
-        label.textContent = 'Desligar Tudo';
-        icon.src = 'images/icons/icon-small-light-on.svg';
-    } else {
-        btn.dataset.action = 'on';
-        label.textContent = 'Ligar Tudo';
-        icon.src = 'images/icons/icon-small-light-off.svg';
-    }
-}
+// DEPRECATED: função removida com novos cenários de expediente
+// function updateMasterLightToggleState() {
+//     const btn = document.getElementById('master-light-toggle-btn');
+//     if (!btn) return;
+//     // ... código comentado
+// }
 
 function handleMasterLightToggle() {
     const btn = document.getElementById('master-light-toggle-btn');
@@ -177,6 +164,133 @@ function executeMasterCurtainsAction(action) {
                 btn.classList.remove('loading');
             }
         });
+}
+
+// === CENÁRIOS DE EXPEDIENTE ===
+
+function handleIniciarExpediente() {
+    showPopup('Iniciar expediente? Isso irá acender as luzes do Garden, Reunião e Barra LED da Vitrine, e abrir as cortinas da Reunião.', executeIniciarExpediente);
+}
+
+function executeIniciarExpediente() {
+    console.log('🌅 Iniciando cenário: Iniciar Expediente');
+    
+    // Definir IDs dos dispositivos por ambiente
+    const gardenLights = ['7', '8', '9'];     // Garden: Barra LED, Lustre Garden, Lustre Hall
+    const reuniaoLights = ['11', '12', '13']; // Reunião: Barra LED, Spots Hall, Lustre
+    const vitrineBarra = ['36'];              // Vitrine: Barra LED apenas
+    const reuniaoCurtains = ['39', '40'];     // Cortinas da Reunião (EeD e SeD)
+    
+    // Adicionar feedback visual
+    const btn = document.getElementById('iniciar-expediente-btn');
+    if (btn) btn.classList.add('loading');
+    
+    const promises = [];
+    
+    // Acender luzes do Garden
+    gardenLights.forEach(deviceId => {
+        console.log(`💡 Ligando Garden device ${deviceId}`);
+        promises.push(sendHubitatCommand(deviceId, 'on'));
+        setStoredState(deviceId, 'on');
+    });
+    
+    // Acender luzes da Reunião
+    reuniaoLights.forEach(deviceId => {
+        console.log(`💡 Ligando Reunião device ${deviceId}`);
+        promises.push(sendHubitatCommand(deviceId, 'on'));
+        setStoredState(deviceId, 'on');
+    });
+    
+    // Acender Barra LED da Vitrine
+    vitrineBarra.forEach(deviceId => {
+        console.log(`💡 Ligando Vitrine Barra LED ${deviceId}`);
+        promises.push(sendHubitatCommand(deviceId, 'on'));
+        setStoredState(deviceId, 'on');
+    });
+    
+    // Abrir cortinas da Reunião
+    reuniaoCurtains.forEach(deviceId => {
+        console.log(`🪟 Abrindo cortina Reunião ${deviceId}`);
+        promises.push(sendCurtainCommand(deviceId, 'open'));
+    });
+    
+    Promise.all(promises).then(() => {
+        console.log('✅ Cenário Iniciar Expediente executado com sucesso');
+        setTimeout(() => {
+            if (typeof syncAllVisibleControls === 'function') {
+                syncAllVisibleControls(true);
+            }
+        }, 500);
+        hidePopup();
+    }).catch(error => {
+        console.error('❌ Erro ao executar Iniciar Expediente:', error);
+        if (typeof showErrorMessage === 'function') {
+            showErrorMessage(`Erro ao iniciar expediente: ${error.message}`);
+        }
+    }).finally(() => {
+        if (btn) btn.classList.remove('loading');
+    });
+}
+
+function handleEncerrarExpediente() {
+    showPopup('Encerrar expediente? Isso irá ligar apenas os lustres da Vitrine e Garagem + Jardim Vitrine, fechar todas as cortinas e apagar as demais luzes.', executeEncerrarExpediente);
+}
+
+function executeEncerrarExpediente() {
+    console.log('🌙 Iniciando cenário: Encerrar Expediente');
+    
+    // Definir IDs dos dispositivos
+    const lustresToKeepOn = [
+        '35',  // Vitrine: Lustres  
+        '37',  // Vitrine: Jardim
+        '49'   // Garagem: Lustre + Balizadores
+    ];
+    
+    // Todos os outros dispositivos devem ser apagados
+    const devicesToTurnOff = ALL_LIGHT_IDS.filter(id => !lustresToKeepOn.includes(id));
+    
+    // Adicionar feedback visual
+    const btn = document.getElementById('encerrar-expediente-btn');
+    if (btn) btn.classList.add('loading');
+    
+    const promises = [];
+    
+    // Ligar lustres especificados
+    lustresToKeepOn.forEach(deviceId => {
+        console.log(`💡 Ligando lustre ${deviceId}`);
+        promises.push(sendHubitatCommand(deviceId, 'on'));
+        setStoredState(deviceId, 'on');
+    });
+    
+    // Apagar todas as demais luzes
+    devicesToTurnOff.forEach(deviceId => {
+        console.log(`🔌 Desligando device ${deviceId}`);
+        promises.push(sendHubitatCommand(deviceId, 'off'));
+        setStoredState(deviceId, 'off');
+    });
+    
+    // Fechar todas as cortinas
+    ALL_CURTAIN_IDS.forEach(deviceId => {
+        console.log(`🪟 Fechando cortina ${deviceId}`);
+        promises.push(sendCurtainCommand(deviceId, 'close'));
+    });
+    
+    Promise.all(promises).then(() => {
+        console.log('✅ Cenário Encerrar Expediente executado com sucesso');
+        setTimeout(() => {
+            if (typeof syncAllVisibleControls === 'function') {
+                syncAllVisibleControls(true);
+            }
+        }, 500);
+        hidePopup();
+    }).catch(error => {
+        console.error('❌ Erro ao executar Encerrar Expediente:', error);
+        if (typeof showErrorMessage === 'function') {
+            showErrorMessage(`Erro ao encerrar expediente: ${error.message}`);
+        }
+    }).finally(() => {
+        if (btn) btn.classList.remove('loading');
+    });
 }
 
 function initScenesPage() {

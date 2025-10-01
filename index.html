@@ -596,11 +596,19 @@ curtains: () => `
 
                     <div class="controls-grid" style="top: 130px; grid-template-columns: 1fr; grid-auto-rows: min-content; gap: 15px;">
 
-                        <div class="control-card large scene-control-card" id="master-light-toggle-btn" onclick="handleMasterLightToggle()">
+                        <div class="control-card large scene-control-card" id="iniciar-expediente-btn" onclick="handleIniciarExpediente()">
 
-                            <img class="control-icon" id="master-light-toggle-icon" src="images/icons/icon-small-light-off.svg" alt="Master Light Toggle">
+                            <img class="control-icon" src="images/icons/icon-small-light-on.svg" alt="Iniciar Expediente">
 
-                            <div class="control-label" id="master-light-toggle-label">Ligar Tudo</div>
+                            <div class="control-label">Iniciar Expediente</div>
+
+                        </div>
+
+                        <div class="control-card large scene-control-card" id="encerrar-expediente-btn" onclick="handleEncerrarExpediente()">
+
+                            <img class="control-icon" src="images/icons/icon-small-light-off.svg" alt="Encerrar Expediente">
+
+                            <div class="control-label">Encerrar Expediente</div>
 
                         </div>
 
