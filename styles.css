@@ -177,70 +177,17 @@
     z-index: 2;
 }
 
-.room-master-btn {
-    position: absolute;
-    bottom: 16px;
-    left: 16px;
-    width: 72px; /* larger click area */
-    height: 72px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: pointer;
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    z-index: 11; /* above .room-card-link */
-    transition: transform .08s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
-}
 
-.room-master-btn:hover:not(.loading) { 
-    transform: scale(1.04); 
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-}
-.room-master-btn:active:not(.loading) { 
-    transform: translateY(2px) scale(0.98);
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.4);
-}
-.room-master-btn img { 
-    width: 56px !important; 
-    height: 56px !important; 
-    filter: brightness(0) invert(1);
-    display: block !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    object-fit: contain;
-    position: static !important;
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
-    bottom: auto !important;
-    transform: none !important;
-    float: none !important;
-}
-
-/* BotÃ£o Master para Cortinas */
+.room-master-btn,
 .room-curtain-master-btn {
-    position: absolute;
-    bottom: 16px;
-    left: 103px; /* Posicionado com 15px de distÃ¢ncia do botÃ£o de luz (16px + 72px + 15px) */
     width: 72px;
     height: 72px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border-radius: 18px;
+    box-shadow: var(--glass-shadow), var(--glass-inner-top), var(--glass-inner-bottom);
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -249,26 +196,65 @@
     margin: 0;
     box-sizing: border-box;
     z-index: 11;
-    transform-origin: center center; /* Garante que transformaÃ§Ãµes sejam do centro */
-    transition: transform .08s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+    isolation: isolate;
+    overflow: hidden;
+    position: absolute;
+    bottom: 16px;
+    transition: transform .1s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
 
-.room-curtain-master-btn:hover:not(.loading) { 
-    transform: scale(1.04); 
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+.room-master-btn {
+    left: 16px;
 }
 
-.room-curtain-master-btn:active:not(.loading) { 
-    transform: scale(0.96);
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.4);
+.room-curtain-master-btn {
+    left: 103px;
 }
 
-.room-curtain-master-btn img { 
-    width: 56px !important; 
-    height: 56px !important; 
+.room-master-btn::before,
+.room-curtain-master-btn::before,
+.room-master-btn::after,
+.room-curtain-master-btn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+.room-master-btn::before,
+.room-curtain-master-btn::before {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0));
+    opacity: 0.5;
+}
+
+.room-master-btn::after,
+.room-curtain-master-btn::after {
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.35), transparent 60%);
+    mix-blend-mode: screen;
+    opacity: 0.45;
+}
+
+.room-master-btn:hover:not(.loading),
+.room-curtain-master-btn:hover:not(.loading) {
+    transform: translateY(-2px) scale(1.04);
+    background: var(--glass-bg-hover);
+    border-color: rgba(255, 255, 255, 0.38);
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22), var(--glass-inner-top), var(--glass-inner-bottom);
+}
+
+.room-master-btn:active:not(.loading),
+.room-curtain-master-btn:active:not(.loading) {
+    transform: translateY(1px) scale(0.97);
+    background: var(--glass-bg-active);
+    border-color: var(--glass-border-strong);
+    box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.28), 0 6px 14px rgba(0, 0, 0, 0.16);
+}
+
+.room-master-btn img,
+.room-curtain-master-btn img {
+    width: 48px !important;
+    height: 48px !important;
     filter: brightness(0) invert(1);
     display: block !important;
     margin: 0 !important;
@@ -281,6 +267,7 @@
     bottom: auto !important;
     transform: none !important;
     float: none !important;
+    z-index: 1;
 }
 
 /* Estados de loading para botÃµes master */
@@ -454,6 +441,142 @@ html, body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+}
+
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-bg-hover: rgba(255, 255, 255, 0.08);
+    --glass-bg-active: rgba(255, 255, 255, 0.1);
+    --glass-bg-dark: rgba(15, 15, 15, 0.55);
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --glass-border-strong: rgba(255, 255, 255, 0.45);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --glass-inner-top: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    --glass-inner-bottom: inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+    --glass-inner-flat: inset 0 0 0 0 rgba(255, 255, 255, 0);
+    --glass-blur: 5px;
+}
+
+:where(.glass-card) {
+    width: 240px;
+    height: 360px;
+}
+
+:where(
+    .glass-card,
+    .glass-card,
+    .control-card,
+    .control-card-curtain,
+    .room-control,
+    .curtain-control-minimal,
+    .curtain-btn-minimal,
+    .curtain-card-btn,
+    .curtain-btn,
+    .curtain-control-figma,
+    .curtain-figma-controls,
+    .curtain-figma-btn,
+    .curtain-tile,
+    .curtain-tile__btn,
+    .curtain-control
+) {
+    position: relative;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--glass-radius, 16px);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    box-shadow: var(--glass-shadow), var(--glass-inner-top), var(--glass-inner-bottom), var(--glass-inner-flat);
+    isolation: isolate;
+    overflow: hidden;
+}
+
+:where(
+    .glass-card,
+    .glass-card,
+    .control-card,
+    .control-card-curtain,
+    .room-control,
+    .curtain-control-minimal,
+    .curtain-btn-minimal,
+    .curtain-card-btn,
+    .curtain-btn,
+    .curtain-control-figma,
+    .curtain-figma-controls,
+    .curtain-figma-btn,
+    .curtain-tile,
+    .curtain-tile__btn,
+    .curtain-control
+)::before,
+:where(
+    .glass-card,
+    .control-card,
+    .control-card-curtain,
+    .room-control,
+    .curtain-control-minimal,
+    .curtain-btn-minimal,
+    .curtain-card-btn,
+    .curtain-btn,
+    .curtain-control-figma,
+    .curtain-figma-controls,
+    .curtain-figma-btn,
+    .curtain-tile,
+    .curtain-tile__btn
+)::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+}
+
+:where(
+    .control-card,
+    .control-card-curtain,
+    .room-control,
+    .curtain-control-minimal,
+    .curtain-btn-minimal,
+    .curtain-card-btn,
+    .curtain-btn,
+    .curtain-control-figma,
+    .curtain-figma-controls,
+    .curtain-figma-btn
+)::before {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    border-radius: inherit;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.8),
+        transparent
+    );
+}
+
+:where(
+    .control-card,
+    .control-card-curtain,
+    .room-control,
+    .curtain-control-minimal,
+    .curtain-btn-minimal,
+    .curtain-card-btn,
+    .curtain-btn,
+    .curtain-control-figma,
+    .curtain-figma-controls,
+    .curtain-figma-btn,
+    .curtain-tile,
+    .curtain-tile__btn
+)::after {
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.8),
+        transparent,
+        rgba(255, 255, 255, 0.3)
+    );
 }
 
 .container {
@@ -638,23 +761,20 @@ html, body {
 /* PÃ¡gina de Cortinas - Design Minimalista Modo Escuro */
 /* Controles de cortina minimalistas para pÃ¡ginas individuais */
 .curtain-control-minimal {
+    --glass-radius: 15px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 15px 20px;
     margin: 10px 0;
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 15px;
     transition: all 0.3s ease;
 }
 
 .curtain-control-minimal:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--glass-bg-hover);
     transform: translateY(-1px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.32);
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22), var(--glass-inner-top), var(--glass-inner-bottom);
 }
 
 .curtain-name-minimal {
@@ -670,9 +790,6 @@ html, body {
 }
 
 .curtain-btn-minimal {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 16px;
     padding: 20px;
     cursor: pointer;
     transition: all 0.25s ease;
@@ -681,20 +798,20 @@ html, body {
     justify-content: center;
     width: 80px;
     height: 80px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
 }
 
 .curtain-btn-minimal:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: var(--glass-bg-hover);
+    border-color: rgba(255, 255, 255, 0.35);
     transform: translateY(-1px);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18), var(--glass-inner-top), var(--glass-inner-bottom);
 }
 
 .curtain-btn-minimal:active {
     transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    background: var(--glass-bg-active);
+    border-color: var(--glass-border-strong);
+    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.14);
 }
 
 .curtain-btn-minimal img {
@@ -754,12 +871,7 @@ html, body {
 }
 
 .control-card {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 16px;
-    box-shadow: 0 14px 38px rgba(0, 0, 0, 0.22);
+    --glass-radius: 16px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -776,17 +888,17 @@ html, body {
 }
 
 .control-card:hover {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.1));
-    border-color: rgba(255, 255, 255, 0.28);
-    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+    background: var(--glass-bg-hover);
+    border-color: rgba(255, 255, 255, 0.38);
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22), var(--glass-inner-top), var(--glass-inner-bottom);
 }
 
 /* AparÃƒÂªncia de pressionado quando ligado */
 .control-card[data-state="on"] {
     transform: translateY(2px);
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.12));
-    border-color: rgba(255, 255, 255, 0.35);
-    box-shadow: inset 0 2px 8px rgba(0,0,0,0.35), 0 6px 16px rgba(0,0,0,0.24);
+    background: var(--glass-bg-active);
+    border-color: var(--glass-border-strong);
+    box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.35), 0 3px 12px rgba(0, 0, 0, 0.18);
 }
 
 .control-card.large {
@@ -795,12 +907,7 @@ html, body {
 
 /* Controles de cortina no mesmo container dos botÃµes de luz */
 .control-card-curtain {
-    background: rgba(255, 255, 255, 0.1);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 16px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    --glass-radius: 16px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -838,11 +945,7 @@ html, body {
 
 /* BotÃµes individuais da cortina */
 .curtain-card-btn {
-    background: rgba(255, 255, 255, 0.1);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
+    --glass-radius: 12px;
     width: 70px;
     height: 70px;
     display: flex;
@@ -851,18 +954,20 @@ html, body {
     cursor: pointer;
     transition: all 0.25s ease;
     padding: 0;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
 }
 
 .curtain-card-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: var(--glass-bg-hover);
+    border-color: rgba(255, 255, 255, 0.35);
     transform: translateY(-1px) scale(1.02);
-    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2), var(--glass-inner-top), var(--glass-inner-bottom);
 }
 
 .curtain-card-btn:active {
     transform: scale(0.95);
+    background: var(--glass-bg-active);
+    border-color: var(--glass-border-strong);
+    box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .curtain-card-btn img {
@@ -909,9 +1014,8 @@ html, body {
 }
 
 .control-card.dvr {
-    background: linear-gradient(145deg, rgba(40, 44, 64, 0.48), rgba(24, 26, 38, 0.38));
-    border: 1px solid rgba(170, 190, 255, 0.22);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+    background: var(--glass-bg-dark);
+    border-color: rgba(175, 195, 255, 0.28);
 }
 
 /* Thermostat Styles */
@@ -986,17 +1090,12 @@ html, body {
 }
 
 .room-control {
+    --glass-radius: 16px;
     display: flex;
     align-items: center;
     gap: 14px;
     height: 64px;
     padding: 0 16px;
-    background: rgba(255, 255, 255, 0.1);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 16px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     color: white;
     font-family: 'Raleway', sans-serif;
     font-weight: 400;
@@ -1027,14 +1126,16 @@ html, body {
 }
 
 .room-control:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--glass-bg-hover);
+    border-color: rgba(255, 255, 255, 0.38);
+    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.2), var(--glass-inner-top), var(--glass-inner-bottom);
 }
 
 .room-control[data-state="on"] {
     transform: translateY(2px);
-    background: rgba(255, 255, 255, 0.18);
-    border-color: rgba(255, 255, 255, 0.35);
-    box-shadow: inset 0 2px 8px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.2);
+    background: var(--glass-bg-active);
+    border-color: var(--glass-border-strong);
+    box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.32), 0 3px 10px rgba(0, 0, 0, 0.16);
 }
 
 .room-control-icon { width: 32px; height: 32px; }
@@ -1062,13 +1163,9 @@ html, body {
   gap: 14px;
 }
 .curtain-btn {
+    --glass-radius: 50%;
   width: 80px;
   height: 80px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255,255,255,0.08);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
   color: #fff;
   display: flex;
   align-items: center;
@@ -1076,8 +1173,17 @@ html, body {
   cursor: pointer;
   transition: transform .08s ease;
 }
-.curtain-btn:hover { background: rgba(255,255,255,0.12); }
-.curtain-btn:active { transform: translateY(2px) scale(0.98); }
+.curtain-btn:hover {
+    background: var(--glass-bg-hover);
+    border-color: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2), var(--glass-inner-top), var(--glass-inner-bottom);
+}
+.curtain-btn:active {
+    transform: translateY(2px) scale(0.98);
+    background: var(--glass-bg-active);
+    border-color: var(--glass-border-strong);
+    box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.28), 0 4px 12px rgba(0, 0, 0, 0.14);
+}
 .curtain-btn img { width: 40px; height: 40px; filter: brightness(0) invert(1); }
 @media (max-width: 360px) { .curtain-btn { width: 70px; height: 70px; } }
 
@@ -1281,14 +1387,12 @@ html, body {
 
 /* Novo design de controles de cortina baseado no Figma */
 .curtain-control-figma {
+    --glass-radius: 16px;
     flex: 1 1 280px;
     max-width: 320px;
     position: relative;
-    background: rgba(16, 16, 16, 0.85);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 16px;
+    background: var(--glass-bg-dark);
+    border-color: rgba(255, 255, 255, 0.24);
     box-sizing: border-box;
     min-height: clamp(120px, 16vw, 150px);
     overflow: hidden;
@@ -1296,7 +1400,7 @@ html, body {
     color: #fff;
     font-family: 'Raleway', sans-serif;
     margin: 0;
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 16px 42px rgba(0, 0, 0, 0.32), var(--glass-inner-top), var(--glass-inner-bottom);
 }
 
 .curtain-figma-title {
@@ -1313,15 +1417,13 @@ html, body {
 }
 
 .curtain-figma-controls {
+    --glass-radius: 19px;
     position: absolute;
     top: 41px;
     left: 50%;
     transform: translateX(-50%);
-    border-radius: 19px;
     background: rgba(10, 10, 10, 0.65);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.24);
     box-sizing: border-box;
     width: calc(100% - 36px);
     max-width: 340px;
@@ -1331,7 +1433,7 @@ html, body {
     align-items: center;
     justify-content: space-between;
     padding: 0 clamp(12px, 2vw, 18px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28), var(--glass-inner-top), var(--glass-inner-bottom);
 }
 
 .curtain-figma-separator {
@@ -1341,11 +1443,9 @@ html, body {
 }
 
 .curtain-figma-btn {
-    background: rgba(0, 0, 0, 0.55);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 14px;
+    --glass-radius: 14px;
+    background: rgba(0, 0, 0, 0.5);
+    border-color: rgba(255, 255, 255, 0.26);
     width: 92px;
     height: 92px;
     display: flex;
@@ -1354,19 +1454,20 @@ html, body {
     cursor: pointer;
     transition: all 0.25s ease;
     padding: 0;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
 }
 
 .curtain-figma-btn:hover {
     background: rgba(20, 20, 20, 0.75);
-    border-color: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.32);
     transform: translateY(-1px) scale(1.02);
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 20px 36px rgba(0, 0, 0, 0.36), var(--glass-inner-top), var(--glass-inner-bottom);
 }
 
 .curtain-figma-btn:active {
     transform: scale(0.96);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    background: rgba(22, 22, 22, 0.82);
+    border-color: rgba(255, 255, 255, 0.38);
+    box-shadow: inset 0 5px 12px rgba(0, 0, 0, 0.32), 0 10px 24px rgba(0, 0, 0, 0.28);
 }
 
 .curtain-figma-btn img {
@@ -2341,14 +2442,11 @@ body.app-info-open {
 }
 
 .curtain-tile {
-    background: linear-gradient(150deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    --glass-radius: 20px;
     padding: 22px clamp(18px, 2vw, 26px);
     display: flex;
     flex-direction: column;
     gap: 20px;
-    box-shadow: 0 18px 45px -25px rgba(0, 0, 0, 0.7);
 }
 
 .curtain-tile__header {
@@ -2383,15 +2481,14 @@ body.app-info-open {
 }
 
 .curtain-tile__btn {
+    --glass-radius: 16px;
+    background: var(--glass-bg-dark);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 16px 12px;
     min-height: 56px;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    background: rgba(0, 0, 0, 0.35);
     cursor: pointer;
     transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
@@ -2403,13 +2500,17 @@ body.app-info-open {
 }
 
 .curtain-tile__btn:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.28);
+    background: var(--glass-bg-hover);
+    border-color: rgba(255, 255, 255, 0.38);
     transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25), var(--glass-inner-top), var(--glass-inner-bottom);
 }
 
 .curtain-tile__btn:active {
     transform: translateY(0);
+    background: var(--glass-bg-active);
+    border-color: var(--glass-border-strong);
+    box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.28), 0 4px 12px rgba(0, 0, 0, 0.18);
 }
 
 .curtain-tile__icon-pause {
