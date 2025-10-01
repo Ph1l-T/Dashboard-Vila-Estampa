@@ -754,12 +754,12 @@ html, body {
 }
 
 .control-card {
-    background: rgba(255, 255, 255, 0.1);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 16px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 14px 38px rgba(0, 0, 0, 0.22);
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -776,15 +776,17 @@ html, body {
 }
 
 .control-card:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.1));
+    border-color: rgba(255, 255, 255, 0.28);
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
 }
 
 /* AparÃƒÂªncia de pressionado quando ligado */
 .control-card[data-state="on"] {
     transform: translateY(2px);
-    background: rgba(255, 255, 255, 0.18);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.12));
     border-color: rgba(255, 255, 255, 0.35);
-    box-shadow: inset 0 2px 8px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.2);
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.35), 0 6px 16px rgba(0,0,0,0.24);
 }
 
 .control-card.large {
@@ -907,8 +909,9 @@ html, body {
 }
 
 .control-card.dvr {
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(145deg, rgba(40, 44, 64, 0.48), rgba(24, 26, 38, 0.38));
+    border: 1px solid rgba(170, 190, 255, 0.22);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
 }
 
 /* Thermostat Styles */
