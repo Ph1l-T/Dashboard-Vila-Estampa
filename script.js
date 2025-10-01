@@ -428,33 +428,33 @@ const POLLING_URL = '/polling';
 function showErrorMessage(message) {
     // Criar modal de erro
     const errorModal = document.createElement('div');
+    errorModal.className = 'error-modal';
     errorModal.style.cssText = `
         position: fixed;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 0, 0, 0.3);
-        border-radius: 16px;
-        padding: 20px;
+        padding: 24px;
         max-width: 90vw;
+        min-width: 320px;
         z-index: 10000;
         text-align: center;
-        box-shadow: 0 8px 32px rgba(255, 0, 0, 0.1);
     `;
     
     errorModal.innerHTML = `
-        <h3 style="color: #e74c3c; margin-bottom: 10px;">❌ Erro de Conexão</h3>
-        <p style="margin-bottom: 15px;">${message}</p>
+        <h3 style="margin-bottom: 12px; font-size: 1.4rem;">❌ Erro de Conexão</h3>
+        <p style="margin-bottom: 20px; line-height: 1.5;">${message}</p>
         <button onclick="this.parentElement.remove()" style="
-            background: #e74c3c;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
+            padding: 12px 24px;
+            border-radius: 12px;
             cursor: pointer;
-        ">Fechar</button>
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        " onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 6px 20px rgba(231, 76, 60, 0.4)'" 
+           onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">Fechar</button>
     `;
     
     document.body.appendChild(errorModal);
