@@ -134,6 +134,8 @@ function setRoomControlUI(el, state) {
         img.src = newSrc;
     } else {
         console.warn(`⚠️ setRoomControlUI: Imagem não encontrada para elemento com classes: ${el.className}`);
+        // Debug: mostrar todos os elementos filhos para diagnóstico
+        console.log(`🔍 Elementos filhos:`, Array.from(el.children).map(child => child.className));
     }
 }
 
@@ -182,7 +184,7 @@ async function refreshRoomControlFromHubitat(el) {
 
 function initRoomPage() {
     console.log('🏠 Inicializando página de cômodo...');
-    const controls = document.querySelectorAll('.room-control[data-device-id]:not([data-no-sync="true"])');
+    const controls = document.querySelectorAll('.room-control[data-device-id]:not([data-no-sync="true"]), .control-card[data-device-id]:not([data-no-sync="true"])');
     console.log(`🏠 Encontrados ${controls.length} controles de cômodo para inicializar`);
     
     controls.forEach((el, index) => {
@@ -808,13 +810,15 @@ function updateDeviceUI(deviceId, state, forceUpdate = false) {
         }
     }
     
-    // Atualizar controles de cômodo
+    // Atualizar controles de cômodo (room-control E control-card)
     const roomControls = document.querySelectorAll(`[data-device-id="${deviceId}"]`);
     console.log(`🔧 updateDeviceUI(${deviceId}, ${state}) - Encontrados ${roomControls.length} controles`);
     
     roomControls.forEach((el, index) => {
         console.log(`🔧 Controle ${index + 1}: classes="${el.className}", currentState="${el.dataset.state}"`);
-        if (el.classList.contains('room-control')) {
+        
+        // Suporta tanto .room-control quanto .control-card
+        if (el.classList.contains('room-control') || el.classList.contains('control-card')) {
             const currentState = el.dataset.state;
             if (currentState !== state || forceUpdate) {
                 console.log(`🔄 Atualizando controle ${deviceId}: "${currentState}" → "${state}" (force=${forceUpdate})`);
@@ -825,7 +829,7 @@ function updateDeviceUI(deviceId, state, forceUpdate = false) {
                 console.log(`✓ Controle ${deviceId} já está no estado correto: "${state}"`);
             }
         } else {
-            console.log(`⚠️ Elemento encontrado mas não é room-control: ${el.className}`);
+            console.log(`⚠️ Elemento encontrado mas não é room-control nem control-card: ${el.className}`);
         }
     });
     
@@ -1629,8 +1633,8 @@ function setupDomObserver() {
 function syncAllVisibleControls(forceMasterUpdate = false) {
     console.log('🔄 Sincronizando todos os controles visíveis...');
     
-    // Sincronizar controles de cômodo
-    const roomControls = document.querySelectorAll('.room-control[data-device-id]');
+    // Sincronizar controles de cômodo (room-control E control-card)
+    const roomControls = document.querySelectorAll('.room-control[data-device-id], .control-card[data-device-id]');
     let updatedControls = 0;
     console.log(`🔄 Encontrados ${roomControls.length} controles para sincronizar`);
     
