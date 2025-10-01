@@ -7,6 +7,15 @@ const ALL_LIGHT_IDS = [
   // Café não possui dispositivos de luz (apenas cortina)
 ];
 
+// Configurações de timeout e retry
+const NETWORK_CONFIG = {
+    HEALTH_CHECK_TIMEOUT: 5000,    // 5s para health check
+    FETCH_TIMEOUT_PER_ATTEMPT: 15000, // 15s por tentativa
+    MAX_RETRY_ATTEMPTS: 3,         // 3 tentativas máximo
+    RETRY_DELAY_BASE: 1000,        // 1s base para backoff
+    RETRY_DELAY_MAX: 5000          // 5s máximo entre tentativas
+};
+
 // Funções de toggle para ícones nos cards da home
 function toggleTelamovelIcon(el) {
     const img = el.querySelector('img');
@@ -1174,7 +1183,26 @@ async function loadAllDeviceStatesGlobally() {
     
     try {
         console.log('🌍 MODO PRODUÇÃO ATIVO - buscando do servidor');
-        updateProgress(10, 'Conectando com servidor...');
+        updateProgress(10, 'Testando conectividade...');
+        
+        // Teste rápido de conectividade
+        try {
+            const healthController = new AbortController();
+            const healthTimeout = setTimeout(() => healthController.abort(), NETWORK_CONFIG.HEALTH_CHECK_TIMEOUT);
+            
+            const healthCheck = await fetch(POLLING_URL + '?health=1', {
+                method: 'GET',
+                signal: healthController.signal,
+                mode: 'cors'
+            });
+            
+            clearTimeout(healthTimeout);
+            console.log('🏥 Health check:', healthCheck.ok ? 'OK' : 'FAIL');
+        } catch (healthError) {
+            console.warn('⚠️ Health check falhou, continuando mesmo assim:', healthError.message);
+        }
+        
+        updateProgress(20, 'Conectando com servidor...');
         
         const deviceIds = ALL_LIGHT_IDS.join(',');
         console.log(`📡 Buscando estados de ${ALL_LIGHT_IDS.length} dispositivos no servidor...`);
@@ -1182,31 +1210,67 @@ async function loadAllDeviceStatesGlobally() {
         
         updateProgress(30, 'Enviando solicitação...');
         
+        // Função de retry com backoff exponencial
+        const fetchWithRetry = async (url, options, maxRetries = NETWORK_CONFIG.MAX_RETRY_ATTEMPTS) => {
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                    console.log(`📡 Tentativa ${attempt}/${maxRetries} para ${url}`);
+                    updateProgress(30 + (attempt - 1) * 5, `Tentativa ${attempt}/${maxRetries}...`);
+                    
+                    // Configurar timeout por tentativa
+                    let controller, timeoutId;
+                    const timeout = NETWORK_CONFIG.FETCH_TIMEOUT_PER_ATTEMPT;
+                    
+                    if (typeof AbortController !== 'undefined') {
+                        controller = new AbortController();
+                        timeoutId = setTimeout(() => {
+                            console.warn(`⏰ Timeout de ${timeout/1000}s atingido na tentativa ${attempt}`);
+                            controller.abort();
+                        }, timeout);
+                        options.signal = controller.signal;
+                    }
+                    
+                    const response = await fetch(url, options);
+                    if (timeoutId) clearTimeout(timeoutId);
+                    
+                    console.log(`📡 Tentativa ${attempt} - Status: ${response.status}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    return response;
+                    
+                } catch (error) {
+                    console.warn(`❌ Tentativa ${attempt} falhou:`, error.message);
+                    
+                    if (attempt === maxRetries) {
+                        throw new Error(`Falha após ${maxRetries} tentativas: ${error.message}`);
+                    }
+                    
+                    // Aguardar antes do retry (backoff exponencial)
+                    const delay = Math.min(
+                        NETWORK_CONFIG.RETRY_DELAY_BASE * Math.pow(2, attempt - 1), 
+                        NETWORK_CONFIG.RETRY_DELAY_MAX
+                    );
+                    console.log(`⏳ Aguardando ${delay}ms antes da próxima tentativa...`);
+                    updateProgress(30 + attempt * 5, `Reagendando em ${delay/1000}s...`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        };
+        
         // Configurações otimizadas para mobile
         const fetchOptions = {
             method: 'GET',
-            cache: 'default',
+            cache: 'no-cache', // Forçar busca fresca
             mode: 'cors'
         };
         
-        // Timeout mais longo para mobile (compatível com browsers antigos)
-        let controller, timeoutId;
-        const timeout = 10000; // 10s padrão para desktop e mobile
-        
-        // Verificar se AbortController é suportado
-        if (typeof AbortController !== 'undefined') {
-            controller = new AbortController();
-            timeoutId = setTimeout(() => controller.abort(), timeout);
-            fetchOptions.signal = controller.signal;
-        } else {
-            console.warn('⚠️ AbortController não suportado - sem timeout');
-        }
-        
         const requestUrl = `${POLLING_URL}?devices=${deviceIds}`;
-        console.log('📡 Fazendo fetch para:', requestUrl);
+        console.log('📡 Fazendo fetch com retry para:', requestUrl);
         
-        const response = await fetch(requestUrl, fetchOptions);
-        if (timeoutId) clearTimeout(timeoutId);
+        const response = await fetchWithRetry(requestUrl, fetchOptions);
         
         console.log('📡 Resposta recebida, status:', response.status);
         updateProgress(50, 'Recebendo dados...');
@@ -1396,16 +1460,27 @@ async function loadAllDeviceStatesGlobally() {
             console.error('Erro no diagnóstico:', diagError);
         }
         
-        // Tratamento universal de erro (desktop e mobile idênticos)
+        // Tratamento inteligente de erro com retry automático
         if (error.name === 'AbortError') {
-            console.warn('⏱️ Timeout de rede detectado');
+            console.warn('⏱️ Timeout após múltiplas tentativas');
             updateProgress(60, 'Timeout - usando backup...');
+            showErrorMessage('Timeout na conexão. Verifique sua internet e tente novamente.');
+        } else if (error.message.includes('Falha após')) {
+            console.warn('🔄 Múltiplas tentativas falharam');
+            updateProgress(60, 'Falhas múltiplas - modo backup...');
+            showErrorMessage('Servidor temporariamente indisponível. Usando dados salvos.');
         } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
-            console.warn('🌐 Problema de conectividade');
+            console.warn('🌐 Problema de conectividade de rede');
             updateProgress(60, 'Sem rede - modo offline...');
+            showErrorMessage('Sem conexão com a internet. Modo offline ativado.');
+        } else if (error.message.includes('HTTP 5')) {
+            console.warn('🔥 Erro no servidor (5xx)');
+            updateProgress(60, 'Erro servidor - backup...');
+            showErrorMessage('Problema no servidor. Usando últimos dados conhecidos.');
         } else {
-            console.warn('❌ Erro no carregamento:', error.message);
-            updateProgress(60, 'Erro - usando backup...');
+            console.warn('❌ Erro desconhecido no carregamento:', error.message);
+            updateProgress(60, 'Erro geral - usando backup...');
+            showErrorMessage('Erro no carregamento. Usando dados salvos localmente.');
         }
         
         // Fallback para localStorage
