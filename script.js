@@ -4,7 +4,7 @@ const ALL_LIGHT_IDS = [
   '7','8','9',    // KP-HallEntrada/Showroom (Garden/Hall)
   '11','12','13', // KP-Sala-Reuniao (Reunião)
   '35','36','37', // KP-Vitrine (Vitrine)
-  '44','45'       // KP-Garagem (Garagem)
+  '49','50'       // Shelly Switch Components (Garagem)
   // Café não possui dispositivos de luz (apenas cortina)
   // ID 6: KP Hall entrada/Showroom (switch principal)
   // ID 10: KP Sala Reuniao (switch principal) 
