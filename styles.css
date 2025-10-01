@@ -1830,7 +1830,8 @@ body:has([data-page="scenes"].active) {
 .reuniao-page .reuniao-controls-wrapper,
 .cafe-page .cafe-controls-wrapper,
 .entrada-page .entrada-controls-wrapper,
-.vitrine-page .vitrine-controls-wrapper {
+.vitrine-page .vitrine-controls-wrapper,
+.garagem-page .garagem-controls-wrapper {
     position: absolute;
     top: 115px;
     left: 21px;
@@ -1849,7 +1850,8 @@ body:has([data-page="scenes"].active) {
 .reuniao-page .reuniao-controls-wrapper .controls-grid,
 .cafe-page .cafe-controls-wrapper .controls-grid,
 .entrada-page .entrada-controls-wrapper .controls-grid,
-.vitrine-page .vitrine-controls-wrapper .controls-grid {
+.vitrine-page .vitrine-controls-wrapper .controls-grid,
+.garagem-page .garagem-controls-wrapper .controls-grid {
     position: relative !important;
     top: auto !important;
     left: auto !important;
@@ -1919,7 +1921,8 @@ body:has([data-page="scenes"].active) {
     .reuniao-page .reuniao-controls-wrapper,
     .cafe-page .cafe-controls-wrapper,
     .entrada-page .entrada-controls-wrapper,
-    .vitrine-page .vitrine-controls-wrapper {
+    .vitrine-page .vitrine-controls-wrapper,
+    .garagem-page .garagem-controls-wrapper {
         gap: 12px;
         align-items: stretch;
     }
@@ -1928,7 +1931,8 @@ body:has([data-page="scenes"].active) {
     .garden-page .lights-container,
     .reuniao-page .lights-container,
     .entrada-page .lights-container,
-    .vitrine-page .lights-container {
+    .vitrine-page .lights-container,
+    .garagem-page .lights-container {
         grid-template-columns: 1fr !important;
         grid-auto-rows: 120px;
         gap: 12px;
@@ -1954,7 +1958,8 @@ body:has([data-page="scenes"].active) {
     .reuniao-page .reuniao-controls-wrapper,
     .cafe-page .cafe-controls-wrapper,
     .entrada-page .entrada-controls-wrapper,
-    .vitrine-page .vitrine-controls-wrapper {
+    .vitrine-page .vitrine-controls-wrapper,
+    .garagem-page .garagem-controls-wrapper {
         gap: 15px;
         align-items: stretch;
     }

@@ -1076,7 +1076,7 @@ curtains: () => `
 
 <div class="top-bar-custom"></div>
 
-<div class="page active page-container">
+<div class="page active page-container garagem-page">
 
     <div class="page-header">
 
@@ -1086,9 +1086,28 @@ curtains: () => `
 
     </div>
 
-    <div class="room-controls-list">
+    <div class="garagem-controls-wrapper">
 
-        <div style="color:#bbb; text-align:center; width: 100%;">Sem dispositivos configurados.</div>
+        <!-- Container de Luzes -->
+        <div class="controls-grid lights-container">
+
+            <div class="control-card" data-state="off" data-device-id="44" onclick="toggleRoomControl(this)">
+
+                <img class="control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+
+                <div class="control-label">Lustre e Balizadores</div>
+
+            </div>
+
+            <div class="control-card" data-state="off" data-device-id="45" onclick="toggleRoomControl(this)">
+
+                <img class="control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+
+                <div class="control-label">Perfil</div>
+
+            </div>
+
+        </div>
 
     </div>
 
@@ -1160,7 +1179,7 @@ curtains: () => `
 
                     'cafe': [], // Café não possui luzes
 
-                    'garagem': []
+                    'garagem': ['44','45'] // Lustre e Balizadores, Perfil
 
                 };
 
