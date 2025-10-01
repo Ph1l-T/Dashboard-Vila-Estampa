@@ -1,10 +1,13 @@
 // IDs de todos os dispositivos de iluminação (Vila Estampa apenas)
 const ALL_LIGHT_IDS = [
-  '17',           // Entrada
-  '8','7','9',    // Garden
-  '13','11','12', // Reunião
-  '36','37','35'  // Vitrine
+  '17',           // KP-HallEntrada-Jardim (Entrada)
+  '7','8','9',    // KP-HallEntrada/Showroom (Garden/Hall)
+  '11','12','13', // KP-Sala-Reuniao (Reunião)
+  '35','36','37'  // KP-Vitrine (Vitrine)
   // Café não possui dispositivos de luz (apenas cortina)
+  // ID 6: KP Hall entrada/Showroom (switch principal)
+  // ID 10: KP Sala Reuniao (switch principal) 
+  // ID 34: KP Vitrine (switch principal)
 ];
 
 // Configurações de timeout e retry

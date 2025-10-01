@@ -1,5 +1,13 @@
 // ALL_LIGHT_IDS agora está definido em script.js (carregado primeiro)
-const ALL_CURTAIN_IDS = ['38', '39', '40', '42', '43'];
+const ALL_CURTAIN_IDS = [
+  '38',  // Cortina Café
+  '39',  // Cortina Reunião (EeD)
+  '40',  // Cortina Reunião (SeD)
+  '41',  // MolSmart - GW3 - RF (cortina adicional)
+  '42',  // Cortina Garden Esquerda
+  '43'   // Cortina Garden Direita
+  // ID 44: Todas-Cortinas (Virtual Button - master)
+];
 let masterConfirmCallback = null;
 
 function showPopup(message, onConfirm) {
