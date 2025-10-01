@@ -1272,7 +1272,7 @@ body:has([data-page="scenes"].active) {
 }
 
 .scene-control-card {
-    height: 165px;
+    height: 150px;
 }
 
 /* Extra spacer below Home cards to avoid navbar overlap */
