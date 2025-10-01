@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vila Estampa</title>
+    <link rel="stylesheet" href="fonts-raleway.css">
+    <link rel="icon" href="images/pwa/app-icon-192.png" type="image/png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1C1C1C">
+    <link rel="apple-touch-icon" href="images/pwa/app-icon-192.png">
+
+    <script>
+
+        // Cache buster dinâmico para CSS
+
+        document.write('<link rel="stylesheet" href="styles.css?cb=' + new Date().getTime() + Math.random().toString(36).substr(2, 9) + '">');
+
+    </script>
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script>
+        // LIMPEZA AGRESSIVA DE CACHE - TODOS OS DISPOSITIVOS
+        (function() {
+            console.log('🧹 INICIANDO LIMPEZA TOTAL DE CACHE...');
+            
+            var timestamp = new Date().getTime();
+            var randomId = Math.random().toString(36).substr(2, 12);
+            var cacheBuster = timestamp + '_' + randomId;
+            var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+            
+            console.log('🧹 Cache buster gerado:', cacheBuster);
+            console.log('🧹 Dispositivo móvel:', isMobile);
+            
+            // 1. LIMPAR TODOS OS STORAGES
+            try {
+                console.log('🧹 Limpando localStorage...');
+                // Manter apenas configurações críticas
+                var criticalKeys = ['hubitat_host', 'hubitat_token'];
+                var backup = {};
+                criticalKeys.forEach(function(key) {
+                    if (localStorage.getItem(key)) {
+                        backup[key] = localStorage.getItem(key);
+                    }
+                });
+                
+                localStorage.clear();
+                
+                // Restaurar configurações críticas
+                Object.keys(backup).forEach(function(key) {
+                    localStorage.setItem(key, backup[key]);
+                });
+                
+                console.log('🧹 localStorage limpo e restaurado');
+            } catch(e) {
+                console.warn('⚠️ Erro ao limpar localStorage:', e);
+            }
+
+            
+
+            try {
+
+                console.log('🧹 Limpando sessionStorage...');
+
+                sessionStorage.clear();
+
+            } catch(e) {
+
+                console.warn('⚠️ Erro ao limpar sessionStorage:', e);
+
+            }
+
+            
+
+            // 2. FORÇAR RELOAD DE CACHE DO NAVEGADOR
+            if ('caches' in window) {
+                console.log('🧹 Limpando cache do navegador...');
+                caches.keys().then(function(cacheNames) {
+                    return Promise.all(
+                        cacheNames.map(function(cacheName) {
+                            console.log('🧹 Deletando cache:', cacheName);
+                            return caches.delete(cacheName);
+                        })
+                    );
+                }).then(function() {
+                    console.log('✅ Cache do navegador limpo');
+                }).catch(function(e) {
+                    console.warn('⚠️ Erro ao limpar cache:', e);
+                });
+            }
+            
+            // 3. MARCAR NOVA VERSÃO E CACHE BUSTER
+            try {
+                localStorage.setItem('app_cache_version', cacheBuster);
+                localStorage.setItem('last_cache_clear', timestamp);
+                localStorage.setItem('force_reload_flag', 'true');
+                console.log('✅ Nova versão marcada:', cacheBuster);
+            } catch(e) {
+                console.warn('⚠️ localStorage indisponível para cache busting');
+            }
+
+            
+            // 4. FORÇAR RELOAD SE NECESSÁRIO
+            var forceReload = localStorage.getItem('force_reload_flag');
+            if (forceReload === 'true') {
+                localStorage.removeItem('force_reload_flag');
+                console.log('🔄 Flag de reload detectada - será recarregado após carregamento');
+            }
+            
+            console.log('✅ Limpeza de cache concluída');
+        })();
+    </script>
+
+    <style>
+
+        /* Botão invisível no card para capturar clique na Home */
+
+        .room-card-link{position:absolute;left:0;top:0;width:100%;height:100%;z-index:10;background:transparent;border:none;cursor:pointer}
+
+    </style>
+    </head>
+<body>
+
+    <!-- Tela de Loading Global -->
+    <div id="global-loader" class="global-loader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <img src="images/pwa/app-icon-512-transparent.png" alt="Vila Estampa" width="240" height="240">
+            </div>
+            <div class="loader-spinner"></div>
+            <div class="loader-text">Carregando estados dos dispositivos...</div>
+            <div class="loader-progress">
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <div id="progress-text" class="progress-text">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SPA root -->
+    <div id="spa-root"></div>
+
+    <!-- Confirmation Popup -->
+    <div class="popup-overlay" id="confirmation-popup">
+
+        <div class="popup-dialog">
+
+            <p class="popup-message" id="popup-message"></p>
+
+            <div class="popup-buttons">
+
+                <button class="popup-btn cancel" id="popup-cancel">Cancelar</button>
+
+                <button class="popup-btn confirm" id="popup-confirm">Confirmar</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- App Info Popup -->
+
+    <div class="app-info-overlay" id="app-info-overlay" aria-hidden="true">
+
+        <div class="app-info-dialog" role="dialog" aria-labelledby="app-info-title" aria-modal="true">
+
+            <button class="app-info-close" type="button" aria-label="Fechar menu de informacoes">&times;</button>
+
+            <div class="app-info-header">
+
+                <img class="app-info-logo" src="images/pwa/app-icon-512.png" alt="Logo do aplicativo">
+
+                <div class="app-info-heading">
+
+                    <h2 class="app-info-title" id="app-info-title">Dashboard Eletrize</h2>
+
+                    <p class="app-info-subtitle">Dashboard de controle para automação</p>
+
+                </div>
+
+            </div>
+
+            <div class="app-info-content">
+
+                <ul class="app-info-list">
+
+                    <li>Monitoramento rapido dos ambientes</li>
+
+                    <li>Acesso a cenarios e controles favoritos</li>
+
+                    <li>Sincronizacao com dispositivos inteligentes</li>
+
+                </ul>
+
+            </div>
+
+            <div class="app-info-footer">
+
+                <span class="app-info-version" id="app-info-version"></span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Navbar fixa SPA -->
+
+    <nav class="navbar" id="spa-navbar">
+
+        <div class="nav-item" data-page="curtains">
+
+            <div class="nav-icon-wrapper">
+
+                <img src="images/icons/icon-curtain.svg" alt="Cortinas" class="nav-icon">
+
+            </div>
+
+        </div>
+
+        <div class="nav-item" data-page="home">
+
+            <div class="nav-icon-wrapper">
+
+                <img src="images/icons/icon-home.svg" alt="Home" class="nav-icon">
+
+            </div>
+
+        </div>
+
+        <div class="nav-item" data-page="scenes">
+
+            <div class="nav-icon-wrapper">
+
+                <img src="images/icons/icon-scenes.svg" alt="Cenarios" class="nav-icon">
+
+            </div>
+
+        </div>
+
+    </nav>
+
+    <script>
+
+        // Carregamento dinâmico com cache busting agressivo para mobile
+
+        (function() {
+
+            var baseVersion = '1737455925';
+
+            var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+            var cacheBuster = baseVersion;
+
+            
+
+            if (isMobile) {
+
+                // Cache busting extra agressivo para mobile
+
+                cacheBuster = baseVersion + '_' + new Date().getTime() + '_' + Math.random().toString(36).substr(2, 5);
+
+                console.log('📱 Mobile: cache busting agressivo -', cacheBuster);
+
+            }
+
+            
+
+            // Carregar script.js com cache buster ultra-agressivo
+
+            var scriptMain = document.createElement('script');
+
+            var ultraBuster = cacheBuster + '_' + Date.now() + '_' + Math.floor(Math.random() * 999999);
+
+            scriptMain.src = 'script.js?cb=' + ultraBuster + '&t=' + Date.now();
+
+            console.log('📜 Carregando script.js com cache buster:', ultraBuster);
+
+            document.head.appendChild(scriptMain);
+
+            
+
+            // Carregar scenes.js com cache buster ultra-agressivo
+
+            var scriptScenes = document.createElement('script');
+
+            var scenesUltraBuster = cacheBuster + '_' + Date.now() + '_' + Math.floor(Math.random() * 999999);
+
+            scriptScenes.src = 'scenes.js?cb=' + scenesUltraBuster + '&t=' + Date.now();
+
+            console.log('🎬 Carregando scenes.js com cache buster:', scenesUltraBuster);
+
+            document.head.appendChild(scriptScenes);
+
+        })();
+
+    </script>
+
+    <script>
+
+    // PWA: registra service worker (desativado em localhost para evitar cache no desenvolvimento)
+
+    if ('serviceWorker' in navigator) {
+
+        const isLocalhost = ['localhost', '127.0.0.1', '::1'].includes(location.hostname);
+
+        if (isLocalhost) {
+
+            // Em ambiente de desenvolvimento, garantir remoção do SW e dos caches
+
+            navigator.serviceWorker.getRegistrations?.().then(regs => regs.forEach(r => r.unregister())).catch(()=>{});
+
+            if (window.caches?.keys) {
+
+                caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))).catch(()=>{});
+
+            }
+
+        } else {
+
+            window.addEventListener('load', function() {
+
+                navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+
+            });
+
+        }
+
+    }
+
+    // --- SPA Core ---
+
+    const spaRoot = document.getElementById('spa-root');
+
+    // Fotos dos cards por rota (reaproveitadas como fundo das páginas internas)
+
+    const ROOM_PHOTOS = {
+
+        entrada: 'images/Images/Photo-Entrada.jpg',
+
+        garden: 'images/Images/Photo-Garden.jpg',
+
+        reuniao: 'images/Images/Photo-Reuniao.jpg',
+
+        vitrine: 'images/Images/photo-vitrine.jpg',
+
+        cafe: 'images/Images/Photo-cafe.jpg',
+
+        garagem: 'images/Images/Photo-garagem.jpg'
+
+    };
+
+    const CURTAIN_SECTIONS = [
+        {
+            key: 'garden',
+            name: 'Garden',
+            curtains: [
+                { deviceId: '42', title: 'Cortina Esquerda' },
+                { deviceId: '43', title: 'Cortina Direita' }
+            ]
+        },
+        {
+            key: 'reuniao',
+            name: 'Reunião',
+            curtains: [
+                { deviceId: '39', title: 'Cortina Interna' },
+                { deviceId: '40', title: 'Cortina Externa' }
+            ]
+        },
+        {
+            key: 'cafe',
+            name: 'Café',
+            curtains: [
+                { deviceId: '38', title: 'Cortina Corredor' }
+            ]
+        }
+    ];
+
+function renderCurtainControlCard(curtain, environment) {
+    const { deviceId, title, description } = curtain;
+    return `
+        <article class="curtain-tile" data-device-id="${deviceId}" data-environment="${environment}">
+            <header class="curtain-tile__header">
+                <span class="curtain-tile__env">${environment}</span>
+                <h3 class="curtain-tile__title">${title}</h3>
+                ${description ? `<p class="curtain-tile__subtitle">${description}</p>` : ''}
+            </header>
+            <div class="curtain-tile__actions">
+                <button class="curtain-tile__btn" data-device-id="${deviceId}" onclick="curtainAction(this, 'open')" aria-label="Abrir ${title}">
+                    <img src="images/icons/arrow-up.svg" alt="Abrir">
+                </button>
+                <button class="curtain-tile__btn" data-device-id="${deviceId}" onclick="curtainAction(this, 'stop')" aria-label="Parar ${title}">
+                    <div class="curtain-tile__icon-pause"><span></span><span></span></div>
+                </button>
+                <button class="curtain-tile__btn" data-device-id="${deviceId}" onclick="curtainAction(this, 'close')" aria-label="Fechar ${title}">
+                    <img src="images/icons/arrow-down.svg" alt="Fechar">
+                </button>
+            </div>
+        </article>`;
+}
+
+function renderCurtainSection(section) {
+    return `
+        <section class="curtain-section" data-section="${section.key}">
+            <header class="curtain-section__header">
+                <div class="curtain-section__badge">${section.name}</div>
+            </header>
+            <div class="curtain-section__grid">
+                ${section.curtains.map(curtain => renderCurtainControlCard(curtain, section.name)).join('')}
+            </div>
+        </section>`;
+}
+
+    const APP_INFO_VERSION = '1.0';
+
+    const APP_INFO_VISIBLE_CLASS = 'is-visible';
+
+    const appInfoOverlay = document.getElementById('app-info-overlay');
+
+    const appInfoVersionLabel = document.getElementById('app-info-version');
+
+    let appInfoReturnFocusElement = null;
+
+    function updateAppInfoVersion() {
+
+        if (appInfoVersionLabel) {
+
+            appInfoVersionLabel.textContent = 'Versao ' + APP_INFO_VERSION;
+
+        }
+
+    }
+
+    function openAppInfoMenu() {
+
+        if (!appInfoOverlay) return;
+
+        appInfoReturnFocusElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+        appInfoOverlay.classList.add(APP_INFO_VISIBLE_CLASS);
+
+        appInfoOverlay.setAttribute('aria-hidden', 'false');
+
+        document.body.classList.add('app-info-open');
+
+        const dialog = appInfoOverlay.querySelector('.app-info-dialog');
+
+        if (dialog && typeof dialog.focus === 'function') {
+
+            dialog.setAttribute('tabindex', '-1');
+
+            try {
+
+                dialog.focus({ preventScroll: true });
+
+            } catch (err) {
+
+                dialog.focus();
+
+            }
+
+        }
+
+    }
+
+    function closeAppInfoMenu() {
+
+        if (!appInfoOverlay) return;
+
+        appInfoOverlay.classList.remove(APP_INFO_VISIBLE_CLASS);
+
+        appInfoOverlay.setAttribute('aria-hidden', 'true');
+
+        document.body.classList.remove('app-info-open');
+
+        if (appInfoReturnFocusElement && typeof appInfoReturnFocusElement.focus === 'function') {
+
+            appInfoReturnFocusElement.focus();
+
+        }
+
+    }
+
+    function handleAppLogoTrigger(event) {
+
+        event.preventDefault();
+
+        openAppInfoMenu();
+
+    }
+
+    function setupAppInfoMenu() {
+
+        document.querySelectorAll('.app-logo-trigger').forEach(trigger => {
+
+            trigger.removeEventListener('click', handleAppLogoTrigger);
+
+            trigger.addEventListener('click', handleAppLogoTrigger);
+
+        });
+
+    }
+
+    function initializeAppInfoMenu() {
+
+        if (!appInfoOverlay) return;
+
+        if (appInfoOverlay.dataset.ready === 'true') return;
+
+        appInfoOverlay.dataset.ready = 'true';
+
+        updateAppInfoVersion();
+
+        appInfoOverlay.addEventListener('click', event => {
+
+            if (event.target === appInfoOverlay) {
+
+                closeAppInfoMenu();
+
+            }
+
+        });
+
+        const closeBtn = appInfoOverlay.querySelector('.app-info-close');
+
+        if (closeBtn) {
+
+            closeBtn.addEventListener('click', closeAppInfoMenu);
+
+        }
+
+        document.addEventListener('keydown', event => {
+
+            if (event.key === 'Escape' && appInfoOverlay.classList.contains(APP_INFO_VISIBLE_CLASS)) {
+
+                closeAppInfoMenu();
+
+            }
+
+        });
+
+    }
+
+    const pages = {
+
+curtains: () => `
+
+            <div class="top-bar-custom"></div>
+
+            <main class="container">
+
+                <div class="page active">
+
+                    <h1 class="page-title fixed-header" style="display:flex;justify-content:center;align-items:center;">
+
+                        <button class="app-logo-trigger" type="button" aria-label="Abrir informacoes do aplicativo">
+
+                            <img src="images/icons/Vila-Estampa.svg" alt="Vila Estampa" />
+
+                        </button>
+
+                    </h1>
+
+                    <div class="curtain-layout">
+
+                        ${CURTAIN_SECTIONS.map(renderCurtainSection).join('')}
+
+                    </div>
+
+                </div>
+
+            </main>
+
+        `,
+
+        scenes: () => `
+
+            <div class="top-bar-custom"></div>
+
+             <main class="container">
+
+                <div class="page active">
+
+                    <h1 class="page-title fixed-header" style="display:flex;justify-content:center;align-items:center;">
+
+                        <button class="app-logo-trigger" type="button" aria-label="Abrir informacoes do aplicativo">
+
+                            <img src="images/icons/Vila-Estampa.svg" alt="Vila Estampa" />
+
+                        </button>
+
+                    </h1>
+
+                    <div class="controls-grid" style="top: 130px; grid-template-columns: 1fr; grid-auto-rows: min-content; gap: 15px;">
+
+                        <div class="control-card large scene-control-card" id="iniciar-expediente-btn" onclick="handleIniciarExpediente()">
+
+                            <img class="control-icon" src="images/icons/iniciar-expediente.svg" alt="Iniciar Expediente">
+
+                            <div class="control-label">Iniciar Expediente</div>
+
+                        </div>
+
+                        <div class="control-card large scene-control-card" id="encerrar-expediente-btn" onclick="handleEncerrarExpediente()">
+
+                            <img class="control-icon" src="images/icons/Encerrar-expediente.svg" alt="Encerrar Expediente">
+
+                            <div class="control-label">Encerrar Expediente</div>
+
+                        </div>
+
+                        <div class="control-card large scene-control-card" id="master-curtains-open-btn" onclick="handleMasterCurtainsOpen()">
+
+                            <img class="control-icon" src="images/icons/curtain-open.svg" alt="Abrir Todas as Cortinas">
+
+                            <div class="control-label">Abrir Todas</div>
+
+                        </div>
+
+                        <div class="control-card large scene-control-card" id="master-curtains-close-btn" onclick="handleMasterCurtainsClose()">
+
+                            <img class="control-icon" src="images/icons/curtain-closed.svg" alt="Fechar Todas as Cortinas">
+
+                            <div class="control-label">Fechar Todas</div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </main>
+
+        `,
+
+        home: () => `
+
+            <div class="top-bar-custom"></div>
+
+            <main class="container">
+
+                <div class="page active" id="home-page">
+
+                    <h1 class="page-title fixed-header" style="display:flex;justify-content:center;align-items:center;">
+
+                        <button class="app-logo-trigger" type="button" aria-label="Abrir informacoes do aplicativo">
+
+                            <img src="images/icons/Vila-Estampa.svg" alt="Vila Estampa" />
+
+                        </button>
+
+                    </h1>
+
+                    <div class="rooms-frame">
+
+                        <div class="rooms-list"></div>
+
+                    </div>
+
+                </div>
+
+            </main>
+
+        `,
+
+        garden: () => `
+
+<div class="top-bar-custom"></div>
+
+<div class="page active page-container garden-page">
+
+    <div class="page-header">
+
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back-button.svg" alt="Voltar"></button>
+
+        <h1 class="page-title">Garden</h1>
+
+    </div>
+
+    
+
+    <!-- Container principal que organiza luzes e cortinas -->
+
+    <div class="garden-controls-wrapper">
+
+        <!-- Container dos botões de luz -->
+
+        <div class="controls-grid lights-container">
+
+            <div class="control-card" data-state="off" data-device-id="8" onclick="toggleRoomControl(this)">
+
+                <img class="control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+
+                <div class="control-label">Barra LED</div>
+
+            </div>
+
+            <div class="control-card" data-state="off" data-device-id="7" onclick="toggleRoomControl(this)">
+
+                <img class="control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+
+                <div class="control-label">Lustre Garden</div>
+
+            </div>
+
+            <div class="control-card" data-state="off" data-device-id="9" onclick="toggleRoomControl(this)">
+
+                <img class="control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+
+                <div class="control-label">Lustre Hall</div>
+
+            </div>
+
+        </div>
+
+        
+
+        <!-- Container dos controles de cortina -->
+        <div class="curtains-section">
+            <div class="controls-grid curtains-container">
+                <article class="curtain-tile" data-device-id="42" data-environment="Garden">
+
+            <header class="curtain-tile__header">
+
+                <span class="curtain-tile__env">Garden</span>
+
+                <h3 class="curtain-tile__title">Cortina Esquerda</h3>
+
+            </header>
+
+            <div class="curtain-tile__actions">
+
+                <button class="curtain-tile__btn" data-device-id="42" onclick="curtainAction(this, 'open')" aria-label="Abrir Cortina Esquerda">
+
+                    <img src="images/icons/arrow-up.svg" alt="Abrir">
+
+                </button>
+
+                <button class="curtain-tile__btn" data-device-id="42" onclick="curtainAction(this, 'stop')" aria-label="Parar Cortina Esquerda">
+
+                    <div class="curtain-tile__icon-pause"><span></span><span></span></div>
+
+                </button>
+
+                <button class="curtain-tile__btn" data-device-id="42" onclick="curtainAction(this, 'close')" aria-label="Fechar Cortina Esquerda">
+
+                    <img src="images/icons/arrow-down.svg" alt="Fechar">
+
+                </button>
+
+            </div>
+
+        </article>
+
+        
+
+        <article class="curtain-tile" data-device-id="43" data-environment="Garden">
+
+            <header class="curtain-tile__header">
+
+                <span class="curtain-tile__env">Garden</span>
+
+                <h3 class="curtain-tile__title">Cortina Direita</h3>
+
+            </header>
+
+            <div class="curtain-tile__actions">
+
+                <button class="curtain-tile__btn" data-device-id="43" onclick="curtainAction(this, 'open')" aria-label="Abrir Cortina Direita">
+
+                    <img src="images/icons/arrow-up.svg" alt="Abrir">
+
+                </button>
+
+                <button class="curtain-tile__btn" data-device-id="43" onclick="curtainAction(this, 'stop')" aria-label="Parar Cortina Direita">
+
+                    <div class="curtain-tile__icon-pause"><span></span><span></span></div>
+
+                </button>
+
+                <button class="curtain-tile__btn" data-device-id="43" onclick="curtainAction(this, 'close')" aria-label="Fechar Cortina Direita">
+
+                    <img src="images/icons/arrow-down.svg" alt="Fechar">
+
+                </button>
+
+            </div>
+
+                </article>
+            </div>
+        </div>
+    </div>
+</div>
+
+        `,
+
+        reuniao: () => `
+
+<div class="top-bar-custom"></div>
+
+<div class="page active page-container reuniao-page">
+
+    <div class="page-header">
+
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back-button.svg" alt="Voltar"></button>
+
+        <h1 class="page-title">Reunião</h1>
+
+    </div>
+
+    
+
+    <div class="reuniao-controls-wrapper">
+
+        <!-- Container de Luzes -->
+
+        <div class="controls-grid lights-container">
+
+            <div class="control-card" data-state="off" data-device-id="13" onclick="toggleRoomControl(this)">
+
+                <img class="control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+
+                <div class="control-label">Barra LED</div>
+
+            </div>
+
+            <div class="control-card" data-state="off" data-device-id="11" onclick="toggleRoomControl(this)">
+
+                <img class="control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+
+                <div class="control-label">Spots Hall</div>
+
+            </div>
+
+            <div class="control-card" data-state="off" data-device-id="12" onclick="toggleRoomControl(this)">
+
+                <img class="control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+
+                <div class="control-label">Lustre</div>
+
+            </div>
+
+        </div>
+
+        
+
+        <!-- Container dos controles de cortina -->
+        <div class="curtains-section">
+            <div class="controls-grid curtains-container">
+                <article class="curtain-tile" data-device-id="39" data-environment="Reunião">
+
+                <header class="curtain-tile__header">
+
+                    <span class="curtain-tile__env">Reunião</span>
+
+                    <h3 class="curtain-tile__title">Cortina Interna</h3>
+
+                </header>
+
+                <div class="curtain-tile__actions">
+
+                    <button class="curtain-tile__btn" data-device-id="39" onclick="curtainAction(this, 'open')" aria-label="Abrir Cortina Interna">
+
+                        <img src="images/icons/arrow-left.svg" alt="Abrir">
+
+                    </button>
+
+                    <button class="curtain-tile__btn" data-device-id="39" onclick="curtainAction(this, 'stop')" aria-label="Parar Cortina Interna">
+
+                        <div class="curtain-tile__icon-pause"><span></span><span></span></div>
+
+                    </button>
+
+                    <button class="curtain-tile__btn" data-device-id="39" onclick="curtainAction(this, 'close')" aria-label="Fechar Cortina Interna">
+
+                        <img src="images/icons/arrow-right.svg" alt="Fechar">
+
+                    </button>
+
+                </div>
+
+                </article>
+                
+                <article class="curtain-tile" data-device-id="40" data-environment="Reunião">
+
+                    <header class="curtain-tile__header">
+
+                        <span class="curtain-tile__env">Reunião</span>
+
+                        <h3 class="curtain-tile__title">Cortina Externa</h3>
+
+                    </header>
+
+                    <div class="curtain-tile__actions">
+
+                        <button class="curtain-tile__btn" data-device-id="40" onclick="curtainAction(this, 'open')" aria-label="Abrir Cortina Externa">
+
+                            <img src="images/icons/arrow-up.svg" alt="Abrir">
+
+                        </button>
+
+                        <button class="curtain-tile__btn" data-device-id="40" onclick="curtainAction(this, 'stop')" aria-label="Parar Cortina Externa">
+
+                            <div class="curtain-tile__icon-pause"><span></span><span></span></div>
+
+                        </button>
+
+                        <button class="curtain-tile__btn" data-device-id="40" onclick="curtainAction(this, 'close')" aria-label="Fechar Cortina Externa">
+
+                            <img src="images/icons/arrow-down.svg" alt="Fechar">
+
+                        </button>
+
+                    </div>
+
+                </article>
+            </div>
+        </div>
+    </div>
+</div>
+
+        `,
+
+        cafe: () => `
+
+<div class="top-bar-custom"></div>
+
+<div class="page active page-container cafe-page">
+
+    <div class="page-header">
+
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back-button.svg" alt="Voltar"></button>
+
+        <h1 class="page-title">Café</h1>
+
+    </div>
+
+    
+
+    <div class="cafe-controls-wrapper">
+
+        <!-- Container de Cortinas (Café só tem cortinas) -->
+
+        <div class="controls-grid curtains-container">
+
+            <article class="curtain-tile" data-device-id="38" data-environment="Café">
+
+                <header class="curtain-tile__header">
+
+                    <span class="curtain-tile__env">Café</span>
+
+                    <h3 class="curtain-tile__title">Cortina Corredor</h3>
+
+                </header>
+
+                <div class="curtain-tile__actions">
+
+                    <button class="curtain-tile__btn" data-device-id="38" onclick="curtainAction(this, 'open')" aria-label="Abrir Cortina Corredor">
+
+                        <img src="images/icons/arrow-up.svg" alt="Abrir">
+
+                    </button>
+
+                    <button class="curtain-tile__btn" data-device-id="38" onclick="curtainAction(this, 'stop')" aria-label="Parar Cortina Corredor">
+
+                        <div class="curtain-tile__icon-pause"><span></span><span></span></div>
+
+                    </button>
+
+                    <button class="curtain-tile__btn" data-device-id="38" onclick="curtainAction(this, 'close')" aria-label="Fechar Cortina Corredor">
+
+                        <img src="images/icons/arrow-down.svg" alt="Fechar">
+
+                    </button>
+
+                </div>
+
+            </article>
+
+        </div>
+
+    </div>
+
+</div>
+
+        `,
+
+        entrada: () => `
+
+<div class="top-bar-custom"></div>
+
+<div class="page active page-container entrada-page">
+
+    <div class="page-header">
+
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back-button.svg" alt="Voltar"></button>
+
+        <h1 class="page-title">Entrada</h1>
+
+    </div>
+
+    
+
+    <div class="entrada-controls-wrapper">
+
+        <!-- Container de Luzes -->
+
+        <div class="controls-grid lights-container">
+
+            <div class="control-card" data-state="off" data-device-id="17" onclick="toggleRoomControl(this)">
+
+                <img class="control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+
+                <div class="control-label">Jardim</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+        `,
+
+        vitrine: () => `
+
+<div class="top-bar-custom"></div>
+
+<div class="page active page-container vitrine-page">
+
+    <div class="page-header">
+
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back-button.svg" alt="Voltar"></button>
+
+        <h1 class="page-title">Vitrine</h1>
+
+    </div>
+
+    
+
+    <div class="vitrine-controls-wrapper">
+
+        <!-- Container de Luzes -->
+
+        <div class="controls-grid lights-container">
+
+            <div class="control-card" data-state="off" data-device-id="36" onclick="toggleRoomControl(this)">
+
+                <img class="control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+
+                <div class="control-label">Barras LED</div>
+
+            </div>
+
+            <div class="control-card" data-state="off" data-device-id="37" onclick="toggleRoomControl(this)">
+
+                <img class="control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+
+                <div class="control-label">Jardim</div>
+
+            </div>
+
+            <div class="control-card" data-state="off" data-device-id="35" onclick="toggleRoomControl(this)">
+
+                <img class="control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+
+                <div class="control-label">Lustres</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+        `,
+
+        garagem: () => `
+
+<div class="top-bar-custom"></div>
+
+<div class="page active page-container garagem-page">
+
+    <div class="page-header">
+
+        <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back-button.svg" alt="Voltar"></button>
+
+        <h1 class="page-title">Garagem</h1>
+
+    </div>
+
+    <div class="garagem-controls-wrapper">
+
+        <!-- Container de Luzes -->
+        <div class="controls-grid lights-container">
+
+            <div class="control-card" data-state="off" data-device-id="49" onclick="toggleRoomControl(this)">
+
+                <img class="control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+
+                <div class="control-label">Lustre + Balizadores</div>
+
+            </div>
+
+            <div class="control-card" data-state="off" data-device-id="50" onclick="toggleRoomControl(this)">
+
+                <img class="control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz">
+
+                <div class="control-label">Barras LED</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+        `,
+
+    };
+
+    function spaNavigate(page) {
+
+        window.location.hash = page;
+
+    }
+
+    function renderSpa() {
+
+        let page = window.location.hash.replace('#', '') || 'home';
+
+        if (!pages[page]) page = 'home';
+
+        spaRoot.innerHTML = pages[page]();
+
+        setupAppInfoMenu();
+
+        // Constrói a lista de cômodos na Home
+
+        if (page === 'home') {
+
+            const rooms = [
+
+                { name: 'Entrada', route: 'entrada' },
+
+                { name: 'Garden', route: 'garden' },
+
+                { name: 'Reunião', route: 'reuniao' },
+
+                { name: 'Vitrine', route: 'vitrine' },
+
+                { name: 'Café', route: 'cafe' },
+
+                { name: 'Garagem', route: 'garagem' },
+
+            ];
+
+            const list = document.querySelector('.rooms-list');
+
+            if (list) {
+
+                const order = ['entrada','garden','reuniao','vitrine','cafe','garagem'];
+
+                const visible = rooms
+
+                    .filter(r => order.includes(r.route))
+
+                    .sort((a, b) => order.indexOf(a.route) - order.indexOf(b.route));
+
+                const photoMap = ROOM_PHOTOS;
+
+                const roomDevices = {
+
+                    'entrada': ['17'],
+
+                    'garden': ['8','7','9'],
+
+                    'reuniao': ['13','11','12'],
+
+                    'vitrine': ['36','37','35'],
+
+                    'cafe': [], // Café não possui luzes
+
+                    'garagem': ['49','50'] // Lustre + Balizadores, Barras LED
+
+                };
+
+                const roomCurtains = {
+
+                    'entrada': [],
+
+                    'garden': ['42','43'],  // Cortina Garden Esquerda e Direita
+
+                    'reuniao': ['39','40'], // Cortina Reunião (EeD) e (SeD)
+
+                    'vitrine': [],
+
+                    'cafe': ['38'],         // Cortina Café
+
+                    'garagem': []
+
+                };
+
+                list.innerHTML = visible.map(r => {
+
+                    const hasPhoto = Boolean(photoMap[r.route]);
+
+                    const ids = roomDevices[r.route] || [];
+
+                    const curtainIds = roomCurtains[r.route] || [];
+
+                    const hasCurtains = curtainIds.length > 0;
+
+                    return `
+
+                    <div class="room-card ${hasPhoto ? 'has-photo' : ''}">
+
+                        ${hasPhoto ? `<img src="${photoMap[r.route]}" alt="${r.name}">` : ''}
+
+                        <span>${r.name}</span>
+
+                        ${ids.length > 0 ? `<button class="room-master-btn" data-route="${r.route}" data-device-ids="${ids.join(',')}" onclick="onHomeMasterClick(event,this)" aria-label="Master"><img class="room-master-icon" src="images/icons/icon-small-light-off.svg" alt="Master"></button>` : ''}
+
+                        <button class="room-card-link" onclick="spaNavigate('${r.route}')"></button>
+
+                    </div>`;
+
+                }).join('');
+
+                if (typeof initHomeMasters === 'function') initHomeMasters();
+
+            }
+
+        }
+
+        // Define o fundo da página interna com a mesma foto do card
+
+        (function setPageBackground(route){
+
+            const url = ROOM_PHOTOS[route];
+
+            if (!url) return;
+
+            const container = document.querySelector('.page.active .page-container') || document.querySelector('.page.active.page-container');
+
+            if (container) {
+
+                container.style.backgroundImage = `url('${url}')`;
+
+                container.style.backgroundSize = 'cover';
+
+                container.style.backgroundPosition = 'center';
+
+            }
+
+        })(page);
+
+        // Atualiza navbar (ativo + indicador)
+
+        const nav = document.getElementById('spa-navbar');
+
+        const items = nav.querySelectorAll('.nav-item');
+
+        const navPages = Array.from(items).map(i => i.getAttribute('data-page'));
+
+        const navPage = navPages.includes(page) ? page : 'home';
+
+        let activeIndex = navPages.indexOf(navPage);
+
+        if (activeIndex < 0) activeIndex = navPages.indexOf('home');
+
+        items.forEach((item, idx) => item.classList.toggle('active', idx === activeIndex));
+
+        const activeItem = items[activeIndex];
+
+        if (activeItem) {
+
+            // Usar setTimeout para garantir que o layout seja calculado após mudanças de DOM
+
+            setTimeout(() => {
+
+                const navRect = nav.getBoundingClientRect();
+
+                const itemRect = activeItem.getBoundingClientRect();
+
+                const center = itemRect.left + itemRect.width / 2 - navRect.left;
+
+                nav.style.setProperty('--indicator-left', `${center}px`);
+
+            }, 10);
+
+        }
+
+        // Inicializa botões dos cômodos nas páginas internas
+
+        if (['entrada','vitrine','garden','reuniao','cafe','garagem'].includes(page)) {
+
+            if (typeof initRoomPage === 'function') initRoomPage();
+
+        }
+
+        // Atualiza o botão master na página de cenários
+
+        if (page === 'scenes') {
+
+            initScenesPage();
+
+        }
+
+    }
+
+    // Home: Master On/Off por ambiente (funções movidas para script.js)
+
+    window.onHomeMasterClick = function(ev, btn){
+
+        ev.stopPropagation();
+
+        ev.preventDefault();
+
+        
+
+        // Verificar se já tem comando pendente
+
+        if (btn.dataset.pending === 'true') {
+
+            console.log('🚫 Comando master já em andamento');
+
+            return;
+
+        }
+
+        
+
+        const ids = (btn.dataset.deviceIds || '').split(',').filter(Boolean);
+
+        if (!ids.length) return;
+
+        
+
+        const shouldTurnOn = !anyOn(ids);
+
+        const cmd = shouldTurnOn ? 'on' : 'off';
+
+        
+
+        console.log(`🏠 Master ${cmd} para ${ids.length} dispositivos:`, ids);
+
+        
+
+        // Marcar botão como pendente
+
+        btn.dataset.pending = 'true';
+
+        
+
+        // Atualizar visual imediatamente (forçar update)
+
+        const img = btn.querySelector('img');
+
+        if (img) {
+
+            img.src = shouldTurnOn ? 'images/icons/icon-small-light-on.svg' : 'images/icons/icon-small-light-off.svg';
+
+            btn.dataset.state = cmd;
+
+        }
+
+        
+
+        // Proteger todos os dispositivos individuais para evitar conflitos
+
+        ids.forEach(deviceId => {
+
+            if (typeof protectDevice === 'function') {
+
+                protectDevice(deviceId, 10000); // 10s de proteção para master commands
+
+            }
+
+        });
+
+        
+
+        // Atualizar estados salvos imediatamente
+
+        ids.forEach(id => {
+
+            setStoredState(id, cmd);
+
+        });
+
+        
+
+        // Atualizar UI imediatamente
+
+        if (typeof updateStatesAfterMasterCommand === 'function') {
+
+            updateStatesAfterMasterCommand(ids, cmd);
+
+        }
+
+        
+
+        // Enviar comandos para todos os dispositivos
+
+        const promises = ids.map(id => sendHubitatCommand(id, cmd));
+
+        
+
+        Promise.allSettled(promises).then(results => {
+
+            const successes = results.filter(r => r.status === 'fulfilled').length;
+
+            const failures = results.filter(r => r.status === 'rejected').length;
+
+            
+
+            console.log(`✅ Master ${cmd}: ${successes} sucessos, ${failures} falhas`);
+
+            
+
+            // Segunda sincronização após comandos completos
+
+            setTimeout(() => {
+
+                if (typeof updateStatesAfterMasterCommand === 'function') {
+
+                    updateStatesAfterMasterCommand(ids, cmd);
+
+                }
+
+            }, 300);
+
+            
+
+            // Remover proteção após delay
+
+            setTimeout(() => {
+
+                btn.dataset.pending = 'false';
+
+                console.log(`🔓 Master button liberado`);
+
+            }, 3000);
+
+            
+
+        }).catch(error => {
+
+            console.error('❌ Erro no comando master:', error);
+
+            btn.dataset.pending = 'false';
+
+        });
+
+    };
+
+    // Função para recalcular posição do page selector
+
+    function updatePageSelectorPosition() {
+
+        const nav = document.getElementById('spa-navbar');
+
+        const activeItem = nav?.querySelector('.nav-item.active');
+
+        if (activeItem && nav) {
+
+            const navRect = nav.getBoundingClientRect();
+
+            const itemRect = activeItem.getBoundingClientRect();
+
+            const center = itemRect.left + itemRect.width / 2 - navRect.left;
+
+            nav.style.setProperty('--indicator-left', `${center}px`);
+
+            console.log('📍 Page selector reposicionado:', center + 'px');
+
+        }
+
+    }
+
+    window.addEventListener('hashchange', renderSpa);
+
+    window.addEventListener('DOMContentLoaded', () => {
+
+        initializeAppInfoMenu();
+
+        renderSpa();
+
+        // Navbar SPA - listeners após DOM pronto
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+
+            item.addEventListener('click', function(e) {
+
+                const page = item.getAttribute('data-page');
+
+                if (page) {
+
+                    e.preventDefault();
+
+                    spaNavigate(page);
+
+                }
+
+            });
+
+        });
+
+    });
+
+    // Listeners para recalcular page selector ao rotacionar/redimensionar
+
+    window.addEventListener('resize', () => {
+
+        // Debounce para evitar múltiplas chamadas
+
+        clearTimeout(window.resizeTimeout);
+
+        window.resizeTimeout = setTimeout(updatePageSelectorPosition, 100);
+
+    });
+
+    window.addEventListener('orientationchange', () => {
+
+        // Aguardar um pouco após mudança de orientação para garantir layout correto
+
+        setTimeout(updatePageSelectorPosition, 300);
+
+    });
+
+    </script>
+
+</body>
+
+</html>
