@@ -1158,7 +1158,7 @@ curtains: () => `
 
                     'vitrine': ['36','37','35'],
 
-                    'cafe': [],
+                    'cafe': [], // Café não possui luzes
 
                     'garagem': []
 
@@ -1198,9 +1198,7 @@ curtains: () => `
 
                         <span>${r.name}</span>
 
-                        <button class="room-master-btn" data-route="${r.route}" data-device-ids="${(ids||[]).join(',')}" onclick="onHomeMasterClick(event,this)" aria-label="Master"><img class="room-master-icon" src="images/icons/icon-small-light-off.svg" alt="Master"></button>
-
-                        ${hasCurtains ? `<button class="room-curtain-master-btn" data-route="${r.route}" data-curtain-ids="${curtainIds.join(',')}" onclick="onHomeCurtainMasterClick(event,this)" aria-label="Curtain Master"><img class="room-curtain-master-icon" src="images/icons/curtain-closed.svg" alt="Cortinas"></button>` : ''}
+                        ${ids.length > 0 ? `<button class="room-master-btn" data-route="${r.route}" data-device-ids="${ids.join(',')}" onclick="onHomeMasterClick(event,this)" aria-label="Master"><img class="room-master-icon" src="images/icons/icon-small-light-off.svg" alt="Master"></button>` : ''}
 
                         <button class="room-card-link" onclick="spaNavigate('${r.route}')"></button>
 

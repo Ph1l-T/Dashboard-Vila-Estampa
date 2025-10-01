@@ -200,10 +200,7 @@ function initRoomPage() {
     });
     
     // Forçar atualização de botões master também
-    setTimeout(() => {
-        updateAllMasterButtons();
-        updateAllCurtainMasterButtons();
-    }, 50);
+    setTimeout(updateAllMasterButtons, 50);
 
     // Rename label on Sinuca page: Iluminação -> Bar (UI-only)
     try {
@@ -838,7 +835,6 @@ function updateDeviceUI(deviceId, state, forceUpdate = false) {
     
     // Atualizar botões master da home após qualquer mudança de dispositivo
     updateAllMasterButtons();
-    updateAllCurtainMasterButtons();
 }
 
 function updateAllMasterButtons() {
@@ -852,19 +848,7 @@ function updateAllMasterButtons() {
     });
 }
 
-function updateAllCurtainMasterButtons() {
-    const curtainMasterButtons = document.querySelectorAll('.room-curtain-master-btn');
-    curtainMasterButtons.forEach(btn => {
-        const curtainIds = (btn.dataset.curtainIds || '').split(',').filter(Boolean);
-        if (curtainIds.length > 0) {
-            // Determinar estado baseado nas cortinas do ambiente
-            const hasAnyOpen = anyCurtainOpen(curtainIds);
-            const masterState = hasAnyOpen ? 'close' : 'open'; // Se alguma está aberta, mostrar fechar; se todas fechadas, mostrar abrir
-            setCurtainMasterIcon(btn, hasAnyOpen ? 'open' : 'closed', false);
-            console.log(`🪟 Botão master cortinas atualizado - Ambiente: ${curtainIds.join(',')}, Estado: ${hasAnyOpen ? 'tem abertas' : 'todas fechadas'}, Ícone: ${hasAnyOpen ? 'open' : 'closed'}`);
-        }
-    });
-}
+
 
 // Funções auxiliares para botões master (movidas do HTML)
 function anyOn(deviceIds) {
@@ -1224,7 +1208,6 @@ async function loadAllDeviceStatesGlobally() {
         
         console.log(`✅ Carregamento completo: ${loadedCount}/${ALL_LIGHT_IDS.length} dispositivos`);
         updateProgress(100, 'Carregamento concluído!');
-        updateAllCurtainMasterButtons();
         return true;
     }
     
@@ -1486,7 +1469,6 @@ async function loadAllDeviceStatesGlobally() {
         // Forçar atualização de todos os botões master após carregamento
         setTimeout(() => {
             updateAllMasterButtons();
-            updateAllCurtainMasterButtons();
             console.log('🔄 Botões master atualizados após carregamento global');
         }, 100);
         
