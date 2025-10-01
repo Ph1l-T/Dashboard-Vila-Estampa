@@ -1308,8 +1308,10 @@ html, body {
 }
 
 .loader-logo img {
-    filter: brightness(0) invert(1);
+    /* Removido filtro para usar ícone transparente original */
     opacity: 0.9;
+    max-width: 240px;
+    max-height: 240px;
 }
 
 .loader-spinner {
