@@ -2603,3 +2603,41 @@ body.app-info-open {
     }
 }
 
+/* Ocultar scrollbars em todas as páginas */
+/* Para WebKit (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    background: transparent;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: transparent;
+}
+
+/* Para Firefox */
+* {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+/* Garantir que containers com scroll não mostrem barras */
+.room-controls-list,
+.controls-grid,
+.curtains-section,
+.page {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.room-controls-list::-webkit-scrollbar,
+.controls-grid::-webkit-scrollbar,
+.curtains-section::-webkit-scrollbar,
+.page::-webkit-scrollbar {
+    display: none;
+}
+
