@@ -135,6 +135,50 @@ function executeMasterCurtainToggle(action) {
     });
 }
 
+// Funções para controlar todas as cortinas via botão virtual do Hubitat (ID 44)
+function handleMasterCurtainsOpen() {
+    showPopup('Você tem certeza que gostaria de abrir todas as cortinas?', () => {
+        executeMasterCurtainsAction('open');
+    });
+}
+
+function handleMasterCurtainsClose() {
+    showPopup('Você tem certeza que gostaria de fechar todas as cortinas?', () => {
+        executeMasterCurtainsAction('close');
+    });
+}
+
+function executeMasterCurtainsAction(action) {
+    const deviceId = '44'; // Virtual Button "Todas-Cortinas"
+    const pushButton = action === 'open' ? '1' : '3'; // 1 = abrir, 3 = fechar
+    
+    console.log(`🎬 Executando ação master curtinas: ${action} (ID: ${deviceId}, push: ${pushButton})`);
+    
+    // Adicionar feedback visual (loading)
+    const btnId = action === 'open' ? 'master-curtains-open-btn' : 'master-curtains-close-btn';
+    const btn = document.getElementById(btnId);
+    if (btn) {
+        btn.classList.add('loading');
+    }
+    
+    // Enviar comando para o Virtual Button
+    sendHubitatCommand(deviceId, 'push', pushButton)
+        .then(() => {
+            console.log(`✅ Comando master curtinas ${action} executado com sucesso`);
+            hidePopup();
+        })
+        .catch((error) => {
+            console.error(`❌ Erro ao executar comando master curtinas ${action}:`, error);
+            showErrorMessage(`Erro ao ${action === 'open' ? 'abrir' : 'fechar'} cortinas: ${error.message}`);
+        })
+        .finally(() => {
+            // Remover feedback visual
+            if (btn) {
+                btn.classList.remove('loading');
+            }
+        });
+}
+
 function initScenesPage() {
     updateMasterLightToggleState();
 }

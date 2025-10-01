@@ -1590,10 +1590,10 @@ function setupDomObserver() {
                 if (node.nodeType === Node.ELEMENT_NODE) {
                     // Verificar se adicionou controles de dispositivos
                     const controls = node.querySelectorAll ? 
-                        node.querySelectorAll('.room-control[data-device-id], .room-master-btn[data-device-ids]') :
+                        node.querySelectorAll('.control-card[data-device-id], .room-control[data-device-id], .room-master-btn[data-device-ids]') :
                         [];
                     
-                    if (controls.length > 0 || node.matches?.('.room-control[data-device-id], .room-master-btn[data-device-ids]')) {
+                    if (controls.length > 0 || node.matches?.('.control-card[data-device-id], .room-control[data-device-id], .room-master-btn[data-device-ids]')) {
                         needsUpdate = true;
                         console.log('🔍 Novos controles adicionados ao DOM, inicializando página de cômodo...');
                     }
