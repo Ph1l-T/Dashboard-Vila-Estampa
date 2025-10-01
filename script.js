@@ -590,7 +590,18 @@ async function sendHubitatCommand(deviceId, command, value) {
 // --- Cortinas (abrir/parar/fechar) ---
 function sendCurtainCommand(deviceId, action, commandName) {
     const cmd = commandName || 'push';
-    const map = { open: 1, stop: 2, close: 3 };
+    
+    // Correção específica para cortina interna (ID 39) - comandos invertidos
+    let map;
+    if (deviceId === '39') {
+        // Cortina Interna da Reunião tem comandos invertidos
+        map = { open: 3, stop: 2, close: 1 };
+        console.log(`🔄 Cortina Interna (ID ${deviceId}): comando ${action} mapeado para valor ${map[action]} (invertido)`);
+    } else {
+        // Padrão para todas as outras cortinas
+        map = { open: 1, stop: 2, close: 3 };
+    }
+    
     const value = map[action];
     if (value === undefined) throw new Error('Ação de cortina inválida');
     return sendHubitatCommand(deviceId, cmd, value);
