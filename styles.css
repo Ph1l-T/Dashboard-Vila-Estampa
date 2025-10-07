@@ -1,472 +1,493 @@
 ﻿/* Fileira de ícones nos cards de cômodos */
 .room-icons-row {
-    position: absolute;
-    left: 30px;
-    top: 240px;
-    z-index: 2;
-    width: auto;
-    height: auto;
+  position: absolute;
+  left: 30px;
+  top: 240px;
+  z-index: 2;
+  width: auto;
+  height: auto;
 }
 
 /* Barra superior customizada */
 .top-bar-custom {
-    position: fixed;
-    top: 90px;
-    left: 21px; /* Alinha com as margens dos containers */
-    right: 21px; /* Alinha com as margens dos containers */
-    width: auto; /* Largura automÃ¡tica baseada em left/right */
-    height: 3px;
-    background: #fff;
-    border-radius: 2px;
-    z-index: 100;
-    pointer-events: none;
+  position: fixed;
+  top: 90px;
+  left: 21px; /* Alinha com as margens dos containers */
+  right: 21px; /* Alinha com as margens dos containers */
+  width: auto; /* Largura automÃ¡tica baseada em left/right */
+  height: 3px;
+  background: #fff;
+  border-radius: 2px;
+  z-index: 100;
+  pointer-events: none;
 }
 
 /* Responsividade da barra superior */
 @media (min-width: 768px) {
-    .top-bar-custom {
-        left: 32px; /* Margem maior em tablets */
-        right: 32px;
-    }
+  .top-bar-custom {
+    left: 32px; /* Margem maior em tablets */
+    right: 32px;
+  }
 }
 
 @media (min-width: 1024px) {
-    .top-bar-custom {
-        left: 40px; /* Margem ainda maior em desktop */
-        right: 40px;
-    }
+  .top-bar-custom {
+    left: 40px; /* Margem ainda maior em desktop */
+    right: 40px;
+  }
 }
 
 /* Frame de rolagem dos cards na Home */
 .rooms-frame {
-    width: 100%;
-    height: calc(100vh - 115px); /* Viewport height - apenas o top offset */
-    position: absolute;
-    left: 0;
-    top: 115px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background: #101010;
-    box-sizing: border-box;
+  width: 100%;
+  height: calc(100vh - 115px); /* Viewport height - apenas o top offset */
+  position: absolute;
+  left: 0;
+  top: 115px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #101010;
+  box-sizing: border-box;
 }
 
 /* Ajuste para desktop - garantir que o frame scrollable tenha altura suficiente */
 @media (min-width: 768px) {
-    .rooms-frame {
-        height: calc(100vh - 115px - 33px); /* Reduzir um pouco a altura para garantir visibilidade */
-    }
+  .rooms-frame {
+    height: calc(
+      100vh - 115px - 33px
+    ); /* Reduzir um pouco a altura para garantir visibilidade */
+  }
 }
 
 /* EspaÃ§o no final dos ambientes (removida a barra preta) */
 .rooms-list::after {
-    content: '';
-    display: block;
-    width: 100%;
-    height: 20px; /* Apenas um pequeno espaÃ§o no final */
-    margin-top: 20px;
+  content: "";
+  display: block;
+  width: 100%;
+  height: 20px; /* Apenas um pequeno espaÃ§o no final */
+  margin-top: 20px;
 }
 
 /* Lista de cÃ´modos na Home */
 .rooms-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  margin-top: 0;
 }
 
 /* Responsivo: duas colunas em tablets/desktop */
 @media (min-width: 768px) {
-    .rooms-list {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-        align-items: stretch;
-        padding: 0 16px;
-    }
+  .rooms-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    align-items: stretch;
+    padding: 0 16px;
+  }
 
-    .room-card {
-        width: 100%;
-    }
+  .room-card {
+    width: 100%;
+  }
 }
 
 /* Container principal das cortinas */
 .curtains-section {
-    width: 100%;
-    margin-top: 15px;
+  width: 100%;
+  margin-top: 15px;
 }
 
 /* Override para .controls-grid dentro de .curtains-section */
 .curtains-section .controls-grid {
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
-    bottom: auto !important;
-    width: 100% !important;
-    height: auto !important;
-    gap: 12px;
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 100% !important;
+  height: auto !important;
+  gap: 12px;
 }
 
 /* Container dos botões de cortina para ambientes que têm cortinas */
 .garden-page .curtains-container,
 .reuniao-page .curtains-container,
 .cafe-page .curtains-container {
-    display: grid;
-    grid-template-columns: 1fr; /* Padrão mobile: 1 coluna */
-    grid-auto-rows: minmax(160px, auto); /* Permite altura variável sem sobreposição */
-    gap: 12px;
-    align-items: start;
-    flex-shrink: 0;
-    position: relative !important; /* Override controls-grid absolute positioning */
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
-    bottom: auto !important;
+  display: grid;
+  grid-template-columns: 1fr; /* Padrão mobile: 1 coluna */
+  grid-auto-rows: minmax(
+    160px,
+    auto
+  ); /* Permite altura variável sem sobreposição */
+  gap: 12px;
+  align-items: start;
+  flex-shrink: 0;
+  position: relative !important; /* Override controls-grid absolute positioning */
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
 }
 
 .room-card {
-    width: 100%;
-    height: 300px;
-    background: #222;
-    position: relative;
-    overflow: hidden;
+  width: 100%;
+  height: 300px;
+  background: #222;
+  position: relative;
+  overflow: hidden;
 }
 
 .room-card img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 0;
-    opacity: 0.85;
-    transition: opacity 0.2s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
 }
 
 .room-card img:hover {
-    opacity: 1;
+  opacity: 1;
 }
 
 .room-card span {
-    position: absolute;
-    left: 30px;
-    top: 30px;
-    z-index: 1;
-    color: #fff;
-    font-size: 35px;
-    font-family: 'Raleway', Arial, sans-serif;
-    font-weight: 300;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  position: absolute;
+  left: 30px;
+  top: 30px;
+  z-index: 1;
+  color: #fff;
+  font-size: 35px;
+  font-family: "Raleway", Arial, sans-serif;
+  font-weight: 300;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 .under-construction {
-    position: absolute;
-    top: 115px;
-    left: 0;
-    right: 0;
-    bottom: 90px; /* navbar height */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #bbb;
-    font-size: 22px;
-    font-family: 'Raleway', sans-serif;
-    background: rgba(16,16,16,0.85);
-    z-index: 2;
+  position: absolute;
+  top: 115px;
+  left: 0;
+  right: 0;
+  bottom: 90px; /* navbar height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bbb;
+  font-size: 22px;
+  font-family: "Raleway", sans-serif;
+  background: rgba(16, 16, 16, 0.85);
+  z-index: 2;
 }
-
 
 .room-master-btn,
 .room-curtain-master-btn {
-    width: 72px;
-    height: 72px;
-    border: 1px solid var(--glass-border);
-    background: var(--glass-bg);
-    backdrop-filter: blur(var(--glass-blur));
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    border-radius: 18px;
-    box-shadow: var(--glass-shadow), var(--glass-inner-top), var(--glass-inner-bottom);
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: pointer;
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    z-index: 11;
-    isolation: isolate;
-    overflow: hidden;
-    position: absolute;
-    bottom: 16px;
-    transition: transform .1s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+  width: 72px;
+  height: 72px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: 18px;
+  box-shadow: var(--glass-shadow), var(--glass-inner-top),
+    var(--glass-inner-bottom);
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  z-index: 11;
+  isolation: isolate;
+  overflow: hidden;
+  position: absolute;
+  bottom: 16px;
+  transition: transform 0.1s ease, background 0.2s ease, border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .room-master-btn {
-    left: 16px;
+  left: 16px;
 }
 
 .room-curtain-master-btn {
-    left: 103px;
+  left: 103px;
 }
 
 .room-master-btn::before,
 .room-curtain-master-btn::before,
 .room-master-btn::after,
 .room-curtain-master-btn::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
 }
 
 .room-master-btn::before,
 .room-curtain-master-btn::before {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0));
-    opacity: 0.5;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.32),
+    rgba(255, 255, 255, 0)
+  );
+  opacity: 0.5;
 }
 
 .room-master-btn::after,
 .room-curtain-master-btn::after {
-    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.35), transparent 60%);
-    mix-blend-mode: screen;
-    opacity: 0.45;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.35),
+    transparent 60%
+  );
+  mix-blend-mode: screen;
+  opacity: 0.45;
 }
 
 .room-master-btn:hover:not(.loading),
 .room-curtain-master-btn:hover:not(.loading) {
-    transform: translateY(-2px) scale(1.04);
-    background: var(--glass-bg-hover);
-    border-color: rgba(255, 255, 255, 0.38);
-    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22), var(--glass-inner-top), var(--glass-inner-bottom);
+  transform: translateY(-2px) scale(1.04);
+  background: var(--glass-bg-hover);
+  border-color: rgba(255, 255, 255, 0.38);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22), var(--glass-inner-top),
+    var(--glass-inner-bottom);
 }
 
 .room-master-btn:active:not(.loading),
 .room-curtain-master-btn:active:not(.loading) {
-    transform: translateY(1px) scale(0.97);
-    background: var(--glass-bg-active);
-    border-color: var(--glass-border-strong);
-    box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.28), 0 6px 14px rgba(0, 0, 0, 0.16);
+  transform: translateY(1px) scale(0.97);
+  background: var(--glass-bg-active);
+  border-color: var(--glass-border-strong);
+  box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.28),
+    0 6px 14px rgba(0, 0, 0, 0.16);
 }
 
 .room-master-btn img,
 .room-curtain-master-btn img {
-    width: 48px !important;
-    height: 48px !important;
-    filter: brightness(0) invert(1);
-    display: block !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    object-fit: contain;
-    position: static !important;
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
-    bottom: auto !important;
-    transform: none !important;
-    float: none !important;
-    z-index: 1;
+  width: 48px !important;
+  height: 48px !important;
+  filter: brightness(0) invert(1);
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  object-fit: contain;
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  float: none !important;
+  z-index: 1;
 }
 
 /* Estados de loading para botÃµes master */
 .room-master-btn.loading {
-    pointer-events: none;
-    opacity: 0.6 !important;
-    position: absolute !important;
-    bottom: 16px !important;
-    left: 16px !important;
-    transform: translateY(2px) scale(0.95) !important;
-    background: rgba(255, 255, 255, 0.08) !important;
-    border-color: rgba(255, 255, 255, 0.15) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.1) !important;
-    transition: all 0.2s ease !important;
+  pointer-events: none;
+  opacity: 0.6 !important;
+  position: absolute !important;
+  bottom: 16px !important;
+  left: 16px !important;
+  transform: translateY(2px) scale(0.95) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.2s ease !important;
 }
 
 /* Estados de loading para botÃµes master das cortinas */
 .room-curtain-master-btn.loading {
-    pointer-events: none;
-    opacity: 0.6 !important;
-    position: absolute !important;
-    bottom: 16px !important;
-    left: 103px !important;
-    transform: translateY(2px) scale(0.95) !important;
-    background: rgba(255, 255, 255, 0.08) !important;
-    border-color: rgba(255, 255, 255, 0.15) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.1) !important;
-    transition: all 0.2s ease !important;
+  pointer-events: none;
+  opacity: 0.6 !important;
+  position: absolute !important;
+  bottom: 16px !important;
+  left: 103px !important;
+  transform: translateY(2px) scale(0.95) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.2s ease !important;
 }
 
 /* Remover spinner - agora usa efeito pressionado */
 
 .room-master-btn.loading img {
-    opacity: 0.4 !important;
-    filter: brightness(0) invert(1) brightness(0.7) !important;
-    transform: none !important;
-    display: block;
-    margin: 0;
-    padding: 0;
-    object-fit: contain;
+  opacity: 0.4 !important;
+  filter: brightness(0) invert(1) brightness(0.7) !important;
+  transform: none !important;
+  display: block;
+  margin: 0;
+  padding: 0;
+  object-fit: contain;
 }
 
 .room-curtain-master-btn.loading img {
-    opacity: 0.4 !important;
-    filter: brightness(0) invert(1) brightness(0.7) !important;
-    transform: none !important;
-    display: block;
-    margin: 0;
-    padding: 0;
-    object-fit: contain;
+  opacity: 0.4 !important;
+  filter: brightness(0) invert(1) brightness(0.7) !important;
+  transform: none !important;
+  display: block;
+  margin: 0;
+  padding: 0;
+  object-fit: contain;
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Previne movimento do botÃ£o master durante loading e mantÃ©m efeito pressionado */
 .room-master-btn.loading {
-    will-change: auto !important;
-    backface-visibility: hidden;
-    contain: layout style paint !important;
+  will-change: auto !important;
+  backface-visibility: hidden;
+  contain: layout style paint !important;
 }
 
 /* Garantir que hover/active nÃ£o funcionem durante loading */
 .room-master-btn.loading:hover,
 .room-master-btn.loading:active {
-    transform: translateY(2px) scale(0.95) !important;
-    opacity: 0.6 !important;
-    background: rgba(255, 255, 255, 0.08) !important;
-    border-color: rgba(255, 255, 255, 0.15) !important;
+  transform: translateY(2px) scale(0.95) !important;
+  opacity: 0.6 !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
 }
 
 .room-curtain-master-btn.loading:hover,
 .room-curtain-master-btn.loading:active {
-    transform: translateY(2px) scale(0.95) !important;
-    opacity: 0.6 !important;
-    background: rgba(255, 255, 255, 0.08) !important;
-    border-color: rgba(255, 255, 255, 0.15) !important;
+  transform: translateY(2px) scale(0.95) !important;
+  opacity: 0.6 !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
 }
 
 /* Loading para botÃ£o master da pÃ¡gina de cenÃ¡rios */
 .scene-control-card.loading {
-    pointer-events: none;
-    opacity: 0.6;
-    position: relative;
+  pointer-events: none;
+  opacity: 0.6;
+  position: relative;
 }
 
 .scene-control-card.loading::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 24px;
-    height: 24px;
-    margin: -12px 0 0 -12px;
-    border: 3px solid #ffffff;
-    border-top: 3px solid transparent;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    z-index: 12;
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  border: 3px solid #ffffff;
+  border-top: 3px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  z-index: 12;
 }
 
 .room-card:hover {
-    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
 .page-title {
-    text-align: center;
-    color: #fff;
-    font-size: 2.2rem;
-    font-family: 'Raleway', Arial, sans-serif;
-    font-weight: 500;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5em;
+  text-align: center;
+  color: #fff;
+  font-size: 2.2rem;
+  font-family: "Raleway", Arial, sans-serif;
+  font-weight: 500;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
 }
 
 /* Fixa o tÃ­tulo principal no cabeÃ§alho para nÃ£o se mover ao rolar */
 .page-title.fixed-header {
-    position: fixed;
-    top: 45px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 412px;
-    z-index: 120;
-    margin: 0;
-    pointer-events: auto;
-    touch-action: none;
-    -ms-touch-action: none;
+  position: fixed;
+  top: 45px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 412px;
+  z-index: 120;
+  margin: 0;
+  pointer-events: auto;
+  touch-action: none;
+  -ms-touch-action: none;
 }
 
 .page-title.fixed-header img {
-    height: 60px;
-    max-width: 80vw;
-    width: auto;
-    display: block;
-    margin: -20px auto 0 auto;
-    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+  height: 60px;
+  max-width: 80vw;
+  width: auto;
+  display: block;
+  margin: -20px auto 0 auto;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
 }
 
 /* Reduce Eletrize.svg icons to 75% */
 .page-title.fixed-header img[src$="Eletrize.svg"] {
-    height: 45px;
-    transform: translate(10px, 10px);
+  height: 45px;
+  transform: translate(10px, 10px);
 }
 
 /* Estilos base */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-html, body {
-    font-family: 'Raleway', Arial, sans-serif;
-    background-color: #101010;
-    color: #fff;
-    width: 100%;
-    height: 100%;
-    min-height: 100vh;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+html,
+body {
+  font-family: "Raleway", Arial, sans-serif;
+  background-color: #101010;
+  color: #fff;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 /* Permitir scroll no body para página de cenários em qualquer instância */
 body:has([data-page="scenes"].active) {
-    overflow-y: auto;
-    overflow-x: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 :root {
-    --glass-bg: rgba(255, 255, 255, 0.05);
-    --glass-bg-hover: rgba(255, 255, 255, 0.08);
-    --glass-bg-active: rgba(255, 255, 255, 0.1);
-    --glass-bg-dark: rgba(15, 15, 15, 0.55);
-    --glass-bg-smoke: rgba(0, 0, 0, 0.75);
-    --glass-border: rgba(255, 255, 255, 0.3);
-    --glass-border-strong: rgba(255, 255, 255, 0.45);
-    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    --glass-inner-top: inset 0 1px 0 rgba(255, 255, 255, 0.5);
-    --glass-inner-bottom: inset 0 -1px 0 rgba(255, 255, 255, 0.1);
-    --glass-inner-flat: inset 0 0 0 0 rgba(255, 255, 255, 0);
-    --glass-blur: 5px;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-bg-hover: rgba(255, 255, 255, 0.08);
+  --glass-bg-active: rgba(255, 255, 255, 0.1);
+  --glass-bg-dark: rgba(15, 15, 15, 0.55);
+  --glass-bg-smoke: rgba(0, 0, 0, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-border-strong: rgba(255, 255, 255, 0.45);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --glass-inner-top: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  --glass-inner-bottom: inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+  --glass-inner-flat: inset 0 0 0 0 rgba(255, 255, 255, 0);
+  --glass-blur: 5px;
 }
 
 :where(.glass-card) {
-    width: 240px;
-    height: 360px;
+  width: 240px;
+  height: 360px;
 }
 
 :where(
@@ -486,16 +507,17 @@ body:has([data-page="scenes"].active) {
     .curtain-tile__btn,
     .curtain-control,
     .error-modal
-) {
-    position: relative;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--glass-radius, 16px);
-    backdrop-filter: blur(var(--glass-blur));
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    box-shadow: var(--glass-shadow), var(--glass-inner-top), var(--glass-inner-bottom), var(--glass-inner-flat);
-    isolation: isolate;
-    overflow: hidden;
+  ) {
+  position: relative;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius, 16px);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--glass-shadow), var(--glass-inner-top),
+    var(--glass-inner-bottom), var(--glass-inner-flat);
+  isolation: isolate;
+  overflow: hidden;
 }
 
 :where(
@@ -515,7 +537,7 @@ body:has([data-page="scenes"].active) {
     .curtain-tile__btn,
     .curtain-control,
     .error-modal
-)::before,
+  )::before,
 :where(
     .glass-card,
     .control-card,
@@ -532,10 +554,10 @@ body:has([data-page="scenes"].active) {
     .curtain-tile__btn,
     .curtain-control,
     .error-modal
-)::after {
-    content: "";
-    position: absolute;
-    pointer-events: none;
+  )::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
 }
 
 :where(
@@ -549,18 +571,18 @@ body:has([data-page="scenes"].active) {
     .curtain-control-figma,
     .curtain-figma-controls,
     .curtain-figma-btn
-)::before {
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    border-radius: inherit;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.8),
-        transparent
-    );
+  )::before {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.8),
+    transparent
+  );
 }
 
 :where(
@@ -576,492 +598,1496 @@ body:has([data-page="scenes"].active) {
     .curtain-figma-btn,
     .curtain-tile,
     .curtain-tile__btn
-)::after {
-    top: 0;
-    left: 0;
-    width: 1px;
-    height: 100%;
-    border-radius: inherit;
-    background: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.8),
-        transparent,
-        rgba(255, 255, 255, 0.3)
-    );
+  )::after {
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.8),
+    transparent,
+    rgba(255, 255, 255, 0.3)
+  );
 }
 
 .container {
-    width: 100%;
-    max-width: 412px;
-    margin: 0 auto;
-    padding: 20px;
-    padding-bottom: 97px; /* Espaço para a barra de navegação fixa (77px altura + 20px margem) */
+  width: 100%;
+  max-width: 412px;
+  margin: 0 auto;
+  padding: 20px;
+  padding-bottom: 97px; /* Espaço para a barra de navegação fixa (77px altura + 20px margem) */
 }
 
 /* Estilos das páginas */
 .page {
-    display: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    background: 101010;
-    min-height: calc(100vh - 16px);
-    box-sizing: border-box;
-    padding-bottom: 97px; /* Espaço para a barra de navegação fixa (77px altura + 20px margem) */
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: 101010;
+  min-height: calc(100vh - 16px);
+  box-sizing: border-box;
+  padding-bottom: 97px; /* Espaço para a barra de navegação fixa (77px altura + 20px margem) */
 }
 
 .page.active {
-    display: block;
-    opacity: 1;
+  display: block;
+  opacity: 1;
 }
 
 /* Estilos da Navbar */
 .navbar {
-    width: 100%;
-    max-width: 100%;
-    height: 77px;
-    background: #1C1C1C;
-    border-radius: 0;
-    border-top: 3px solid #101010;
-    display: flex;
-    justify-content: center;
-    padding: 0 20px;
-    gap: 45px;
-    align-items: center;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    transform: none;
-    margin: 0;
-    --indicator-left: 50%;
-    z-index: 1000;
-    box-sizing: border-box;
-    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 100%;
+  height: 77px;
+  background: #1c1c1c;
+  border-radius: 0;
+  border-top: 3px solid #101010;
+  display: flex;
+  justify-content: center;
+  padding: 0 20px;
+  gap: 45px;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  transform: none;
+  margin: 0;
+  --indicator-left: 50%;
+  z-index: 1000;
+  box-sizing: border-box;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
 }
 
 /* Tablet/desktop layout: ajustar espaÃ§amento mantendo a barra fixa */
 @media (min-width: 768px) {
-    .navbar {
-        bottom: 0;              /* manter fixo na base */
-        padding: 0 30px;       /* mais padding nas laterais */
-    }
-    /* Ajustar espaÃ§o inferior para o conteÃºdo nÃ£o sobrepor a navbar */
-    .container {
-        padding-bottom: 130px;  /* Aumentado para garantir visibilidade do Ãºltimo card */
-    }
-    .page {
-        padding-bottom: 130px;  /* Aumentado para garantir visibilidade do Ãºltimo card */
-    }
-    .controls-grid {
-        bottom: 97px;           /* evitar sobreposição na grade de páginas internas */
-    }
+  .navbar {
+    bottom: 0; /* manter fixo na base */
+    padding: 0 30px; /* mais padding nas laterais */
+  }
+  /* Ajustar espaÃ§o inferior para o conteÃºdo nÃ£o sobrepor a navbar */
+  .container {
+    padding-bottom: 130px; /* Aumentado para garantir visibilidade do Ãºltimo card */
+  }
+  .page {
+    padding-bottom: 130px; /* Aumentado para garantir visibilidade do Ãºltimo card */
+  }
+  .controls-grid {
+    bottom: 97px; /* evitar sobreposição na grade de páginas internas */
+  }
 }
 
 /* Bolinha branca indicadora */
 .navbar::before {
-    content: '';
-    position: absolute;
-    width: 112px;
-    height: 52px;
-    background: url('images/icons/pageselector.svg') no-repeat center center / contain;
-    z-index: 2;
-    top: -17px;
-    left: calc(var(--indicator-left, 50%) - 56px);
-    transition: left 0.45s cubic-bezier(.4,1,.5,1);
-    pointer-events: none;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  content: "";
+  position: absolute;
+  width: 112px;
+  height: 52px;
+  background: url("images/icons/pageselector.svg") no-repeat center center /
+    contain;
+  z-index: 2;
+  top: -17px;
+  left: calc(var(--indicator-left, 50%) - 56px);
+  transition: left 0.45s cubic-bezier(0.4, 1, 0.5, 1);
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    position: relative;
-    padding: 0 10px;
-    transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  padding: 0 10px;
+  transition: transform 0.2s ease;
 }
 
 .nav-item:not(.active):hover {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 .nav-icon-wrapper {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .nav-item.active {
-    position: relative;
+  position: relative;
 }
 
 .nav-item.active .nav-icon {
-    position: relative;
-    z-index: 2;
-    transform: translateY(-33px) scale(1.15);
-    transition: transform 0.3s cubic-bezier(.4,1.5,.5,1);
+  position: relative;
+  z-index: 2;
+  transform: translateY(-33px) scale(1.15);
+  transition: transform 0.3s cubic-bezier(0.4, 1.5, 0.5, 1);
 }
 
 .nav-icon-wrapper {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    z-index: 2;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 2;
 }
 
 .nav-icon {
-    width: 25px;
-    height: 25px;
-    transition: all 0.3s cubic-bezier(.4,1.5,.5,1);
+  width: 25px;
+  height: 25px;
+  transition: all 0.3s cubic-bezier(0.4, 1.5, 0.5, 1);
 }
 
 .nav-item:not(.active) .nav-icon {
-    filter: brightness(0) saturate(100%) invert(32%) sepia(0%) saturate(0%) hue-rotate(147deg) brightness(96%) contrast(89%);
+  filter: brightness(0) saturate(100%) invert(32%) sepia(0%) saturate(0%)
+    hue-rotate(147deg) brightness(96%) contrast(89%);
 }
 
 .nav-item.active .nav-icon {
-    filter: brightness(0) saturate(100%);
+  filter: brightness(0) saturate(100%);
 }
 
 .nav-item:not(.active):hover .nav-icon {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 .nav-item:hover .nav-text {
-    color: #8A38F5;
+  color: #8a38f5;
 }
 
 /* Escritorio Page */
 .page-container {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    background-size: cover;
-    background-position: center;
-    overflow: hidden;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
 }
 
 .page-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%; /* Cobrir toda a altura do container */
-    background: rgba(0, 0, 0, 0.7); /* Sobreposição preta com 70% de opacidade */
-    -webkit-backdrop-filter: blur(2px);
-    backdrop-filter: blur(2px);
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* Cobrir toda a altura do container */
+  background: rgba(0, 0, 0, 0.7); /* Sobreposição preta com 70% de opacidade */
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
 }
 
 .page-header {
-    position: absolute;
-    top: 40px;
-    left: 20px;
-    right: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
+  position: absolute;
+  top: 40px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
 }
 
 /* PÃ¡gina de Cortinas - Design Minimalista Modo Escuro */
 /* Controles de cortina minimalistas para pÃ¡ginas individuais */
 .curtain-control-minimal {
-    --glass-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 20px;
-    margin: 10px 0;
-    transition: all 0.3s ease;
+  --glass-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+  margin: 10px 0;
+  transition: all 0.3s ease;
 }
 
 .curtain-control-minimal:hover {
-    background: var(--glass-bg-hover);
-    transform: translateY(-1px);
-    border-color: rgba(255, 255, 255, 0.32);
-    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22), var(--glass-inner-top), var(--glass-inner-bottom);
+  background: var(--glass-bg-hover);
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.32);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22), var(--glass-inner-top),
+    var(--glass-inner-bottom);
 }
 
 .curtain-name-minimal {
-    color: #ffffff;
-    font-size: 18px;
-    font-weight: 500;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .curtain-buttons-minimal {
-    display: flex;
-    gap: 14px;
+  display: flex;
+  gap: 14px;
 }
 
 .curtain-btn-minimal {
-    padding: 20px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 80px;
-    height: 80px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
 }
 
 .curtain-btn-minimal:hover {
-    background: var(--glass-bg-hover);
-    border-color: rgba(255, 255, 255, 0.35);
-    transform: translateY(-1px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18), var(--glass-inner-top), var(--glass-inner-bottom);
+  background: var(--glass-bg-hover);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18), var(--glass-inner-top),
+    var(--glass-inner-bottom);
 }
 
 .curtain-btn-minimal:active {
-    transform: translateY(0);
-    background: var(--glass-bg-active);
-    border-color: var(--glass-border-strong);
-    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.14);
+  transform: translateY(0);
+  background: var(--glass-bg-active);
+  border-color: var(--glass-border-strong);
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.25),
+    0 4px 10px rgba(0, 0, 0, 0.14);
 }
 
 .curtain-btn-minimal img {
-    width: 32px;
-    height: 32px;
-    opacity: 0.8;
-    transition: opacity 0.2s ease;
-    filter: brightness(0) invert(1);
+  width: 32px;
+  height: 32px;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+  filter: brightness(0) invert(1);
 }
 
 .curtain-btn-minimal:hover img {
-    opacity: 1;
+  opacity: 1;
 }
 
 .page-header .page-title {
-    color: white;
-    font-size: 30px;
-    font-family: 'Raleway', sans-serif;
-    font-weight: 700;
-    text-shadow: 0px 4px 8px rgba(0, 0, 0, 0.50);
-    margin: 0;
+  color: white;
+  font-size: 30px;
+  font-family: "Raleway", sans-serif;
+  font-weight: 700;
+  text-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+  margin: 0;
 }
 
 .back-btn {
-    position: absolute;
-    left: 0;
-    background: none;
-    border: none;
-    cursor: pointer;
+  position: absolute;
+  left: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .back-btn img {
-    width: 32px;
-    height: 32px;
-    filter: brightness(0) invert(1); /* Torna o Ã­cone branco */
+  width: 32px;
+  height: 32px;
+  filter: brightness(0) invert(1); /* Torna o Ã­cone branco */
 }
 
 .controls-grid {
-    position: absolute;
-    top: 115px;
-    left: 21px;
-    right: 21px;
-    bottom: 90px; /* navbar height */
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-auto-rows: 131px;
-    gap: 10px;
-    z-index: 1;
-    align-items: center;
+  position: absolute;
+  top: 115px;
+  left: 21px;
+  right: 21px;
+  bottom: 90px; /* navbar height */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 131px;
+  gap: 10px;
+  z-index: 1;
+  align-items: center;
 }
 
 /* Grid especÃ­fico para pÃ¡ginas com sÃ³ cortinas */
 .controls-grid:has(.control-card-curtain:only-child) {
-    grid-template-columns: 1fr;
-    grid-auto-rows: min-content;
-    align-items: start;
+  grid-template-columns: 1fr;
+  grid-auto-rows: min-content;
+  align-items: start;
 }
 
 .control-card {
-    --glass-radius: 16px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    color: white;
-    font-family: 'Raleway', sans-serif;
-    font-weight: 200;
-    cursor: pointer;
-    text-align: center;
-    transition: background 0.2s ease, transform 0.08s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    height: 100%;
+  --glass-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: white;
+  font-family: "Raleway", sans-serif;
+  font-weight: 200;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s ease, transform 0.08s ease, box-shadow 0.2s ease,
+    border-color 0.2s ease;
+  height: 100%;
 }
 
 .control-card:hover {
-    background: var(--glass-bg-hover);
-    border-color: rgba(255, 255, 255, 0.38);
-    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22), var(--glass-inner-top), var(--glass-inner-bottom);
+  background: var(--glass-bg-hover);
+  border-color: rgba(255, 255, 255, 0.38);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22), var(--glass-inner-top),
+    var(--glass-inner-bottom);
 }
 
 /* AparÃƒÂªncia de pressionado quando ligado */
 .control-card[data-state="on"] {
-    transform: translateY(2px);
-    background: var(--glass-bg-active);
-    border-color: var(--glass-border-strong);
-    box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.35), 0 3px 12px rgba(0, 0, 0, 0.18);
+  transform: translateY(2px);
+  background: var(--glass-bg-active);
+  border-color: var(--glass-border-strong);
+  box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.35),
+    0 3px 12px rgba(0, 0, 0, 0.18);
 }
 
+/* === ESTILOS DO CONTROLADOR DE AR CONDICIONADO === */
+
+/* Container principal da página AC */
+.ac-page-wrapper {
+  position: absolute;
+  top: 130px;
+  left: 0;
+  right: 0;
+  bottom: 97px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Container principal da página AC */
+.ac-page-wrapper {
+  position: absolute;
+  top: 103px; /* 93px (header) + 10px (distância da linha branca) */
+  left: 0;
+  right: 0;
+  bottom: 90px; /* Altura da navbar */
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  padding: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Container principal do controle */
+.ac-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  margin: 0;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: 28px;
+  border: 1px solid var(--glass-border);
+  padding: 24px 20px 20px 20px;
+  box-shadow: var(--glass-shadow), var(--glass-inner-top), var(--glass-inner-bottom);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: "Raleway", sans-serif;
+  overflow-y: auto;
+}
+
+/* === DISPLAY DE TEMPERATURA === */
+.ac-temperature-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  flex-shrink: 0;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  max-height: calc(100% - 15px);
+}
+
+.ac-temperature-section.power-off {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.ac-temperature-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+/* === SELETOR DE TEMPERATURA - ARCO SUPERIOR === */
+.ac-temp-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  height: 265px;
+  margin: 0 auto 20px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* SVG do arco */
+.ac-temp-arc {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+/* Arco de fundo */
+.ac-temp-arc-bg {
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-linecap: round;
+}
+
+/* Arco de progresso */
+.ac-temp-arc-progress {
+  stroke: rgba(255, 255, 255, 0.95);
+  stroke-linecap: round;
+  stroke-dasharray: 251.2;
+  stroke-dashoffset: 251.2;
+  transition: stroke-dashoffset 0.3s ease;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+}
+
+/* Display de temperatura central */
+.ac-temp-display {
+  position: absolute;
+  top: calc(50% + 35px);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.ac-temp-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+}
+
+.ac-temp-prev,
+.ac-temp-next {
+  font-size: clamp(2.5rem, 7vw, 3.5rem);
+  font-weight: 300;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: -0.02em;
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+  will-change: opacity, transform;
+  text-align: center;
+}
+
+.ac-temp-current {
+  font-size: clamp(6rem, 16vw, 9rem);
+  font-weight: 200;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.95);
+  letter-spacing: -0.02em;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.ac-temp-unit-fixed {
+  display: none;
+}
+
+/* Remover estilos antigos */
+.ac-temp-number {
+  display: none;
+}
+
+.ac-temp-unit {
+  display: none;
+}
+
+.ac-temp-labels {
+  display: none;
+}
+
+/* Wrapper do knob para posicionamento */
+.ac-temp-knob-wrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+/* Knob arrastável */
+.ac-temp-knob {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+  border: 4px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  cursor: grab;
+  pointer-events: all;
+  touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 6px 16px rgba(0, 0, 0, 0.6),
+    inset 0 2px 4px rgba(255, 255, 255, 0.1);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  z-index: 10;
+}
+
+.ac-temp-knob-dot {
+  width: 14px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+.ac-temp-knob:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.7),
+    inset 0 2px 6px rgba(255, 255, 255, 0.15);
+}
+
+.ac-temp-knob.is-active {
+  cursor: grabbing;
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 10px 24px rgba(0, 0, 0, 0.8),
+    inset 0 3px 8px rgba(255, 255, 255, 0.2);
+}
+
+.ac-temp-knob.is-active .ac-temp-knob-dot {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+}
+
+/* Labels de temperatura */
+.ac-temp-labels {
+  position: absolute;
+  width: 100%;
+  bottom: 5px;
+  left: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 15px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.ac-temp-label-min,
+.ac-temp-label-max {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.02em;
+}
+
+/* === SEÇÕES DE CONTROLE === */
+.ac-section-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 10px 0;
+  text-align: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.ac-section-title::before,
+.ac-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  max-width: calc(50% - 10px);
+}
+
+/* === BOTÕES DE MODO === */
+.ac-modes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ac-modes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.ac-mode-btn {
+  appearance: none;
+  border: 0;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  padding: 14px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  min-height: 95px;
+}
+
+.ac-mode-btn img {
+  width: 38px;
+  height: 38px;
+  filter: brightness(0) invert(1);
+  opacity: 0.7;
+  transition: all 0.25s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.ac-mode-btn:hover {
+  background: var(--glass-bg-hover);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.ac-mode-btn:hover img {
+  opacity: 0.9;
+  transform: scale(1.1);
+}
+
+.ac-mode-btn:active {
+  transform: translateY(-1px);
+}
+
+/* Modos ativos com cores específicas */
+.ac-mode-btn[data-mode="cool"][aria-pressed="true"] {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(37, 99, 235, 0.15));
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.ac-mode-btn[data-mode="cool"][aria-pressed="true"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.2), transparent 70%);
+  pointer-events: none;
+}
+
+.ac-mode-btn[data-mode="heat"][aria-pressed="true"] {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.25), rgba(234, 88, 12, 0.15));
+  border-color: rgba(249, 115, 22, 0.5);
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.ac-mode-btn[data-mode="heat"][aria-pressed="true"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(249, 115, 22, 0.2), transparent 70%);
+  pointer-events: none;
+}
+
+.ac-mode-btn[data-mode="auto"][aria-pressed="true"] {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(22, 163, 74, 0.15));
+  border-color: rgba(34, 197, 94, 0.5);
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.ac-mode-btn[data-mode="auto"][aria-pressed="true"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(34, 197, 94, 0.2), transparent 70%);
+  pointer-events: none;
+}
+
+.ac-mode-btn[aria-pressed="true"] img {
+  opacity: 1;
+  filter: brightness(0) invert(1) drop-shadow(0 0 12px rgba(255, 255, 255, 0.4));
+}
+
+/* === BOTÕES DE VENTILADOR === */
+.ac-fan-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ac-fan-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.ac-fan-btn {
+  appearance: none;
+  border: 0;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  min-height: 95px;
+}
+
+.ac-fan-btn img {
+  width: 32px;
+  height: 32px;
+  filter: brightness(0) invert(1);
+  opacity: 0.6;
+  transition: all 0.25s ease;
+}
+
+.ac-fan-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.25s ease;
+  line-height: 1;
+}
+
+.ac-fan-btn:hover {
+  background: var(--glass-bg-hover);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.ac-fan-btn:hover img {
+  opacity: 0.85;
+  transform: scale(1.1) rotate(180deg);
+}
+
+.ac-fan-btn:hover .ac-fan-label {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.ac-fan-btn:active {
+  transform: translateY(-1px);
+}
+
+.ac-fan-btn[aria-pressed="true"] {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(109, 40, 217, 0.15));
+  border-color: rgba(139, 92, 246, 0.5);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.ac-fan-btn[aria-pressed="true"] img {
+  opacity: 1;
+  filter: brightness(0) invert(1) drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+.ac-fan-btn[aria-pressed="true"] .ac-fan-label {
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 600;
+}
+
+/* === SEÇÃO DE COMANDOS === */
+.ac-commands-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 0;
+  flex-shrink: 0;
+}
+
+.ac-commands-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.ac-command-btn {
+  appearance: none;
+  border: 0;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  min-height: 95px;
+}
+
+.ac-command-btn img {
+  width: 38px;
+  height: 38px;
+  filter: brightness(0) invert(1);
+  opacity: 0.7;
+  transition: all 0.25s ease;
+}
+
+.ac-command-btn:hover {
+  background: var(--glass-bg-hover);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.ac-command-btn:hover img {
+  opacity: 0.9;
+  transform: scale(1.1);
+}
+
+.ac-command-btn:active {
+  transform: translateY(-1px);
+}
+
+/* Botão Power na grid de comandos - estilo especial */
+.ac-command-btn[data-role="power"] {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.15));
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.ac-command-btn[data-role="power"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.25), transparent 70%);
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.ac-command-btn[data-role="power"] img {
+  opacity: 1;
+}
+
+.ac-command-btn[data-role="power"]:hover {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(220, 38, 38, 0.2));
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.ac-command-btn[data-role="power"][aria-pressed="false"] {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), var(--glass-inner-top), var(--glass-inner-bottom);
+}
+
+.ac-command-btn[data-role="power"][aria-pressed="false"]::before {
+  opacity: 0;
+}
+
+.ac-command-btn[data-role="power"][aria-pressed="false"] img {
+  opacity: 0.5;
+}
+
+.ac-command-btn[data-role="power"][aria-pressed="false"]:hover {
+  background: var(--glass-bg-hover);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.ac-command-btn[data-role="power"][aria-pressed="false"]:hover img {
+  opacity: 0.7;
+}
+
+/* === BOTÃO DE POWER (ANTIGO - MANTIDO PARA COMPATIBILIDADE) === */
+.ac-power-section {
+  display: none;
+}
+
+.ac-power-btn {
+  appearance: none;
+  border: 0;
+  width: 100%;
+  max-width: 100%;
+  height: 85px;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.15));
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.ac-power-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.25), transparent 70%);
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.ac-power-btn img {
+  width: 44px;
+  height: 44px;
+  filter: brightness(0) invert(1);
+  opacity: 1;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.ac-power-btn:hover {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(220, 38, 38, 0.2));
+  border-color: rgba(239, 68, 68, 0.5);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(239, 68, 68, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.ac-power-btn:hover img {
+  transform: scale(1.15);
+}
+
+.ac-power-btn:active {
+  transform: translateY(-2px);
+}
+
+.ac-power-btn[aria-pressed="false"] {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), var(--glass-inner-top), var(--glass-inner-bottom);
+}
+
+.ac-power-btn[aria-pressed="false"]::before {
+  opacity: 0;
+}
+
+.ac-power-btn[aria-pressed="false"] img {
+  opacity: 0.5;
+  filter: brightness(0) invert(1);
+}
+
+.ac-power-btn[aria-pressed="false"]:hover {
+  background: var(--glass-bg-hover);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.ac-power-btn[aria-pressed="false"]:hover img {
+  opacity: 0.7;
+}
+
+/* === ESTADO DESLIGADO === */
+[data-component="ac-control"][data-power-off] .ac-temp-ring-value {
+  stroke: rgba(255, 255, 255, 0.15);
+}
+
+[data-component="ac-control"][data-power-off] .ac-temp-number,
+[data-component="ac-control"][data-power-off] .ac-temp-unit {
+  opacity: 0.3;
+}
+
+[data-component="ac-control"][data-power-off] .ac-temp-knob {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(200, 200, 200, 0.2));
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  cursor: not-allowed;
+}
+
+[data-component="ac-control"][data-power-off] .ac-mode-btn,
+[data-component="ac-control"][data-power-off] .ac-fan-btn {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+[data-component="ac-control"][data-power-off] .ac-mode-btn[aria-pressed="true"],
+[data-component="ac-control"][data-power-off] .ac-fan-btn[aria-pressed="true"] {
+  background: var(--glass-bg);
+  border-color: var(--glass-border);
+  box-shadow: none;
+}
+
+[data-component="ac-control"][data-power-off] .ac-mode-btn[aria-pressed="true"]::before,
+[data-component="ac-control"][data-power-off] .ac-fan-btn[aria-pressed="true"]::before {
+  opacity: 0;
+}
+
+/* === ACESSIBILIDADE === */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* === RESPONSIVIDADE === */
+
+/* Mobile pequeno */
+@media (max-width: 520px) {
+  .ac-page-wrapper {
+    padding: 10px;
+  }
+
+  .ac-container {
+    padding: 18px 14px;
+    gap: 16px;
+    border-radius: 24px;
+  }
+
+  .ac-temp-wrapper {
+    max-width: 350px;
+    height: 215px;
+  }
+
+  .ac-temp-current {
+    font-size: clamp(4.5rem, 13vw, 6rem);
+  }
+
+  .ac-temp-prev,
+  .ac-temp-next {
+    font-size: clamp(2rem, 6vw, 2.8rem);
+  }
+
+  .ac-temp-list {
+    gap: 1px;
+  }
+
+  .ac-temp-display {
+    top: calc(50% + 30px);
+  }
+
+  .ac-temp-knob {
+    width: 38px;
+    height: 38px;
+  }
+
+  .ac-temp-knob-dot {
+    width: 11px;
+    height: 11px;
+  }
+
+  .ac-section-title {
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+  }
+
+  .ac-modes-grid,
+  .ac-fan-grid {
+    gap: 8px;
+  }
+
+  .ac-mode-btn,
+  .ac-fan-btn {
+    min-height: 80px;
+    padding: 10px 8px;
+    border-radius: 16px;
+  }
+
+  .ac-fan-btn {
+    gap: 4px;
+  }
+
+  .ac-mode-btn img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .ac-fan-btn img {
+    width: 26px;
+    height: 26px;
+  }
+
+  .ac-fan-label {
+    font-size: 0.68rem;
+  }
+
+  .ac-power-btn {
+    height: 70px;
+  }
+
+  .ac-power-btn img {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  .ac-page-wrapper {
+    padding: 10px;
+  }
+
+  .ac-container {
+    padding: 24px 20px;
+    gap: 20px;
+    border-radius: 28px;
+  }
+
+  .ac-temp-wrapper {
+    max-width: 450px;
+    height: 285px;
+  }
+
+  .ac-temp-current {
+    font-size: clamp(6rem, 14vw, 8rem);
+  }
+
+  .ac-temp-prev,
+  .ac-temp-next {
+    font-size: clamp(2.8rem, 7vw, 3.6rem);
+  }
+
+  .ac-temp-list {
+    gap: 2px;
+  }
+
+  .ac-temp-display {
+    top: calc(50% + 35px);
+  }
+
+  .ac-temp-knob {
+    width: 42px;
+    height: 42px;
+  }
+
+  .ac-temp-knob-dot {
+    width: 12px;
+    height: 12px;
+  }
+
+  .ac-section-title {
+    font-size: 0.9rem;
+    margin-bottom: 11px;
+  }
+
+  .ac-modes-grid,
+  .ac-fan-grid {
+    gap: 10px;
+  }
+
+  .ac-mode-btn,
+  .ac-fan-btn {
+    min-height: 90px;
+  }
+
+  .ac-mode-btn img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .ac-fan-btn img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .ac-fan-label {
+    font-size: 0.75rem;
+  }
+
+  .ac-power-btn {
+    height: 78px;
+    max-width: 100%;
+  }
+
+  .ac-power-btn img {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .ac-page-wrapper {
+    padding: 10px;
+  }
+
+  .ac-container {
+    padding: 28px 24px;
+    gap: 24px;
+  }
+
+  .ac-temp-wrapper {
+    max-width: 480px;
+    height: 305px;
+  }
+
+  .ac-temp-current {
+    font-size: clamp(7rem, 16vw, 10rem);
+  }
+
+  .ac-temp-prev,
+  .ac-temp-next {
+    font-size: clamp(3rem, 7.5vw, 4rem);
+  }
+
+  .ac-temp-list {
+    gap: 3px;
+  }
+
+  .ac-temp-display {
+    top: calc(50% + 40px);
+  }
+
+  .ac-temp-knob {
+    width: 52px;
+    height: 52px;
+  }
+
+  .ac-temp-knob-dot {
+    width: 16px;
+    height: 16px;
+  }
+
+  .ac-section-title {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+
+  .ac-modes-grid,
+  .ac-fan-grid {
+    gap: 11px;
+  }
+
+  .ac-mode-btn,
+  .ac-fan-btn {
+    min-height: 75px;
+    border-radius: 20px;
+  }
+
+  .ac-mode-btn {
+    padding: 15px 12px;
+  }
+
+  .ac-fan-btn {
+    padding: 13px 12px;
+    gap: 7px;
+  }
+
+  .ac-mode-btn img {
+    width: 38px;
+    height: 38px;
+  }
+
+  .ac-fan-btn img {
+    width: 34px;
+    height: 34px;
+  }
+
+  .ac-fan-label {
+    font-size: 0.78rem;
+  }
+
+  .ac-power-btn {
+    height: 60px;
+    max-width: 100%;
+  }
+
+  .ac-power-btn img {
+    width: 46px;
+    height: 46px;
+  }
+}
+
+/* === FIM DOS ESTILOS DO AR CONDICIONADO === */
+
+
 .control-card.large {
-    grid-column: span 2;
+  grid-column: span 2;
 }
 
 /* Controles de cortina no mesmo container dos botÃµes de luz */
 .control-card-curtain {
-    --glass-radius: 16px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    color: white;
-    font-family: 'Raleway', sans-serif;
-    font-weight: 200;
-    text-align: center;
-    height: 150px; /* Altura aumentada para melhor acomodação */
-    width: 100%; /* Largura adaptativa */
-    grid-column: span 2; /* Ocupar toda a largura disponÃ­vel */
-    position: relative;
+  --glass-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: white;
+  font-family: "Raleway", sans-serif;
+  font-weight: 200;
+  text-align: center;
+  height: 150px; /* Altura aumentada para melhor acomodação */
+  width: 100%; /* Largura adaptativa */
+  grid-column: span 2; /* Ocupar toda a largura disponÃ­vel */
+  position: relative;
 }
 
 /* TÃ­tulo da cortina */
 .curtain-card-title {
-    font-size: 18px;
-    font-weight: 300;
-    margin-bottom: 8px;
-    color: #fff;
-    text-align: center;
+  font-size: 18px;
+  font-weight: 300;
+  margin-bottom: 8px;
+  color: #fff;
+  text-align: center;
 }
 
 /* Container dos botÃµes dentro do card */
 .curtain-card-controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    width: 100%;
-    max-width: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  width: 100%;
+  max-width: 280px;
 }
 
 /* BotÃµes individuais da cortina */
 .curtain-card-btn {
-    --glass-radius: 12px;
-    width: 70px;
-    height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    padding: 0;
+  --glass-radius: 12px;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  padding: 0;
 }
 
 .curtain-card-btn:hover {
-    background: var(--glass-bg-hover);
-    border-color: rgba(255, 255, 255, 0.35);
-    transform: translateY(-1px) scale(1.02);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2), var(--glass-inner-top), var(--glass-inner-bottom);
+  background: var(--glass-bg-hover);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2), var(--glass-inner-top),
+    var(--glass-inner-bottom);
 }
 
 .curtain-card-btn:active {
-    transform: scale(0.95);
-    background: var(--glass-bg-active);
-    border-color: var(--glass-border-strong);
-    box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.15);
+  transform: scale(0.95);
+  background: var(--glass-bg-active);
+  border-color: var(--glass-border-strong);
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.25),
+    0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .curtain-card-btn img {
-    width: 45%;
-    height: 45%;
-    object-fit: contain;
-    filter: brightness(0) invert(1);
+  width: 45%;
+  height: 45%;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 
 /* Separador entre botÃµes */
 .curtain-card-separator {
-    border-right: 2px solid rgba(255, 255, 255, 0.3);
-    height: 50px;
-    opacity: 0.6;
+  border-right: 2px solid rgba(255, 255, 255, 0.3);
+  height: 50px;
+  opacity: 0.6;
 }
 
 /* BotÃ£o pause especÃ­fico */
 .curtain-card-pause {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
 .curtain-card-pause-line {
-    border-radius: 8px;
-    background-color: #fff;
-    width: 6px;
-    height: 24px;
-    opacity: 0.9;
+  border-radius: 8px;
+  background-color: #fff;
+  width: 6px;
+  height: 24px;
+  opacity: 0.9;
 }
 
 .control-icon {
-    width: 60px;
-    height: 60px;
+  width: 60px;
+  height: 60px;
 }
 
 .control-label {
-    font-size: 20px;
+  font-size: 20px;
 }
 
 .control-state {
-    font-size: 20px;
+  font-size: 20px;
 }
 
 .control-card.dvr {
-    background: var(--glass-bg-dark);
-    border-color: rgba(175, 195, 255, 0.28);
+  background: var(--glass-bg-dark);
+  border-color: rgba(175, 195, 255, 0.28);
 }
 
 /* Thermostat Styles */
 .thermostat {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    cursor: default !important;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: default !important;
 }
 
 .thermostat-display {
-    font-size: 40px;
-    font-weight: 300;
-    color: white;
-    margin-bottom: 10px;
+  font-size: 40px;
+  font-weight: 300;
+  color: white;
+  margin-bottom: 10px;
 }
 
 .thermostat-buttons {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
 }
 
 .temp-decrease,
 .temp-increase {
-    flex: 1;
-    height: 100%;
-    cursor: pointer;
-    /* For debugging, you can add a background color */
-    /* background-color: rgba(255, 0, 0, 0.1); */
+  flex: 1;
+  height: 100%;
+  cursor: pointer;
+  /* For debugging, you can add a background color */
+  /* background-color: rgba(255, 0, 0, 0.1); */
 }
 
 /* BotÃµes pequenos dos cÃ´modos na Home: efeito pressionado quando ligados */
@@ -1070,87 +2096,110 @@ body:has([data-page="scenes"].active) {
 .icon-toggle-shader,
 .icon-toggle-smartglass,
 .icon-toggle-telamovel {
-    transition: transform 0.08s ease, filter 0.2s ease;
+  transition: transform 0.08s ease, filter 0.2s ease;
 }
 
-.icon-toggle-light[data-state='on'],
-.icon-toggle-tv[data-state='on'],
-.icon-toggle-shader[data-state='on'],
-.icon-toggle-smartglass[data-state='on'],
-.icon-toggle-telamovel[data-state='on'] {
-    transform: translateY(2px) scale(0.96);
-    filter: drop-shadow(0 2px 0 rgba(0,0,0,0.45)) brightness(1.1);
+.icon-toggle-light[data-state="on"],
+.icon-toggle-tv[data-state="on"],
+.icon-toggle-shader[data-state="on"],
+.icon-toggle-smartglass[data-state="on"],
+.icon-toggle-telamovel[data-state="on"] {
+  transform: translateY(2px) scale(0.96);
+  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.45)) brightness(1.1);
 }
 
 /* Placeholder rooms: hide legacy images and icon rows on Home */
-#home-page .room-card:not(.has-photo) > img { display: none !important; }
-#home-page .room-icons-row { display: none !important; }
+#home-page .room-card:not(.has-photo) > img {
+  display: none !important;
+}
+#home-page .room-icons-row {
+  display: none !important;
+}
 
 /* Room controls (inner pages): vertical list of 3 buttons */
 .room-controls-list {
-    position: absolute;
-    top: 115px;
-    left: 21px;
-    right: 21px;
-    bottom: 90px; /* navbar height */
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    overflow-y: auto;
-    z-index: 1;
+  position: absolute;
+  top: 115px;
+  left: 21px;
+  right: 21px;
+  bottom: 90px; /* navbar height */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  z-index: 1;
 }
 
 .room-control {
-    --glass-radius: 16px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    height: 64px;
-    padding: 0 16px;
-    color: white;
-    font-family: 'Raleway', sans-serif;
-    font-weight: 400;
-    cursor: pointer;
-    transition: background 0.2s ease, transform 0.08s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  --glass-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 64px;
+  padding: 0 16px;
+  color: white;
+  font-family: "Raleway", sans-serif;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.08s ease, box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 
 /* BotÃ£o especial para o Jardim na Entrada */
-#home-page ~ .page-container .room-controls-list .room-control[data-device-id="17"] {
-    height: 110px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 14px;
-    padding: 0 24px;
+#home-page
+  ~ .page-container
+  .room-controls-list
+  .room-control[data-device-id="17"] {
+  height: 110px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  padding: 0 24px;
 }
-#home-page ~ .page-container .room-controls-list .room-control[data-device-id="17"] .room-control-icon {
-    width: 48px;
-    height: 48px;
-    display: block;
-    margin: 0 auto 6px auto;
+#home-page
+  ~ .page-container
+  .room-controls-list
+  .room-control[data-device-id="17"]
+  .room-control-icon {
+  width: 48px;
+  height: 48px;
+  display: block;
+  margin: 0 auto 6px auto;
 }
-#home-page ~ .page-container .room-controls-list .room-control[data-device-id="17"] .room-control-label {
-    font-size: 22px;
-    text-align: center;
-    width: 100%;
-    margin: 0;
+#home-page
+  ~ .page-container
+  .room-controls-list
+  .room-control[data-device-id="17"]
+  .room-control-label {
+  font-size: 22px;
+  text-align: center;
+  width: 100%;
+  margin: 0;
 }
 
 .room-control:hover {
-    background: var(--glass-bg-hover);
-    border-color: rgba(255, 255, 255, 0.38);
-    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.2), var(--glass-inner-top), var(--glass-inner-bottom);
+  background: var(--glass-bg-hover);
+  border-color: rgba(255, 255, 255, 0.38);
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.2), var(--glass-inner-top),
+    var(--glass-inner-bottom);
 }
 
 .room-control[data-state="on"] {
-    transform: translateY(2px);
-    background: var(--glass-bg-active);
-    border-color: var(--glass-border-strong);
-    box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.32), 0 3px 10px rgba(0, 0, 0, 0.16);
+  transform: translateY(2px);
+  background: var(--glass-bg-active);
+  border-color: var(--glass-border-strong);
+  box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.32),
+    0 3px 10px rgba(0, 0, 0, 0.16);
 }
 
-.room-control-icon { width: 32px; height: 32px; }
-.room-control-label { font-size: 18px; }
+.room-control-icon {
+  width: 32px;
+  height: 32px;
+}
+.room-control-label {
+  font-size: 18px;
+}
 
 /* Home quick toggle (long-press) */
 /* estilos do botÃ£o rÃ¡pido de master on/off removidos */
@@ -1163,7 +2212,9 @@ body:has([data-page="scenes"].active) {
   height: auto;
   padding: 16px;
 }
-.curtain-control .room-control-icon { display: none; }
+.curtain-control .room-control-icon {
+  display: none;
+}
 .curtain-control .room-control-label {
   font-size: 20px;
   text-align: center;
@@ -1174,7 +2225,7 @@ body:has([data-page="scenes"].active) {
   gap: 14px;
 }
 .curtain-btn {
-    --glass-radius: 50%;
+  --glass-radius: 50%;
   width: 80px;
   height: 80px;
   color: #fff;
@@ -1182,646 +2233,678 @@ body:has([data-page="scenes"].active) {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform .08s ease;
+  transition: transform 0.08s ease;
 }
 .curtain-btn:hover {
-    background: var(--glass-bg-hover);
-    border-color: rgba(255, 255, 255, 0.35);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2), var(--glass-inner-top), var(--glass-inner-bottom);
+  background: var(--glass-bg-hover);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2), var(--glass-inner-top),
+    var(--glass-inner-bottom);
 }
 .curtain-btn:active {
-    transform: translateY(2px) scale(0.98);
-    background: var(--glass-bg-active);
-    border-color: var(--glass-border-strong);
-    box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.28), 0 4px 12px rgba(0, 0, 0, 0.14);
+  transform: translateY(2px) scale(0.98);
+  background: var(--glass-bg-active);
+  border-color: var(--glass-border-strong);
+  box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.28),
+    0 4px 12px rgba(0, 0, 0, 0.14);
 }
-.curtain-btn img { width: 40px; height: 40px; filter: brightness(0) invert(1); }
-@media (max-width: 360px) { .curtain-btn { width: 70px; height: 70px; } }
+.curtain-btn img {
+  width: 40px;
+  height: 40px;
+  filter: brightness(0) invert(1);
+}
+@media (max-width: 360px) {
+  .curtain-btn {
+    width: 70px;
+    height: 70px;
+  }
+}
 
 /* Rotação dos ícones de cortina para a sala de Reunião (Cortina Interna) */
 .room-control[data-device-id="39"] .curtain-btn.open img {
-    transform: rotate(-90deg);
+  transform: rotate(-90deg);
 }
 
 .room-control[data-device-id="39"] .curtain-btn.close img {
-    transform: rotate(45deg);
+  transform: rotate(45deg);
 }
 
 /* Popup styles */
 .popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    display: none; /* Hidden by default */
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  display: none; /* Hidden by default */
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
 }
 
 .popup-dialog {
-    background: rgba(30, 30, 30, 0.9);
-    padding: 25px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    text-align: center;
-    width: 90%;
-    max-width: 320px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  background: rgba(30, 30, 30, 0.9);
+  padding: 25px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+  width: 90%;
+  max-width: 320px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .popup-message {
-    font-size: 18px;
-    font-weight: 300;
-    margin-bottom: 25px;
+  font-size: 18px;
+  font-weight: 300;
+  margin-bottom: 25px;
 }
 
 .popup-buttons {
-    display: flex;
-    justify-content: space-around;
-    gap: 15px;
+  display: flex;
+  justify-content: space-around;
+  gap: 15px;
 }
 
 .popup-btn {
-    flex: 1;
-    padding: 12px 0;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
+  flex: 1;
+  padding: 12px 0;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
 }
 
 .popup-btn.confirm {
-    background-color: #8A38F5;
-    color: white;
+  background-color: #8a38f5;
+  color: white;
 }
 
 .popup-btn.cancel {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
 }
 
 .popup-btn:active {
-    transform: scale(0.96);
+  transform: scale(0.96);
 }
 
 .scene-control-card {
-    height: 145px;
+  height: 145px;
 }
 
 /* Extra spacer below Home cards to avoid navbar overlap */
 #home-page .rooms-list::after {
-    height: 75px;
+  height: 75px;
 }
 
 /* === TELA DE LOADING GLOBAL === */
 .global-loader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #1C1C1C 0%, #2A2A2A 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1c1c1c 0%, #2a2a2a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
 .global-loader.hidden {
-    opacity: 0;
-    visibility: hidden;
+  opacity: 0;
+  visibility: hidden;
 }
 
 .loader-content {
-    text-align: center;
-    color: #fff;
-    animation: fadeInUp 0.6s ease-out;
+  text-align: center;
+  color: #fff;
+  animation: fadeInUp 0.6s ease-out;
 }
 
 .loader-logo {
-    margin-bottom: 30px;
-    animation: pulse 2s infinite;
+  margin-bottom: 30px;
+  animation: pulse 2s infinite;
 }
 
 .loader-logo img {
-    /* Removido filtro para usar ícone transparente original */
-    opacity: 0.9;
-    max-width: 240px;
-    max-height: 240px;
+  /* Removido filtro para usar ícone transparente original */
+  opacity: 0.9;
+  max-width: 240px;
+  max-height: 240px;
 }
 
 .loader-spinner {
-    width: 50px;
-    height: 50px;
-    border: 3px solid rgba(255, 255, 255, 0.1);
-    border-top: 3px solid #fff;
-    border-radius: 50%;
-    margin: 0 auto 25px;
-    animation: spin 1s linear infinite;
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid #fff;
+  border-radius: 50%;
+  margin: 0 auto 25px;
+  animation: spin 1s linear infinite;
 }
 
 .loader-text {
-    font-family: 'Raleway', sans-serif;
-    font-size: 16px;
-    font-weight: 300;
-    margin-bottom: 25px;
-    opacity: 0.8;
+  font-family: "Raleway", sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  margin-bottom: 25px;
+  opacity: 0.8;
 }
 
 .loader-progress {
-    width: 280px;
-    margin: 0 auto;
+  width: 280px;
+  margin: 0 auto;
 }
 
 .progress-bar {
-    width: 100%;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 2px;
-    overflow: hidden;
-    margin-bottom: 10px;
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 10px;
 }
 
 .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #4CAF50, #66BB6A);
-    border-radius: 2px;
-    width: 0%;
-    transition: width 0.3s ease;
-    animation: shimmer 1.5s infinite;
+  height: 100%;
+  background: linear-gradient(90deg, #4caf50, #66bb6a);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.3s ease;
+  animation: shimmer 1.5s infinite;
 }
 
 .progress-text {
-    font-family: 'Raleway', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    opacity: 0.7;
+  font-family: "Raleway", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.7;
 }
 
 /* AnimaÃ§Ãµes */
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 0.9; }
-    50% { transform: scale(1.05); opacity: 1; }
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
 }
 
 @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes shimmer {
-    0% { box-shadow: 0 0 5px rgba(76, 175, 80, 0.3); }
-    50% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.6); }
-    100% { box-shadow: 0 0 5px rgba(76, 175, 80, 0.3); }
+  0% {
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+  }
 }
 
 /* Debug mobile visual - REMOVIDO (compatibilidade resolvida) */
 
 /* Novo design de controles de cortina baseado no Figma */
 .curtain-control-figma {
-    --glass-radius: 16px;
-    flex: 1 1 280px;
-    max-width: 320px;
-    position: relative;
-    background: var(--glass-bg-dark);
-    border-color: rgba(255, 255, 255, 0.24);
-    box-sizing: border-box;
-    min-height: clamp(120px, 16vw, 150px);
-    overflow: hidden;
-    text-align: center;
-    color: #fff;
-    font-family: 'Raleway', sans-serif;
-    margin: 0;
-    box-shadow: 0 16px 42px rgba(0, 0, 0, 0.32), var(--glass-inner-top), var(--glass-inner-bottom);
+  --glass-radius: 16px;
+  flex: 1 1 280px;
+  max-width: 320px;
+  position: relative;
+  background: var(--glass-bg-dark);
+  border-color: rgba(255, 255, 255, 0.24);
+  box-sizing: border-box;
+  min-height: clamp(120px, 16vw, 150px);
+  overflow: hidden;
+  text-align: center;
+  color: #fff;
+  font-family: "Raleway", sans-serif;
+  margin: 0;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.32), var(--glass-inner-top),
+    var(--glass-inner-bottom);
 }
 
 .curtain-figma-title {
-    position: absolute;
-    top: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: clamp(18px, 4vw, 25px);
-    font-weight: 200;
-    display: inline-block;
-    width: calc(100% - 40px);
-    height: 28px;
-    text-align: center;
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(18px, 4vw, 25px);
+  font-weight: 200;
+  display: inline-block;
+  width: calc(100% - 40px);
+  height: 28px;
+  text-align: center;
 }
 
 .curtain-figma-controls {
-    --glass-radius: 19px;
-    position: absolute;
-    top: 41px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(10, 10, 10, 0.65);
-    border-color: rgba(255, 255, 255, 0.24);
-    box-sizing: border-box;
-    width: calc(100% - 36px);
-    max-width: 340px;
-    height: clamp(68px, 10vw, 86px);
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 clamp(12px, 2vw, 18px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28), var(--glass-inner-top), var(--glass-inner-bottom);
+  --glass-radius: 19px;
+  position: absolute;
+  top: 41px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10, 10, 10, 0.65);
+  border-color: rgba(255, 255, 255, 0.24);
+  box-sizing: border-box;
+  width: calc(100% - 36px);
+  max-width: 340px;
+  height: clamp(68px, 10vw, 86px);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(12px, 2vw, 18px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28), var(--glass-inner-top),
+    var(--glass-inner-bottom);
 }
 
 .curtain-figma-separator {
-    border-right: 2px solid rgba(255, 255, 255, 0.4);
-    height: calc(100% - 14px);
-    opacity: 0.5;
+  border-right: 2px solid rgba(255, 255, 255, 0.4);
+  height: calc(100% - 14px);
+  opacity: 0.5;
 }
 
 .curtain-figma-btn {
-    --glass-radius: 14px;
-    background: rgba(0, 0, 0, 0.5);
-    border-color: rgba(255, 255, 255, 0.26);
-    width: 92px;
-    height: 92px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    padding: 0;
+  --glass-radius: 14px;
+  background: rgba(0, 0, 0, 0.5);
+  border-color: rgba(255, 255, 255, 0.26);
+  width: 92px;
+  height: 92px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  padding: 0;
 }
 
 .curtain-figma-btn:hover {
-    background: rgba(20, 20, 20, 0.75);
-    border-color: rgba(255, 255, 255, 0.32);
-    transform: translateY(-1px) scale(1.02);
-    box-shadow: 0 20px 36px rgba(0, 0, 0, 0.36), var(--glass-inner-top), var(--glass-inner-bottom);
+  background: rgba(20, 20, 20, 0.75);
+  border-color: rgba(255, 255, 255, 0.32);
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 20px 36px rgba(0, 0, 0, 0.36), var(--glass-inner-top),
+    var(--glass-inner-bottom);
 }
 
 .curtain-figma-btn:active {
-    transform: scale(0.96);
-    background: rgba(22, 22, 22, 0.82);
-    border-color: rgba(255, 255, 255, 0.38);
-    box-shadow: inset 0 5px 12px rgba(0, 0, 0, 0.32), 0 10px 24px rgba(0, 0, 0, 0.28);
+  transform: scale(0.96);
+  background: rgba(22, 22, 22, 0.82);
+  border-color: rgba(255, 255, 255, 0.38);
+  box-shadow: inset 0 5px 12px rgba(0, 0, 0, 0.32),
+    0 10px 24px rgba(0, 0, 0, 0.28);
 }
 
 .curtain-figma-btn img {
-    width: 50%;
-    height: 50%;
-    object-fit: contain;
-    opacity: 0.9;
-    transition: opacity 0.2s ease;
+  width: 50%;
+  height: 50%;
+  object-fit: contain;
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
 }
 
 .curtain-figma-pause {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
 
 .curtain-pause-line {
-    border-radius: 10px;
-    background-color: #fff;
-    width: clamp(8px, 1.5vw, 11px);
-    height: clamp(28px, 4vw, 36px);
-    opacity: 0.9;
+  border-radius: 10px;
+  background-color: #fff;
+  width: clamp(8px, 1.5vw, 11px);
+  height: clamp(28px, 4vw, 36px);
+  opacity: 0.9;
 }
 
 /* Responsividade aprimorada com glassmorphism */
 .curtain-figma-separator {
-    border-right: 2px solid rgba(255, 255, 255, 0.3);
-    height: calc(100% - 20px);
-    opacity: 0.6;
+  border-right: 2px solid rgba(255, 255, 255, 0.3);
+  height: calc(100% - 20px);
+  opacity: 0.6;
 }
 
 /* Ajustes finos para diferentes tamanhos de tela */
 @media (max-width: 480px) {
-    .curtain-control-figma {
-        margin: 8px 0;
-    }
-    
-    .curtain-figma-controls {
-        width: calc(100% - 20px);
-    }
-    
-    .curtain-figma-separator {
-        height: calc(100% - 15px);
-    }
+  .curtain-control-figma {
+    margin: 8px 0;
+  }
+
+  .curtain-figma-controls {
+    width: calc(100% - 20px);
+  }
+
+  .curtain-figma-separator {
+    height: calc(100% - 15px);
+  }
 }
 
 @media (min-width: 481px) and (max-width: 768px) {
-    .curtain-control-figma {
-        margin: 12px 0;
-    }
+  .curtain-control-figma {
+    margin: 12px 0;
+  }
 }
 
 @media (min-width: 769px) {
-    .curtain-control-figma {
-        margin: 14px 0;
-    }
+  .curtain-control-figma {
+    margin: 14px 0;
+  }
 }
 
 /* Media Queries para botÃµes de controle das cortinas */
 /* Mobile pequeno - atÃ© 320px */
 @media (max-width: 320px) {
-    .curtain-figma-btn {
-        width: 65px;
-        height: 65px;
-        border-radius: 10px;
-    }
-    
-    .curtain-figma-btn img {
-        width: 45%;
-        height: 45%;
-    }
-    
-    .curtain-pause-line {
-        width: 6px;
-        height: 24px;
-    }
+  .curtain-figma-btn {
+    width: 65px;
+    height: 65px;
+    border-radius: 10px;
+  }
+
+  .curtain-figma-btn img {
+    width: 45%;
+    height: 45%;
+  }
+
+  .curtain-pause-line {
+    width: 6px;
+    height: 24px;
+  }
 }
 
 /* Mobile - 321px a 480px */
 @media (min-width: 321px) and (max-width: 480px) {
-    .curtain-figma-btn {
-        width: 75px;
-        height: 75px;
-        border-radius: 11px;
-    }
-    
-    .curtain-figma-btn img {
-        width: 48%;
-        height: 48%;
-    }
-    
-    .curtain-pause-line {
-        width: 8px;
-        height: 28px;
-    }
+  .curtain-figma-btn {
+    width: 75px;
+    height: 75px;
+    border-radius: 11px;
+  }
+
+  .curtain-figma-btn img {
+    width: 48%;
+    height: 48%;
+  }
+
+  .curtain-pause-line {
+    width: 8px;
+    height: 28px;
+  }
 }
 
 /* Tablet pequeno - 481px a 768px */
 @media (min-width: 481px) and (max-width: 768px) {
-    .curtain-figma-btn {
-        width: 85px;
-        height: 85px;
-        border-radius: 12px;
-    }
-    
-    .curtain-figma-btn img {
-        width: 50%;
-        height: 50%;
-    }
-    
-    .curtain-pause-line {
-        width: 9px;
-        height: 32px;
-    }
+  .curtain-figma-btn {
+    width: 85px;
+    height: 85px;
+    border-radius: 12px;
+  }
+
+  .curtain-figma-btn img {
+    width: 50%;
+    height: 50%;
+  }
+
+  .curtain-pause-line {
+    width: 9px;
+    height: 32px;
+  }
 }
 
 /* Tablet grande - 769px a 1024px */
 @media (min-width: 769px) and (max-width: 1024px) {
-    .curtain-figma-btn {
-        width: 90px;
-        height: 90px;
-        border-radius: 12px;
-    }
-    
-    .curtain-figma-btn img {
-        width: 50%;
-        height: 50%;
-    }
-    
-    .curtain-pause-line {
-        width: 10px;
-        height: 34px;
-    }
+  .curtain-figma-btn {
+    width: 90px;
+    height: 90px;
+    border-radius: 12px;
+  }
+
+  .curtain-figma-btn img {
+    width: 50%;
+    height: 50%;
+  }
+
+  .curtain-pause-line {
+    width: 10px;
+    height: 34px;
+  }
 }
 
 /* Desktop - 1025px a 1440px */
 @media (min-width: 1025px) and (max-width: 1440px) {
-    .curtain-figma-btn {
-        width: 95px;
-        height: 95px;
-        border-radius: 13px;
-    }
-    
-    .curtain-figma-btn img {
-        width: 52%;
-        height: 52%;
-    }
-    
-    .curtain-pause-line {
-        width: 11px;
-        height: 36px;
-    }
+  .curtain-figma-btn {
+    width: 95px;
+    height: 95px;
+    border-radius: 13px;
+  }
+
+  .curtain-figma-btn img {
+    width: 52%;
+    height: 52%;
+  }
+
+  .curtain-pause-line {
+    width: 11px;
+    height: 36px;
+  }
 }
 
 /* Desktop grande - acima de 1440px */
 @media (min-width: 1441px) {
-    .curtain-figma-btn {
-        width: 100px;
-        height: 100px;
-        border-radius: 14px;
-    }
-    
-    .curtain-figma-btn img {
-        width: 54%;
-        height: 54%;
-    }
-    
-    .curtain-pause-line {
-        width: 12px;
-        height: 38px;
-    }
+  .curtain-figma-btn {
+    width: 100px;
+    height: 100px;
+    border-radius: 14px;
+  }
+
+  .curtain-figma-btn img {
+    width: 54%;
+    height: 54%;
+  }
+
+  .curtain-pause-line {
+    width: 12px;
+    height: 38px;
+  }
 }
 
 /* Media Queries para controles de cortina no grid */
 /* Mobile pequeno - atÃ© 320px */
 @media (max-width: 320px) {
-    .curtain-card-btn {
-        width: 55px;
-        height: 55px;
-        border-radius: 10px;
-    }
-    
-    .curtain-card-btn img {
-        width: 40%;
-        height: 40%;
-    }
-    
-    .curtain-card-pause-line {
-        width: 5px;
-        height: 20px;
-    }
-    
-    .curtain-card-controls {
-        gap: 10px;
-        max-width: 200px;
-    }
-    
-    .curtain-card-separator {
-        height: 40px;
-    }
+  .curtain-card-btn {
+    width: 55px;
+    height: 55px;
+    border-radius: 10px;
+  }
+
+  .curtain-card-btn img {
+    width: 40%;
+    height: 40%;
+  }
+
+  .curtain-card-pause-line {
+    width: 5px;
+    height: 20px;
+  }
+
+  .curtain-card-controls {
+    gap: 10px;
+    max-width: 200px;
+  }
+
+  .curtain-card-separator {
+    height: 40px;
+  }
 }
 
 /* Mobile - 321px a 480px */
 @media (min-width: 321px) and (max-width: 480px) {
-    .curtain-card-btn {
-        width: 60px;
-        height: 60px;
-        border-radius: 11px;
-    }
-    
-    .curtain-card-btn img {
-        width: 42%;
-        height: 42%;
-    }
-    
-    .curtain-card-pause-line {
-        width: 5px;
-        height: 22px;
-    }
-    
-    .curtain-card-controls {
-        gap: 12px;
-        max-width: 220px;
-    }
-    
-    .curtain-card-separator {
-        height: 45px;
-    }
+  .curtain-card-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 11px;
+  }
+
+  .curtain-card-btn img {
+    width: 42%;
+    height: 42%;
+  }
+
+  .curtain-card-pause-line {
+    width: 5px;
+    height: 22px;
+  }
+
+  .curtain-card-controls {
+    gap: 12px;
+    max-width: 220px;
+  }
+
+  .curtain-card-separator {
+    height: 45px;
+  }
 }
 
 /* Tablet pequeno - 481px a 768px */
 @media (min-width: 481px) and (max-width: 768px) {
-    .curtain-card-btn {
-        width: 65px;
-        height: 65px;
-        border-radius: 12px;
-    }
-    
-    .curtain-card-btn img {
-        width: 44%;
-        height: 44%;
-    }
-    
-    .curtain-card-pause-line {
-        width: 6px;
-        height: 24px;
-    }
-    
-    .curtain-card-controls {
-        gap: 13px;
-        max-width: 240px;
-    }
-    
-    .curtain-card-separator {
-        height: 48px;
-    }
+  .curtain-card-btn {
+    width: 65px;
+    height: 65px;
+    border-radius: 12px;
+  }
+
+  .curtain-card-btn img {
+    width: 44%;
+    height: 44%;
+  }
+
+  .curtain-card-pause-line {
+    width: 6px;
+    height: 24px;
+  }
+
+  .curtain-card-controls {
+    gap: 13px;
+    max-width: 240px;
+  }
+
+  .curtain-card-separator {
+    height: 48px;
+  }
 }
 
 /* Tablet grande - 769px a 1024px */
 @media (min-width: 769px) and (max-width: 1024px) {
-    .curtain-card-btn {
-        width: 70px;
-        height: 70px;
-        border-radius: 12px;
-    }
-    
-    .curtain-card-btn img {
-        width: 45%;
-        height: 45%;
-    }
-    
-    .curtain-card-pause-line {
-        width: 6px;
-        height: 24px;
-    }
-    
-    .curtain-card-controls {
-        gap: 15px;
-        max-width: 280px;
-    }
-    
-    .curtain-card-separator {
-        height: 50px;
-    }
+  .curtain-card-btn {
+    width: 70px;
+    height: 70px;
+    border-radius: 12px;
+  }
+
+  .curtain-card-btn img {
+    width: 45%;
+    height: 45%;
+  }
+
+  .curtain-card-pause-line {
+    width: 6px;
+    height: 24px;
+  }
+
+  .curtain-card-controls {
+    gap: 15px;
+    max-width: 280px;
+  }
+
+  .curtain-card-separator {
+    height: 50px;
+  }
 }
 
 /* Desktop - 1025px a 1440px */
 @media (min-width: 1025px) and (max-width: 1440px) {
-    .curtain-card-btn {
-        width: 75px;
-        height: 75px;
-        border-radius: 13px;
-    }
-    
-    .curtain-card-btn img {
-        width: 46%;
-        height: 46%;
-    }
-    
-    .curtain-card-pause-line {
-        width: 7px;
-        height: 26px;
-    }
-    
-    .curtain-card-controls {
-        gap: 16px;
-        max-width: 300px;
-    }
-    
-    .curtain-card-separator {
-        height: 52px;
-    }
+  .curtain-card-btn {
+    width: 75px;
+    height: 75px;
+    border-radius: 13px;
+  }
+
+  .curtain-card-btn img {
+    width: 46%;
+    height: 46%;
+  }
+
+  .curtain-card-pause-line {
+    width: 7px;
+    height: 26px;
+  }
+
+  .curtain-card-controls {
+    gap: 16px;
+    max-width: 300px;
+  }
+
+  .curtain-card-separator {
+    height: 52px;
+  }
 }
 
 /* Desktop grande - acima de 1440px */
 @media (min-width: 1441px) {
-    .curtain-card-btn {
-        width: 80px;
-        height: 80px;
-        border-radius: 14px;
-    }
-    
-    .curtain-card-btn img {
-        width: 48%;
-        height: 48%;
-    }
-    
-    .curtain-card-pause-line {
-        width: 8px;
-        height: 28px;
-    }
-    
-    .curtain-card-controls {
-        gap: 18px;
-        max-width: 320px;
-    }
-    
-    .curtain-card-separator {
-        height: 55px;
-    }
+  .curtain-card-btn {
+    width: 80px;
+    height: 80px;
+    border-radius: 14px;
+  }
+
+  .curtain-card-btn img {
+    width: 48%;
+    height: 48%;
+  }
+
+  .curtain-card-pause-line {
+    width: 8px;
+    height: 28px;
+  }
+
+  .curtain-card-controls {
+    gap: 18px;
+    max-width: 320px;
+  }
+
+  .curtain-card-separator {
+    height: 55px;
+  }
 }
 
 /* === CONTAINERS SEPARADOS PARA TODAS AS PÃGINAS === */
@@ -1832,17 +2915,17 @@ body:has([data-page="scenes"].active) {
 .entrada-page .entrada-controls-wrapper,
 .vitrine-page .vitrine-controls-wrapper,
 .garagem-page .garagem-controls-wrapper {
-    position: absolute;
-    top: 115px;
-    left: 21px;
-    right: 21px;
-    bottom: 84px; /* navbar height */
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    overflow-y: auto;
-    padding-bottom: 20px;
+  position: absolute;
+  top: 115px;
+  left: 21px;
+  right: 21px;
+  bottom: 84px; /* navbar height */
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow-y: auto;
+  padding-bottom: 20px;
 }
 
 /* Desativar posicionamento absolute dos grids dentro dos wrappers de todos os ambientes */
@@ -1852,19 +2935,19 @@ body:has([data-page="scenes"].active) {
 .entrada-page .entrada-controls-wrapper .controls-grid,
 .vitrine-page .vitrine-controls-wrapper .controls-grid,
 .garagem-page .garagem-controls-wrapper .controls-grid {
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
-    bottom: auto !important;
-    width: 100% !important;
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 100% !important;
 }
 
 /* Sobrescrever grid-column dos cards de cortina em todas as pÃ¡ginas */
 .garden-page .control-card-curtain,
 .reuniao-page .control-card-curtain,
 .cafe-page .control-card-curtain {
-    grid-column: span 1 !important; /* Sempre 1 coluna nos novos layouts */
+  grid-column: span 1 !important; /* Sempre 1 coluna nos novos layouts */
 }
 
 /* Container dos botÃµes de luz para todos os ambientes */
@@ -1872,775 +2955,799 @@ body:has([data-page="scenes"].active) {
 .reuniao-page .lights-container,
 .entrada-page .lights-container,
 .vitrine-page .lights-container {
-    display: grid;
-    grid-template-columns: 1fr; /* PadrÃ£o mobile: 1 coluna */
-    grid-auto-rows: 131px;
-    gap: 10px;
-    align-items: start;
-    flex-shrink: 0;
-    position: relative !important; /* Override controls-grid absolute positioning */
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
-    bottom: auto !important;
+  display: grid;
+  grid-template-columns: 1fr; /* PadrÃ£o mobile: 1 coluna */
+  grid-auto-rows: 131px;
+  gap: 10px;
+  align-items: start;
+  flex-shrink: 0;
+  position: relative !important; /* Override controls-grid absolute positioning */
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+}
+
+/* Container do botão de conforto */
+.garden-page .comfort-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: 131px;
+  gap: 10px;
+  align-items: start;
+  flex-shrink: 0;
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
 }
 
 /* Layout responsivo para cortinas em telas maiores */
 @media (min-width: 521px) {
-    .garden-page .curtains-section .curtains-container,
-    .reuniao-page .curtains-section .curtains-container {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 15px !important;
-    }
-    
-    .cafe-page .curtains-section .curtains-container {
-        grid-template-columns: 1fr !important;
-    }
+  .garden-page .curtains-section .curtains-container,
+  .reuniao-page .curtains-section .curtains-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 15px !important;
+  }
+
+  .cafe-page .curtains-section .curtains-container {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 /* Container dos botÃµes de cortina para ambientes que tÃªm cortinas */
 .garden-page .curtains-container,
 .reuniao-page .curtains-container,
 .cafe-page .curtains-container {
-    display: grid;
-    grid-template-columns: 1fr; /* PadrÃ£o mobile: 1 coluna */
-    grid-auto-rows: minmax(160px, auto);
-    gap: 12px;
-    align-items: start;
-    flex-shrink: 0;
-    position: relative !important; /* Override controls-grid absolute positioning */
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
-    bottom: auto !important;
+  display: grid;
+  grid-template-columns: 1fr; /* PadrÃ£o mobile: 1 coluna */
+  grid-auto-rows: minmax(160px, auto);
+  gap: 12px;
+  align-items: start;
+  flex-shrink: 0;
+  position: relative !important; /* Override controls-grid absolute positioning */
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
 }
 
 /* Layout responsivo - menor que 600px (mobile) para todos os ambientes */
 @media (max-width: 599px) {
-    .garden-page .garden-controls-wrapper,
-    .reuniao-page .reuniao-controls-wrapper,
-    .cafe-page .cafe-controls-wrapper,
-    .entrada-page .entrada-controls-wrapper,
-    .vitrine-page .vitrine-controls-wrapper,
-    .garagem-page .garagem-controls-wrapper {
-        gap: 12px;
-        align-items: stretch;
-    }
-    
-    /* Container de luzes: uma coluna */
-    .garden-page .lights-container,
-    .reuniao-page .lights-container,
-    .entrada-page .lights-container,
-    .vitrine-page .lights-container,
-    .garagem-page .lights-container {
-        grid-template-columns: 1fr !important;
-        grid-auto-rows: 120px;
-        gap: 12px;
-        width: 100%;
-        margin-bottom: 0; /* Garante que nÃ£o haja sobreposiÃ§Ã£o */
-    }
-    
-    /* Container de cortinas: uma coluna (abaixo das luzes) */
-    .garden-page .curtains-container,
-    .reuniao-page .curtains-container,
-    .cafe-page .curtains-container {
-        grid-template-columns: 1fr !important;
-        grid-auto-rows: auto;
-        gap: 12px;
-        width: 100%;
-        margin-top: 0; /* Garante que nÃ£o haja sobreposiÃ§Ã£o */
-    }
+  .garden-page .garden-controls-wrapper,
+  .reuniao-page .reuniao-controls-wrapper,
+  .cafe-page .cafe-controls-wrapper,
+  .entrada-page .entrada-controls-wrapper,
+  .vitrine-page .vitrine-controls-wrapper,
+  .garagem-page .garagem-controls-wrapper {
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  /* Container de luzes: uma coluna */
+  .garden-page .lights-container,
+  .reuniao-page .lights-container,
+  .entrada-page .lights-container,
+  .vitrine-page .lights-container,
+  .garagem-page .lights-container {
+    grid-template-columns: 1fr !important;
+    grid-auto-rows: 120px;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 0; /* Garante que nÃ£o haja sobreposiÃ§Ã£o */
+  }
+
+  /* Container de cortinas: uma coluna (abaixo das luzes) */
+  .garden-page .curtains-container,
+  .reuniao-page .curtains-container,
+  .cafe-page .curtains-container {
+    grid-template-columns: 1fr !important;
+    grid-auto-rows: auto;
+    gap: 12px;
+    width: 100%;
+    margin-top: 0; /* Garante que nÃ£o haja sobreposiÃ§Ã£o */
+  }
 }
 
 /* Layout responsivo - maior que 600px (tablet/desktop) para todos os ambientes */
 @media (min-width: 600px) {
-    .garden-page .garden-controls-wrapper,
-    .reuniao-page .reuniao-controls-wrapper,
-    .cafe-page .cafe-controls-wrapper,
-    .entrada-page .entrada-controls-wrapper,
-    .vitrine-page .vitrine-controls-wrapper,
-    .garagem-page .garagem-controls-wrapper {
-        gap: 15px;
-        align-items: stretch;
-    }
-    
-    /* Container de luzes: grid adaptÃ¡vel baseado no nÃºmero de luzes */
-    .garden-page .lights-container {
-        grid-template-columns: repeat(3, 1fr) !important; /* Garden: 3 luzes */
-    }
-    
-    .reuniao-page .lights-container {
-        grid-template-columns: repeat(3, 1fr) !important; /* ReuniÃ£o: 3 luzes */
-    }
-    
-    .entrada-page .lights-container {
-        grid-template-columns: 1fr !important; /* Entrada: 1 luz ocupa toda a linha */
-    }
-    
-    .vitrine-page .lights-container {
-        grid-template-columns: repeat(3, 1fr) !important; /* Vitrine: 3 luzes */
-    }
-    
-    .garden-page .lights-container,
-    .reuniao-page .lights-container,
-    .entrada-page .lights-container,
-    .vitrine-page .lights-container {
-        width: 100%;
-        margin-bottom: 0; /* Garante que nÃ£o haja sobreposiÃ§Ã£o */
-    }
-    
-    /* Container de cortinas: duas colunas, uma linha (abaixo das luzes) */
-    .garden-page .curtains-container,
-    .reuniao-page .curtains-container {
-        grid-template-columns: repeat(2, 1fr) !important; /* 2 cortinas lado a lado */
-        gap: 15px;
-    }
-    
-    .cafe-page .curtains-container {
-        grid-template-columns: 1fr !important; /* CafÃ©: sÃ³ 1 cortina */
-    }
-    
-    .garden-page .curtains-container,
-    .reuniao-page .curtains-container,
-    .cafe-page .curtains-container {
-        grid-auto-rows: 140px; /* Altura ajustada para botÃµes 80px */
-        width: 100%;
-        margin-top: 0; /* Garante que nÃ£o haja sobreposiÃ§Ã£o */
-    }
-    
-    .garden-page .control-card-curtain {
-        grid-column: span 1 !important;
-        height: 140px; /* Altura ajustada para botÃµes 80px */
-        width: 100%;
-    }
+  .garden-page .garden-controls-wrapper,
+  .reuniao-page .reuniao-controls-wrapper,
+  .cafe-page .cafe-controls-wrapper,
+  .entrada-page .entrada-controls-wrapper,
+  .vitrine-page .vitrine-controls-wrapper,
+  .garagem-page .garagem-controls-wrapper {
+    gap: 15px;
+    align-items: stretch;
+  }
+
+  /* Container de luzes: grid adaptÃ¡vel baseado no nÃºmero de luzes */
+  .garden-page .lights-container {
+    grid-template-columns: repeat(3, 1fr) !important; /* Garden: 3 luzes */
+  }
+
+  .reuniao-page .lights-container {
+    grid-template-columns: repeat(3, 1fr) !important; /* ReuniÃ£o: 3 luzes */
+  }
+
+  .entrada-page .lights-container {
+    grid-template-columns: 1fr !important; /* Entrada: 1 luz ocupa toda a linha */
+  }
+
+  .vitrine-page .lights-container {
+    grid-template-columns: repeat(3, 1fr) !important; /* Vitrine: 3 luzes */
+  }
+
+  .garden-page .lights-container,
+  .reuniao-page .lights-container,
+  .entrada-page .lights-container,
+  .vitrine-page .lights-container {
+    width: 100%;
+    margin-bottom: 0; /* Garante que nÃ£o haja sobreposiÃ§Ã£o */
+  }
+
+  /* Container de cortinas: duas colunas, uma linha (abaixo das luzes) */
+  .garden-page .curtains-container,
+  .reuniao-page .curtains-container {
+    grid-template-columns: repeat(
+      2,
+      1fr
+    ) !important; /* 2 cortinas lado a lado */
+    gap: 15px;
+  }
+
+  .cafe-page .curtains-container {
+    grid-template-columns: 1fr !important; /* CafÃ©: sÃ³ 1 cortina */
+  }
+
+  .garden-page .curtains-container,
+  .reuniao-page .curtains-container,
+  .cafe-page .curtains-container {
+    grid-auto-rows: 140px; /* Altura ajustada para botÃµes 80px */
+    width: 100%;
+    margin-top: 0; /* Garante que nÃ£o haja sobreposiÃ§Ã£o */
+  }
+
+  .garden-page .control-card-curtain {
+    grid-column: span 1 !important;
+    height: 140px; /* Altura ajustada para botÃµes 80px */
+    width: 100%;
+  }
 }
 
 /* Estilos para os controles de cortina em todos os ambientes */
 .garden-page .curtain-card-btn,
 .reuniao-page .curtain-card-btn,
 .cafe-page .curtain-card-btn {
-    width: 100px; /* Largura fixa */
-    height: 80px; /* Altura fixa */
-    border-radius: 14px;
-    flex-shrink: 0; /* Impede que diminua */
+  width: 100px; /* Largura fixa */
+  height: 80px; /* Altura fixa */
+  border-radius: 14px;
+  flex-shrink: 0; /* Impede que diminua */
 }
 
 .garden-page .curtain-card-controls,
 .reuniao-page .curtain-card-controls,
 .cafe-page .curtain-card-controls {
-    gap: 8px; /* EspaÃ§amento fixo entre botÃµes */
-    max-width: 100%; /* Remover limitação de largura */
-    width: 100%; /* Ocupar toda a largura disponÃ­vel */
-    padding: 0 20px; /* Adicionar padding lateral */
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Garantir centralização sempre */
+  gap: 8px; /* EspaÃ§amento fixo entre botÃµes */
+  max-width: 100%; /* Remover limitação de largura */
+  width: 100%; /* Ocupar toda a largura disponÃ­vel */
+  padding: 0 20px; /* Adicionar padding lateral */
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Garantir centralização sempre */
 }
 
 .garden-page .curtain-card-separator,
 .reuniao-page .curtain-card-separator,
 .cafe-page .curtain-card-separator {
-    height: calc(60px + 2vw); /* Altura responsiva */
-    min-height: 60px;
-    max-height: 80px;
+  height: calc(60px + 2vw); /* Altura responsiva */
+  min-height: 60px;
+  max-height: 80px;
 }
 
 .garden-page .curtain-card-pause-line,
 .reuniao-page .curtain-card-pause-line,
 .cafe-page .curtain-card-pause-line {
-    width: calc(8px + 0.5vw); /* Largura responsiva */
-    height: calc(28px + 1vw); /* Altura responsiva */
-    min-width: 8px;
-    max-width: 12px;
-    min-height: 28px;
-    max-height: 36px;
+  width: calc(8px + 0.5vw); /* Largura responsiva */
+  height: calc(28px + 1vw); /* Altura responsiva */
+  min-width: 8px;
+  max-width: 12px;
+  min-height: 28px;
+  max-height: 36px;
 }
 
 .garden-page .curtain-card-title,
 .reuniao-page .curtain-card-title,
 .cafe-page .curtain-card-title {
-    font-size: 20px;
-    margin-bottom: 12px;
-    font-weight: 300;
+  font-size: 20px;
+  margin-bottom: 12px;
+  font-weight: 300;
 }
 
 .garden-page .curtain-card-btn img,
 .reuniao-page .curtain-card-btn img,
 .cafe-page .curtain-card-btn img {
-    width: 50% !important;
-    height: 50% !important;
-    object-fit: contain;
+  width: 50% !important;
+  height: 50% !important;
+  object-fit: contain;
 }
 
 /* Ajustar Ã­cones de luz para diferentes resoluÃ§Ãµes em todos os ambientes */
 @media (max-width: 599px) {
-    .garden-page .control-icon,
-    .reuniao-page .control-icon,
-    .entrada-page .control-icon,
-    .vitrine-page .control-icon {
-        width: 60px;
-        height: 60px;
-    }
-    
-    .garden-page .control-label,
-    .reuniao-page .control-label,
-    .entrada-page .control-label,
-    .vitrine-page .control-label {
-        font-size: 18px;
-    }
-    
-    /* Ajustar altura dos cards de luz em mobile */
-    .garden-page .control-card,
-    .reuniao-page .control-card,
-    .entrada-page .control-card,
-    .vitrine-page .control-card {
-        height: 120px;
-    }
-    
-    /* Controles de cortina em mobile para todos os ambientes */
-    .garden-page .curtain-card-btn,
-    .reuniao-page .curtain-card-btn,
-    .cafe-page .curtain-card-btn {
-        min-width: 100px !important; /* Largura mÃ­nima respeitada */
-        width: 100px !important;
-        height: 80px !important;
-        flex: 0 0 100px; /* NÃ£o cresce, nÃ£o diminui, base 100px */
-    }
-    
-    .garden-page .curtain-card-controls,
-    .reuniao-page .curtain-card-controls,
-    .cafe-page .curtain-card-controls {
-        gap: 8px !important;
-        padding: 0 15px !important;
-        justify-content: center !important; /* Centralizar botÃµes */
-    }
-    
-    .garden-page .control-card-curtain,
-    .reuniao-page .control-card-curtain,
-    .cafe-page .control-card-curtain {
-        height: 140px !important; /* Altura ajustada para botÃµes 80px */
-    }
+  .garden-page .control-icon,
+  .reuniao-page .control-icon,
+  .entrada-page .control-icon,
+  .vitrine-page .control-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .garden-page .control-label,
+  .reuniao-page .control-label,
+  .entrada-page .control-label,
+  .vitrine-page .control-label {
+    font-size: 18px;
+  }
+
+  /* Ajustar altura dos cards de luz em mobile */
+  .garden-page .control-card,
+  .reuniao-page .control-card,
+  .entrada-page .control-card,
+  .vitrine-page .control-card {
+    height: 120px;
+  }
+
+  /* Controles de cortina em mobile para todos os ambientes */
+  .garden-page .curtain-card-btn,
+  .reuniao-page .curtain-card-btn,
+  .cafe-page .curtain-card-btn {
+    min-width: 100px !important; /* Largura mÃ­nima respeitada */
+    width: 100px !important;
+    height: 80px !important;
+    flex: 0 0 100px; /* NÃ£o cresce, nÃ£o diminui, base 100px */
+  }
+
+  .garden-page .curtain-card-controls,
+  .reuniao-page .curtain-card-controls,
+  .cafe-page .curtain-card-controls {
+    gap: 8px !important;
+    padding: 0 15px !important;
+    justify-content: center !important; /* Centralizar botÃµes */
+  }
+
+  .garden-page .control-card-curtain,
+  .reuniao-page .control-card-curtain,
+  .cafe-page .control-card-curtain {
+    height: 140px !important; /* Altura ajustada para botÃµes 80px */
+  }
 }
 
 @media (min-width: 600px) {
-    .garden-page .control-icon,
-    .reuniao-page .control-icon,
-    .entrada-page .control-icon,
-    .vitrine-page .control-icon {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .garden-page .control-label,
-    .reuniao-page .control-label,
-    .entrada-page .control-label,
-    .vitrine-page .control-label {
-        font-size: 16px;
-    }
-    
-    /* Manter altura padrÃ£o dos cards de luz */
-    .garden-page .control-card,
-    .reuniao-page .control-card,
-    .entrada-page .control-card,
-    .vitrine-page .control-card {
-        height: 131px;
-    }
-    
-    /* Controles de cortina em desktop para todos os ambientes */
-    .garden-page .curtain-card-btn,
-    .reuniao-page .curtain-card-btn,
-    .cafe-page .curtain-card-btn {
-        width: 100px !important; /* Largura fixa */
-        height: 80px !important; /* Altura fixa */
-        flex: 0 0 auto;
-    }
-    
-    .garden-page .curtain-card-controls,
-    .reuniao-page .curtain-card-controls,
-    .cafe-page .curtain-card-controls {
-        gap: 8px !important; /* EspaÃ§amento fixo */
-        padding: 0 30px !important;
-        justify-content: center !important; /* Centralizar botÃµes */
-    }
-    
-    .garden-page .control-card-curtain,
-    .reuniao-page .control-card-curtain,
-    .cafe-page .control-card-curtain {
-        height: 140px !important; /* Altura ajustada para botÃµes 80px */
-    }
+  .garden-page .control-icon,
+  .reuniao-page .control-icon,
+  .entrada-page .control-icon,
+  .vitrine-page .control-icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .garden-page .control-label,
+  .reuniao-page .control-label,
+  .entrada-page .control-label,
+  .vitrine-page .control-label {
+    font-size: 16px;
+  }
+
+  /* Manter altura padrÃ£o dos cards de luz */
+  .garden-page .control-card,
+  .reuniao-page .control-card,
+  .entrada-page .control-card,
+  .vitrine-page .control-card {
+    height: 131px;
+  }
+
+  /* Controles de cortina em desktop para todos os ambientes */
+  .garden-page .curtain-card-btn,
+  .reuniao-page .curtain-card-btn,
+  .cafe-page .curtain-card-btn {
+    width: 100px !important; /* Largura fixa */
+    height: 80px !important; /* Altura fixa */
+    flex: 0 0 auto;
+  }
+
+  .garden-page .curtain-card-controls,
+  .reuniao-page .curtain-card-controls,
+  .cafe-page .curtain-card-controls {
+    gap: 8px !important; /* EspaÃ§amento fixo */
+    padding: 0 30px !important;
+    justify-content: center !important; /* Centralizar botÃµes */
+  }
+
+  .garden-page .control-card-curtain,
+  .reuniao-page .control-card-curtain,
+  .cafe-page .control-card-curtain {
+    height: 140px !important; /* Altura ajustada para botÃµes 80px */
+  }
 }
 
 @media (min-width: 900px) {
-    .garden-page .control-icon,
-    .reuniao-page .control-icon,
-    .entrada-page .control-icon,
-    .vitrine-page .control-icon {
-        width: 55px;
-        height: 55px;
-    }
-    
-    .garden-page .control-label,
-    .reuniao-page .control-label,
-    .entrada-page .control-label,
-    .vitrine-page .control-label {
-        font-size: 18px;
-    }
-    
-    /* Controles de cortina em telas grandes para todos os ambientes */
-    .garden-page .curtain-card-btn,
-    .reuniao-page .curtain-card-btn,
-    .cafe-page .curtain-card-btn {
-        width: 100px !important; /* Largura fixa */
-        height: 80px !important; /* Altura fixa */
-        border-radius: 18px !important;
-        flex: 0 0 auto;
-    }
-    
-    .garden-page .curtain-card-controls,
-    .reuniao-page .curtain-card-controls,
-    .cafe-page .curtain-card-controls {
-        gap: 8px !important; /* EspaÃ§amento fixo */
-        padding: 0 40px !important;
-        justify-content: center !important; /* Centralizar botÃµes */
-    }
-    
-    .garden-page .control-card-curtain,
-    .reuniao-page .control-card-curtain,
-    .cafe-page .control-card-curtain {
-        height: 140px !important; /* Altura ajustada para botÃµes 80px */
-    }
-    
-    .garden-page .curtain-card-title {
-        font-size: 22px !important;
-        margin-bottom: 15px !important;
-    }
-    
-    .garden-page .curtain-card-separator {
-        height: 70px !important;
-    }
-    
-    .garden-page .curtain-card-pause-line {
-        width: 10px !important;
-        height: 32px !important;
-    }
+  .garden-page .control-icon,
+  .reuniao-page .control-icon,
+  .entrada-page .control-icon,
+  .vitrine-page .control-icon {
+    width: 55px;
+    height: 55px;
+  }
+
+  .garden-page .control-label,
+  .reuniao-page .control-label,
+  .entrada-page .control-label,
+  .vitrine-page .control-label {
+    font-size: 18px;
+  }
+
+  /* Controles de cortina em telas grandes para todos os ambientes */
+  .garden-page .curtain-card-btn,
+  .reuniao-page .curtain-card-btn,
+  .cafe-page .curtain-card-btn {
+    width: 100px !important; /* Largura fixa */
+    height: 80px !important; /* Altura fixa */
+    border-radius: 18px !important;
+    flex: 0 0 auto;
+  }
+
+  .garden-page .curtain-card-controls,
+  .reuniao-page .curtain-card-controls,
+  .cafe-page .curtain-card-controls {
+    gap: 8px !important; /* EspaÃ§amento fixo */
+    padding: 0 40px !important;
+    justify-content: center !important; /* Centralizar botÃµes */
+  }
+
+  .garden-page .control-card-curtain,
+  .reuniao-page .control-card-curtain,
+  .cafe-page .control-card-curtain {
+    height: 140px !important; /* Altura ajustada para botÃµes 80px */
+  }
+
+  .garden-page .curtain-card-title {
+    font-size: 22px !important;
+    margin-bottom: 15px !important;
+  }
+
+  .garden-page .curtain-card-separator {
+    height: 70px !important;
+  }
+
+  .garden-page .curtain-card-pause-line {
+    width: 10px !important;
+    height: 32px !important;
+  }
 }
 
 /* App info menu */
 .app-logo-trigger {
-    background: transparent;
-    border: none;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .app-logo-trigger:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.55);
-    outline-offset: 6px;
+  outline: 2px solid rgba(255, 255, 255, 0.55);
+  outline-offset: 6px;
 }
 
 .app-info-overlay {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 32px 16px;
-    background: rgba(5, 5, 5, 0.65);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s ease;
-    z-index: 1200;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  background: rgba(5, 5, 5, 0.65);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 1200;
 }
 
 .app-info-overlay.is-visible {
-    opacity: 1;
-    pointer-events: auto;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .app-info-dialog {
-    width: min(420px, 92vw);
-    background: rgba(12, 12, 12, 0.78);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
-    color: #fff;
-    padding: 32px 28px;
-    position: relative;
-    overflow: hidden;
+  width: min(420px, 92vw);
+  background: rgba(12, 12, 12, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  color: #fff;
+  padding: 32px 28px;
+  position: relative;
+  overflow: hidden;
 }
 
 .app-info-close {
-    position: absolute;
-    top: 18px;
-    right: 18px;
-    width: 36px;
-    height: 36px;
-    border-radius: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    font-size: 20px;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease;
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 20px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .app-info-close:hover {
-    background: rgba(255, 255, 255, 0.18);
-    transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.18);
+  transform: scale(1.05);
 }
 
 .app-info-close:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.5);
-    outline-offset: 3px;
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 3px;
 }
 
 .app-info-header {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    margin-bottom: 24px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 24px;
 }
 
 .app-info-logo {
-    width: 72px;
-    height: 72px;
-    border-radius: 18px;
-    flex-shrink: 0;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  flex-shrink: 0;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
 }
 
 .app-info-heading {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .app-info-title {
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
 }
 
 .app-info-subtitle {
-    margin: 0;
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.75);
+  margin: 0;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .app-info-content {
-    margin-bottom: 24px;
+  margin-bottom: 24px;
 }
 
 .app-info-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
 }
 
 .app-info-list li {
-    padding: 12px 14px;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    font-size: 0.95rem;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.95rem;
 }
 
 .app-info-footer {
-    text-align: center;
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 body.app-info-open {
-    overflow: hidden;
+  overflow: hidden;
 }
-
 
 /* Curtains dashboard */
 .curtain-dashboard {
-    position: absolute;
-    top: 115px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 32px clamp(20px, 4vw, 48px) 140px;
-    background: linear-gradient(180deg, rgba(11,11,11,0.95) 0%, rgba(8,8,8,0.92) 55%, rgba(8,8,8,0.88) 100%);
-    overflow-y: auto;
-    color: #f7f7f7;
-    display: flex;
-    flex-direction: column;
-    gap: 36px;
+  position: absolute;
+  top: 115px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 32px clamp(20px, 4vw, 48px) 140px;
+  background: linear-gradient(
+    180deg,
+    rgba(11, 11, 11, 0.95) 0%,
+    rgba(8, 8, 8, 0.92) 55%,
+    rgba(8, 8, 8, 0.88) 100%
+  );
+  overflow-y: auto;
+  color: #f7f7f7;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
 }
 
 .curtain-hero {
-    max-width: 760px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .curtain-hero__status {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 16px;
-    border-radius: 24px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    font-size: 0.8rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.75);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .curtain-hero__title {
-    font-size: clamp(1.8rem, 3vw, 2.4rem);
-    font-weight: 600;
-    margin: 0;
-    color: #ffffff;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 600;
+  margin: 0;
+  color: #ffffff;
 }
 
 .curtain-hero__hint {
-    margin: 0;
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .curtain-layout {
-    position: absolute;
-    top: 130px;
-    left: 0;
-    right: 0;
-    bottom: 97px;
-    padding: 20px;
-    overflow-y: auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-    gap: clamp(15px, 3vw, 25px);
-    align-content: start;
+  position: absolute;
+  top: 130px;
+  left: 0;
+  right: 0;
+  bottom: 97px;
+  padding: 20px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: clamp(15px, 3vw, 25px);
+  align-content: start;
 }
 
 .curtain-section {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 24px;
-    padding: 28px clamp(22px, 2.5vw, 32px);
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    box-shadow: 0 24px 50px -35px rgba(0, 0, 0, 0.8);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 28px clamp(22px, 2.5vw, 32px);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-shadow: 0 24px 50px -35px rgba(0, 0, 0, 0.8);
 }
 
 .curtain-section__header {
-    margin-bottom: 4px;
+  margin-bottom: 4px;
 }
 
 .curtain-section__badge {
-    font-size: clamp(1.4rem, 2.5vw, 1.8rem);
-    font-weight: 600;
-    color: #ffffff;
+  font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+  font-weight: 600;
+  color: #ffffff;
 }
 
 .curtain-section__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 18px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
 }
 
 .curtain-tile {
-    --glass-radius: 20px;
-    padding: 22px clamp(18px, 2vw, 26px);
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  --glass-radius: 20px;
+  padding: 22px clamp(18px, 2vw, 26px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .curtain-tile__header {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .curtain-tile__env {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.6);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .curtain-tile__title {
-    margin: 0;
-    font-size: 1.2rem;
-    font-weight: 600;
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
 }
 
 .curtain-tile__subtitle {
-    margin: 0;
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .curtain-tile__actions {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .curtain-tile__btn {
-    --glass-radius: 16px;
-    background: var(--glass-bg-dark);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 16px 12px;
-    min-height: 56px;
-    cursor: pointer;
-    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  --glass-radius: 16px;
+  background: var(--glass-bg-dark);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 12px;
+  min-height: 56px;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 
 .curtain-tile__btn img {
-    width: 22px;
-    height: 22px;
-    filter: brightness(0) invert(1);
+  width: 22px;
+  height: 22px;
+  filter: brightness(0) invert(1);
 }
 
 .curtain-tile__btn:hover {
-    background: var(--glass-bg-hover);
-    border-color: rgba(255, 255, 255, 0.38);
-    transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25), var(--glass-inner-top), var(--glass-inner-bottom);
+  background: var(--glass-bg-hover);
+  border-color: rgba(255, 255, 255, 0.38);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25), var(--glass-inner-top),
+    var(--glass-inner-bottom);
 }
 
 .curtain-tile__btn:active {
-    transform: translateY(0);
-    background: var(--glass-bg-active);
-    border-color: var(--glass-border-strong);
-    box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.28), 0 4px 12px rgba(0, 0, 0, 0.18);
+  transform: translateY(0);
+  background: var(--glass-bg-active);
+  border-color: var(--glass-border-strong);
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.28),
+    0 4px 12px rgba(0, 0, 0, 0.18);
 }
 
 .curtain-tile__icon-pause {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .curtain-tile__icon-pause span {
-    display: block;
-    width: 6px;
-    height: 22px;
-    border-radius: 4px;
-    background: #ffffff;
+  display: block;
+  width: 6px;
+  height: 22px;
+  border-radius: 4px;
+  background: #ffffff;
 }
 
 @media (max-width: 1024px) {
-    .curtain-layout {
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    }
+  .curtain-layout {
+    width: 24px; /* ligeiramente maior em desktop */
+    height: 24px;
 }
 
 @media (max-width: 768px) {
-    .curtain-layout {
-        grid-template-columns: 1fr;
-        gap: 22px;
-        padding: 15px;
-    }
-    .curtain-section {
-        padding: 24px 20px;
-        gap: 20px;
-    }
-    .curtain-tile__actions {
-        grid-template-columns: repeat(3, minmax(0, auto));
-        gap: 12px;
-    }
+  .curtain-layout {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding: 15px;
+  }
+  .curtain-section {
+    padding: 24px 20px;
+    gap: 20px;
+  }
+  .curtain-tile__actions {
+    grid-template-columns: repeat(3, minmax(0, auto));
+    gap: 12px;
+  }
 }
 
 /* Tablet - ajustes específicos */
 @media (max-width: 768px) and (min-width: 521px) {
-    .curtain-tile__btn {
-        min-height: 52px;
-        padding: 14px 10px;
-    }
-    
-    .curtain-tile__btn img {
-        width: 22px;
-        height: 22px;
-    }
-    
-    .curtain-tile__icon-pause {
-        width: 22px;
-        height: 22px;
-    }
+  .curtain-tile__btn {
+    min-height: 52px;
+    padding: 14px 10px;
+  }
+
+  .curtain-tile__btn img {
+    width: 22px;
+    height: 22px;
+  }
+
+  .curtain-tile__icon-pause {
+    width: 22px;
+    height: 22px;
+  }
 }
 
 /* Mobile - ajustes específicos para tela pequena */
 @media (max-width: 520px) {
-    .curtain-tile__actions {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
-    
-    .curtain-tile__btn {
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 64px;
-        min-height: 64px;
-        padding: 18px 12px;
-    }
-    
-    .curtain-tile__btn img {
-        width: 28px;
-        height: 28px;
-    }
-    
-    .curtain-tile__icon-pause {
-        width: 28px;
-        height: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-    }
-    
-    .curtain-tile__icon-pause span {
-        width: 5px;
-        height: 20px;
-    }
+  .curtain-tile__actions {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .curtain-tile__btn {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 64px;
+    min-height: 64px;
+    padding: 18px 12px;
+  }
+
+  .curtain-tile__btn img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .curtain-tile__icon-pause {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .curtain-tile__icon-pause span {
+    width: 5px;
+    height: 20px;
+  }
 }
 
 /* Ocultar scrollbars em todas as páginas */
 /* Para WebKit (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-    background: transparent;
+  width: 0;
+  height: 0;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: transparent;
+  background: transparent;
 }
 
 /* Para Firefox */
 * {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 /* Garantir que containers com scroll não mostrem barras */
@@ -2648,94 +3755,90 @@ body.app-info-open {
 .controls-grid,
 .curtains-section,
 .page {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .room-controls-list::-webkit-scrollbar,
 .controls-grid::-webkit-scrollbar,
 .curtains-section::-webkit-scrollbar,
 .page::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 /* 📱 Scroll na página de cenários - qualquer instância */
 /* Permitir scroll vertical na página de cenários */
 .main-container:has([data-page="scenes"].active) {
-    overflow-y: auto;
-    overflow-x: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Container da página de cenários deve permitir scroll */
 [data-page="scenes"] .container {
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 100vh;
-    padding-bottom: 100px; /* Espaço extra para navegação */
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100vh;
+  padding-bottom: 100px; /* Espaço extra para navegação */
 }
 
 /* Grid de controles pode expandir verticalmente */
 [data-page="scenes"] .controls-grid {
-    position: relative !important;
-    top: 130px !important;
-    min-height: auto;
-    height: auto;
-    overflow: visible;
+  position: relative !important;
+  top: 130px !important;
+  min-height: auto;
+  height: auto;
+  overflow: visible;
 }
 
 /* Garantir que scrollbars permaneçam ocultas mesmo com scroll ativo */
 .main-container:has([data-page="scenes"].active)::-webkit-scrollbar,
 [data-page="scenes"] .container::-webkit-scrollbar {
-    display: none;
-    width: 0;
-    height: 0;
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 /* Para Firefox - manter scrollbars ocultas */
 .main-container:has([data-page="scenes"].active),
 [data-page="scenes"] .container {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 /* Estilos específicos para modais de erro */
 .error-modal {
-    --glass-radius: 20px;
-    background: var(--glass-bg-smoke) !important;
-    border-color: rgba(255, 100, 100, 0.4) !important;
-    box-shadow: 
-        0 12px 40px rgba(255, 0, 0, 0.15),
-        var(--glass-inner-top), 
-        var(--glass-inner-bottom), 
-        var(--glass-inner-flat) !important;
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --glass-radius: 20px;
+  background: var(--glass-bg-smoke) !important;
+  border-color: rgba(255, 100, 100, 0.4) !important;
+  box-shadow: 0 12px 40px rgba(255, 0, 0, 0.15), var(--glass-inner-top),
+    var(--glass-inner-bottom), var(--glass-inner-flat) !important;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .error-modal h3 {
-    color: #ff6b6b !important;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: #ff6b6b !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .error-modal p {
-    color: rgba(255, 255, 255, 0.9) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .error-modal::before {
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 100, 100, 0.6),
-        transparent
-    ) !important;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 100, 100, 0.6),
+    transparent
+  ) !important;
 }
 
 .error-modal::after {
-    background: linear-gradient(
-        180deg,
-        rgba(255, 100, 100, 0.6),
-        transparent,
-        rgba(255, 100, 100, 0.3)
-    ) !important;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 100, 100, 0.6),
+    transparent,
+    rgba(255, 100, 100, 0.3)
+  ) !important;
 }
-
