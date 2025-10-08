@@ -258,7 +258,7 @@ function initAirConditionerControl() {
     maxTemp: 30,
     temperature: 20,
     mode: "cool",
-    powerOn: true,
+    powerOn: false,
     fanLevel: "medium",
   };
 
