@@ -551,9 +551,9 @@
 
             <div class="top-bar-custom"></div>
 
-            <main class="container">
+      <main class="container curtains-page-container">
 
-                <div class="page active">
+        <div class="page active curtains-page">
 
                     <h1 class="page-title fixed-header" style="display:flex;justify-content:center;align-items:center;">
 
@@ -826,34 +826,34 @@
             
             <!-- Display de Temperatura -->
             <section class="ac-temperature-section">
-                <h2 class="ac-section-title">Temperatura</h2>
-                <div class="ac-temperature-display">
-                    <div class="ac-temp-wrapper">
-                        <!-- SVG para o arco de progresso -->
-                        <svg class="ac-temp-arc" viewBox="0 0 200 120" preserveAspectRatio="xMidYMid meet">
-                            <!-- Arco de fundo -->
-                            <path class="ac-temp-arc-bg" d="M 20,100 A 80,80 0 0,1 180,100" fill="none" stroke-width="8"/>
-                            <!-- Arco de progresso -->
-                            <path class="ac-temp-arc-progress" d="M 20,100 A 80,80 0 0,1 180,100" fill="none" stroke-width="8" data-role="progress-ring"/>
-                        </svg>
-                        
-                        <!-- Display do valor em lista -->
-                        <div class="ac-temp-display">
-                            <div class="ac-temp-list">
-                                <div class="ac-temp-prev" data-role="temp-prev">21</div>
-                                <div class="ac-temp-current" data-role="temp-current">22</div>
-                                <div class="ac-temp-next" data-role="temp-next">23</div>
-                            </div>
-                        </div>
-                        
-                        <!-- Knob arrastável -->
-                        <div class="ac-temp-knob-wrapper" data-role="knob">
-                            <div class="ac-temp-knob">
-                                <div class="ac-temp-knob-dot"></div>
-                            </div>
-                        </div>
-                    </div>
+        <h2 class="ac-section-title">Temperatura</h2>
+        <div class="ac-temperature-fade-content">
+          <div class="ac-temperature-display">
+            <div class="ac-temp-wrapper">
+              <!-- SVG para o arco de progresso -->
+              <svg class="ac-temp-arc" viewBox="0 0 200 120" preserveAspectRatio="xMidYMid meet">
+                <!-- Arco de fundo -->
+                <path class="ac-temp-arc-bg" d="M 20,100 A 80,80 0 0,1 180,100" fill="none" stroke-width="8"/>
+                <!-- Arco de progresso -->
+                <path class="ac-temp-arc-progress" d="M 20,100 A 80,80 0 0,1 180,100" fill="none" stroke-width="8" data-role="progress-ring"/>
+              </svg>
+              <!-- Display do valor em lista -->
+              <div class="ac-temp-display">
+                <div class="ac-temp-list">
+                  <div class="ac-temp-prev" data-role="temp-prev">21</div>
+                  <div class="ac-temp-current" data-role="temp-current">22</div>
+                  <div class="ac-temp-next" data-role="temp-next">23</div>
                 </div>
+              </div>
+              <!-- Knob arrastável -->
+              <div class="ac-temp-knob-wrapper" data-role="knob">
+                <div class="ac-temp-knob">
+                  <div class="ac-temp-knob-dot"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
             </section>
 
             <!-- Controles de Modo -->
@@ -895,14 +895,11 @@
             <section class="ac-commands-section">
                 <h3 class="ac-section-title">Comandos</h3>
                 <div class="ac-commands-grid">
-                    <button type="button" class="ac-command-btn" data-role="power" aria-pressed="true" aria-label="Ligar/Desligar ar-condicionado">
+                    <button type="button" class="ac-command-btn ac-command-btn-large" data-role="power" aria-pressed="true" aria-label="Ligar/Desligar ar-condicionado">
                         <img src="images/icons/icon-ac-power.svg" alt="">
                     </button>
-                    <button type="button" class="ac-command-btn" aria-label="Comando 2">
-                        <!-- Ícone vazio por enquanto -->
-                    </button>
-                    <button type="button" class="ac-command-btn" aria-label="Comando 3">
-                        <!-- Ícone vazio por enquanto -->
+                    <button type="button" class="ac-command-btn" data-role="aleta-moving" aria-pressed="false" aria-label="Aletas em movimento">
+                        <img src="images/icons/icon-ac-aleta-moving.svg" alt="">
                     </button>
                 </div>
             </section>

@@ -1,4 +1,9 @@
-﻿/* Fileira de ícones nos cards de cômodos */
+﻿@media (orientation: portrait) {
+  .room-card {
+    min-height: 300px;
+  }
+}
+/* Fileira de ícones nos cards de cômodos */
 .room-icons-row {
   position: absolute;
   left: 30px;
@@ -60,21 +65,30 @@
 }
 
 /* EspaÃ§o no final dos ambientes (removida a barra preta) */
-.rooms-list::after {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 20px; /* Apenas um pequeno espaÃ§o no final */
-  margin-top: 20px;
-}
+
 
 /* Lista de cÃ´modos na Home */
+/*
+ * .rooms-list ocupa o espaço entre a linha branca (top-bar-custom) e a navbar
+ * Linha branca: top 90px + height 3px = 93px
+ * Espaço desejado: 10px abaixo da linha branca => top: 103px
+ * Navbar: bottom: 77px
+ */
 .rooms-list {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 5px;
   margin-top: 0;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 77px;
+  top: 103px;
+  height: auto;
+  overflow-y: auto;
+  box-sizing: border-box;
+  z-index: 10;
 }
 
 /* Responsivo: duas colunas em tablets/desktop */
@@ -85,6 +99,15 @@
     gap: 10px;
     align-items: stretch;
     padding: 0 16px;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 77px;
+    top: 103px;
+    height: auto;
+    overflow-y: auto;
+    box-sizing: border-box;
+    z-index: 10;
   }
 
   .room-card {
@@ -636,6 +659,26 @@ body:has([data-page="scenes"].active) {
   opacity: 1;
 }
 
+.curtains-page-container {
+  max-width: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.curtains-page {
+  position: relative;
+  min-height: 100vh;
+  padding: 0;
+  padding-bottom: 0;
+  background: #101010;
+  overflow: hidden;
+}
+
+.curtains-page .page-title.fixed-header {
+  max-width: none;
+}
+
 /* Estilos da Navbar */
 .navbar {
   width: 100%;
@@ -981,6 +1024,12 @@ body:has([data-page="scenes"].active) {
   width: 100%;
   height: 100%;
   max-width: none;
+  .curtains-page-container {
+    padding-bottom: 0;
+  }
+  .curtains-page {
+    padding-bottom: 0;
+  }
   margin: 0;
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
@@ -994,23 +1043,29 @@ body:has([data-page="scenes"].active) {
   justify-content: space-between;
   gap: 12px;
   font-family: "Raleway", sans-serif;
-  overflow-y: auto;
 }
 
 /* === DISPLAY DE TEMPERATURA === */
 .ac-temperature-section {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0;
   margin: 0;
   flex-shrink: 0;
   opacity: 1 !important;
   visibility: visible !important;
   transition: opacity 0.5s ease, visibility 0.5s ease;
   max-height: calc(100% - 15px);
+  max-height: calc(100% - 15px);
 }
 
-.ac-temperature-section.power-off {
+.ac-temperature-fade-content {
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  opacity: 1;
+  visibility: visible;
+}
+
+.ac-temperature-section.power-off .ac-temperature-fade-content {
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
@@ -1030,7 +1085,7 @@ body:has([data-page="scenes"].active) {
   width: 100%;
   max-width: 420px;
   height: 265px;
-  margin: 0 auto 20px auto;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1435,7 +1490,7 @@ body:has([data-page="scenes"].active) {
 
 .ac-commands-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 2fr 1fr;
   gap: 10px;
 }
 
@@ -1462,9 +1517,11 @@ body:has([data-page="scenes"].active) {
 .ac-command-btn img {
   width: 38px;
   height: 38px;
+  position: relative;
+  z-index: 2;
   filter: brightness(0) invert(1);
   opacity: 0.7;
-  transition: all 0.25s ease;
+  transition: all 0.3s ease;
 }
 
 .ac-command-btn:hover {
@@ -1498,10 +1555,12 @@ body:has([data-page="scenes"].active) {
   opacity: 1;
   transition: opacity 0.3s ease;
   pointer-events: none;
+  z-index: 1;
 }
 
 .ac-command-btn[data-role="power"] img {
   opacity: 1;
+  z-index: 2;
 }
 
 .ac-command-btn[data-role="power"]:hover {
@@ -1530,6 +1589,26 @@ body:has([data-page="scenes"].active) {
 
 .ac-command-btn[data-role="power"][aria-pressed="false"]:hover img {
   opacity: 0.7;
+}
+
+/* === BOTÃO DE ALETA (baseado no padrão dos botões de modo) === */
+.ac-command-btn[data-role="aleta-moving"][aria-pressed="true"] {
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.25), rgba(10, 138, 125, 0.15));
+  border-color: rgba(20, 184, 166, 0.5);
+  box-shadow: 0 8px 24px rgba(20, 184, 166, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.ac-command-btn[data-role="aleta-moving"][aria-pressed="true"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(20, 184, 166, 0.2), transparent 70%);
+  pointer-events: none;
+}
+
+.ac-command-btn[data-role="aleta-moving"][aria-pressed="true"] img {
+  opacity: 1;
+  filter: brightness(0) invert(1) drop-shadow(0 0 12px rgba(255, 255, 255, 0.4));
 }
 
 /* === BOTÃO DE POWER (ANTIGO - MANTIDO PARA COMPATIBILIDADE) === */
@@ -1635,20 +1714,23 @@ body:has([data-page="scenes"].active) {
 }
 
 [data-component="ac-control"][data-power-off] .ac-mode-btn,
-[data-component="ac-control"][data-power-off] .ac-fan-btn {
+[data-component="ac-control"][data-power-off] .ac-fan-btn,
+[data-component="ac-control"][data-power-off] .ac-command-btn[data-role="aleta-moving"] {
   opacity: 0.4;
   pointer-events: none;
 }
 
 [data-component="ac-control"][data-power-off] .ac-mode-btn[aria-pressed="true"],
-[data-component="ac-control"][data-power-off] .ac-fan-btn[aria-pressed="true"] {
+[data-component="ac-control"][data-power-off] .ac-fan-btn[aria-pressed="true"],
+[data-component="ac-control"][data-power-off] .ac-command-btn[data-role="aleta-moving"][aria-pressed="true"] {
   background: var(--glass-bg);
   border-color: var(--glass-border);
   box-shadow: none;
 }
 
 [data-component="ac-control"][data-power-off] .ac-mode-btn[aria-pressed="true"]::before,
-[data-component="ac-control"][data-power-off] .ac-fan-btn[aria-pressed="true"]::before {
+[data-component="ac-control"][data-power-off] .ac-fan-btn[aria-pressed="true"]::before,
+[data-component="ac-control"][data-power-off] .ac-command-btn[data-role="aleta-moving"][aria-pressed="true"]::before {
   opacity: 0;
 }
 
@@ -1680,8 +1762,9 @@ body:has([data-page="scenes"].active) {
   }
 
   .ac-temp-wrapper {
-    max-width: 350px;
-    height: 215px;
+  max-width: 350px;
+  height: 215px;
+  margin: 0 auto;
   }
 
   .ac-temp-current {
@@ -1722,24 +1805,18 @@ body:has([data-page="scenes"].active) {
   }
 
   .ac-mode-btn,
-  .ac-fan-btn {
-    min-height: 80px;
-    padding: 10px 8px;
-    border-radius: 16px;
+  .ac-fan-btn,
+  .ac-command-btn {
+    min-height: 95px;
+    padding: 14px 10px;
+    border-radius: 18px;
   }
 
-  .ac-fan-btn {
-    gap: 4px;
-  }
-
-  .ac-mode-btn img {
-    width: 30px;
-    height: 30px;
-  }
-
-  .ac-fan-btn img {
-    width: 26px;
-    height: 26px;
+  .ac-mode-btn img,
+  .ac-fan-btn img,
+  .ac-command-btn img {
+    width: 38px;
+    height: 38px;
   }
 
   .ac-fan-label {
@@ -1769,8 +1846,9 @@ body:has([data-page="scenes"].active) {
   }
 
   .ac-temp-wrapper {
-    max-width: 450px;
-    height: 285px;
+  max-width: 450px;
+  height: 285px;
+  margin: 0 auto;
   }
 
   .ac-temp-current {
@@ -1811,18 +1889,18 @@ body:has([data-page="scenes"].active) {
   }
 
   .ac-mode-btn,
-  .ac-fan-btn {
-    min-height: 90px;
+  .ac-fan-btn,
+  .ac-command-btn {
+    min-height: 95px;
+    padding: 14px 10px;
+    border-radius: 18px;
   }
 
-  .ac-mode-btn img {
-    width: 36px;
-    height: 36px;
-  }
-
-  .ac-fan-btn img {
-    width: 32px;
-    height: 32px;
+  .ac-mode-btn img,
+  .ac-fan-btn img,
+  .ac-command-btn img {
+    width: 38px;
+    height: 38px;
   }
 
   .ac-fan-label {
@@ -1852,8 +1930,9 @@ body:has([data-page="scenes"].active) {
   }
 
   .ac-temp-wrapper {
-    max-width: 480px;
-    height: 305px;
+  max-width: 480px;
+  height: 305px;
+  margin: 0 auto;
   }
 
   .ac-temp-current {
@@ -1894,28 +1973,18 @@ body:has([data-page="scenes"].active) {
   }
 
   .ac-mode-btn,
-  .ac-fan-btn {
-    min-height: 75px;
-    border-radius: 20px;
+  .ac-fan-btn,
+  .ac-command-btn {
+    min-height: 95px;
+    padding: 14px 10px;
+    border-radius: 18px;
   }
 
-  .ac-mode-btn {
-    padding: 15px 12px;
-  }
-
-  .ac-fan-btn {
-    padding: 13px 12px;
-    gap: 7px;
-  }
-
-  .ac-mode-btn img {
+  .ac-mode-btn img,
+  .ac-fan-btn img,
+  .ac-command-btn img {
     width: 38px;
     height: 38px;
-  }
-
-  .ac-fan-btn img {
-    width: 34px;
-    height: 34px;
   }
 
   .ac-fan-label {
@@ -3525,15 +3594,15 @@ body.app-info-open {
 
 .curtain-layout {
   position: absolute;
-  top: 130px;
-  left: 0;
-  right: 0;
-  bottom: 97px;
-  padding: 20px;
+  top: 103px;
+  left: 21px;
+  right: 21px;
+  bottom: 77px;
+  padding: 0;
   overflow-y: auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: clamp(15px, 3vw, 25px);
+  grid-template-columns: 1fr;
+  gap: 20px;
   align-content: start;
 }
 
@@ -3652,17 +3721,9 @@ body.app-info-open {
   background: #ffffff;
 }
 
-@media (max-width: 1024px) {
-  .curtain-layout {
-    width: 24px; /* ligeiramente maior em desktop */
-    height: 24px;
-}
-
 @media (max-width: 768px) {
   .curtain-layout {
-    grid-template-columns: 1fr;
-    gap: 22px;
-    padding: 15px;
+    gap: 18px;
   }
   .curtain-section {
     padding: 24px 20px;
@@ -3671,6 +3732,34 @@ body.app-info-open {
   .curtain-tile__actions {
     grid-template-columns: repeat(3, minmax(0, auto));
     gap: 12px;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 899px) {
+  .curtain-layout {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+}
+
+@media (min-width: 900px) {
+  .curtain-layout {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+  }
+}
+
+@media (min-width: 768px) {
+  .curtain-layout {
+    left: 32px;
+    right: 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .curtain-layout {
+    left: 40px;
+    right: 40px;
   }
 }
 
@@ -3783,11 +3872,16 @@ body.app-info-open {
 
 /* Grid de controles pode expandir verticalmente */
 [data-page="scenes"] .controls-grid {
-  position: relative !important;
-  top: 130px !important;
+  position: fixed !important;
+  left: 0;
+  right: 0;
+  top: 103px !important; /* 10px abaixo da barra branca */
+  bottom: 77px;
   min-height: auto;
   height: auto;
-  overflow: visible;
+  overflow-y: auto;
+  box-sizing: border-box;
+  z-index: 10;
 }
 
 /* Garantir que scrollbars permaneçam ocultas mesmo com scroll ativo */

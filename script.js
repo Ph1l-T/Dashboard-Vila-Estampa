@@ -1,4 +1,3 @@
-
 // IDs de todos os dispositivos de iluminação (Vila Estampa apenas)
 const ALL_LIGHT_IDS = [
   "17", // KP-HallEntrada-Jardim (Entrada)
@@ -252,9 +251,7 @@ function initRoomPage() {
 // Função para inicializar o controle de AR quando a página garden-conforto for carregada
 function initAirConditionerControl() {
   const fanLevels = ["low", "medium", "high"];
-  const temperatures = [
-    18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-  ];
+  const temperatures = [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
 
   const state = {
     minTemp: 18,
@@ -271,19 +268,19 @@ function initAirConditionerControl() {
       minTemp: 18,
       maxTemp: 24,
       defaultTemp: 20,
-      color: 'rgba(59, 130, 246, 0.95)', // Azul
+      color: "rgba(59, 130, 246, 0.95)", // Azul
     },
     heat: {
       minTemp: 25,
       maxTemp: 30,
       defaultTemp: 26,
-      color: 'rgba(249, 115, 22, 0.95)', // Laranja
+      color: "rgba(249, 115, 22, 0.95)", // Laranja
     },
     auto: {
       minTemp: 18,
       maxTemp: 30,
       defaultTemp: 22,
-      color: 'rgba(255, 255, 255, 0.95)', // Branco
+      color: "rgba(255, 255, 255, 0.95)", // Branco
     },
   };
 
@@ -295,7 +292,7 @@ function initAirConditionerControl() {
   }
 
   const knobWrapper = root.querySelector('[data-role="knob"]');
-  const knob = knobWrapper ? knobWrapper.querySelector('.ac-temp-knob') : null;
+  const knob = knobWrapper ? knobWrapper.querySelector(".ac-temp-knob") : null;
   const progressArc = root.querySelector('[data-role="progress-ring"]');
   const tempCurrent = root.querySelector('[data-role="temp-current"]');
   const tempPrev = root.querySelector('[data-role="temp-prev"]');
@@ -305,7 +302,7 @@ function initAirConditionerControl() {
   const modeButtons = Array.from(root.querySelectorAll("[data-mode-button]"));
   const powerButton = root.querySelector('[data-role="power"]');
   const wrapper = root.querySelector(".ac-temp-wrapper");
-  const temperatureSection = document.querySelector('.ac-temperature-section');
+  const temperatureSection = document.querySelector(".ac-temperature-section");
 
   if (!progressArc || !knob || !wrapper) {
     console.warn("Elementos essenciais do AC não encontrados");
@@ -329,20 +326,20 @@ function initAirConditionerControl() {
 
   function calculateGeometry() {
     const rect = wrapper.getBoundingClientRect();
-    const svgElement = progressArc.closest('svg');
+    const svgElement = progressArc.closest("svg");
     const svgRect = svgElement.getBoundingClientRect();
-    
+
     // O viewBox é 0 0 200 120
     // O arco path é: M 20,100 A 80,80 0 0,1 180,100
     // Isso significa que o centro do arco está em (100, 100) no viewBox
     // O raio é 80
-    
+
     return {
       rect,
       svgRect,
       svgElement,
       // Centro do arco em coordenadas da página
-      centerX: svgRect.left + (svgRect.width / 2),
+      centerX: svgRect.left + svgRect.width / 2,
       centerY: svgRect.top + (svgRect.height / 120) * 100, // Y=100 no viewBox
       radius: (svgRect.width / 200) * 80, // Raio 80 no viewBox
     };
@@ -353,9 +350,10 @@ function initAirConditionerControl() {
   }
 
   function angleFromTemperature(temperature) {
-    const ratio = (temperature - state.minTemp) / (state.maxTemp - state.minTemp);
+    const ratio =
+      (temperature - state.minTemp) / (state.maxTemp - state.minTemp);
     // 180° (esquerda/18°C) para 0° (direita/30°C)
-    return 180 - (ratio * 180);
+    return 180 - ratio * 180;
   }
 
   function temperatureFromAngle(angle) {
@@ -366,37 +364,37 @@ function initAirConditionerControl() {
 
   function updateKnobPosition(angle) {
     if (!knob) return;
-    
+
     // Converte ângulo para radianos
     const radians = (angle * Math.PI) / 180;
-    
+
     // Calcula as coordenadas no arco usando o raio e centro corretos
     const radius = geometry.radius;
-    
+
     // IMPORTANTE: Para o arco superior, Y deve ser NEGATIVO (para cima)
     // Posição absoluta na página
-    const x = geometry.centerX + (radius * Math.cos(radians));
-    const y = geometry.centerY - (radius * Math.sin(radians)); // NEGATIVO para ir para cima!
-    
+    const x = geometry.centerX + radius * Math.cos(radians);
+    const y = geometry.centerY - radius * Math.sin(radians); // NEGATIVO para ir para cima!
+
     // Converte para posição relativa ao wrapper
     const wrapperRect = wrapper.getBoundingClientRect();
     const relativeX = x - wrapperRect.left;
     const relativeY = y - wrapperRect.top;
-    
+
     // Centraliza o knob
     knob.style.left = `${relativeX}px`;
     knob.style.top = `${relativeY}px`;
-    knob.style.transform = 'translate(-50%, -50%)';
+    knob.style.transform = "translate(-50%, -50%)";
   }
 
   function updateProgress(angle) {
     if (!progressArc) return;
-    
+
     // Calcula o progresso (0 a 1)
     const progress = (180 - angle) / 180;
     // Offset: começa cheio e vai diminuindo conforme progride
-    const offset = ARC_LENGTH - (progress * ARC_LENGTH);
-    
+    const offset = ARC_LENGTH - progress * ARC_LENGTH;
+
     // Garante que o offset não seja negativo e não ultrapasse o comprimento
     const clampedOffset = Math.max(0, Math.min(ARC_LENGTH, offset));
     progressArc.style.strokeDashoffset = clampedOffset;
@@ -404,35 +402,35 @@ function initAirConditionerControl() {
 
   function updateTemperatureDisplay() {
     if (!tempCurrent) return;
-    
+
     const temp = state.temperature;
-    
+
     // Atualiza temperatura atual
     tempCurrent.textContent = temp;
-    
+
     // Atualiza temperatura anterior
     if (tempPrev) {
       if (temp > state.minTemp) {
         tempPrev.textContent = temp - 1;
-        tempPrev.style.opacity = '1';
-        tempPrev.style.visibility = 'visible';
+        tempPrev.style.opacity = "1";
+        tempPrev.style.visibility = "visible";
       } else {
         // Se é a temperatura mínima, esconde o anterior
-        tempPrev.style.opacity = '0';
-        tempPrev.style.visibility = 'hidden';
+        tempPrev.style.opacity = "0";
+        tempPrev.style.visibility = "hidden";
       }
     }
-    
+
     // Atualiza temperatura seguinte
     if (tempNext) {
       if (temp < state.maxTemp) {
         tempNext.textContent = temp + 1;
-        tempNext.style.opacity = '1';
-        tempNext.style.visibility = 'visible';
+        tempNext.style.opacity = "1";
+        tempNext.style.visibility = "visible";
       } else {
         // Se é a temperatura máxima, esconde o seguinte
-        tempNext.style.opacity = '0';
-        tempNext.style.visibility = 'hidden';
+        tempNext.style.opacity = "0";
+        tempNext.style.visibility = "hidden";
       }
     }
   }
@@ -453,8 +451,10 @@ function initAirConditionerControl() {
   }
 
   function getAngleFromPointer(event) {
-    const pointerX = event.clientX ?? (event.touches && event.touches[0]?.clientX);
-    const pointerY = event.clientY ?? (event.touches && event.touches[0]?.clientY);
+    const pointerX =
+      event.clientX ?? (event.touches && event.touches[0]?.clientX);
+    const pointerY =
+      event.clientY ?? (event.touches && event.touches[0]?.clientY);
 
     if (typeof pointerX !== "number" || typeof pointerY !== "number") {
       return null;
@@ -466,10 +466,10 @@ function initAirConditionerControl() {
 
     // Calcula o ângulo em radianos, depois converte para graus
     let angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
-    
+
     // Normaliza para 0-360
     if (angle < 0) angle += 360;
-    
+
     // Limita ao arco superior (0° a 180°)
     // 0° = direita, 90° = cima, 180° = esquerda
     // Queremos apenas o arco superior, então limitamos ângulos > 180°
@@ -477,13 +477,13 @@ function initAirConditionerControl() {
       // Se está fora do arco superior, mapeia para a extremidade mais próxima
       angle = angle > 270 ? 0 : 180;
     }
-    
+
     return angle;
   }
 
   function handlePointerMove(event) {
     if (!state.powerOn || !isDragging) return;
-    
+
     const angle = getAngleFromPointer(event);
     if (angle !== null) {
       const temperature = temperatureFromAngle(angle);
@@ -493,17 +493,17 @@ function initAirConditionerControl() {
 
   function startDragging(event) {
     if (!state.powerOn) return;
-    
+
     event.preventDefault();
     isDragging = true;
     geometry = calculateGeometry();
-    
+
     if (knob) {
       knob.classList.add("is-active");
     }
-    
+
     handlePointerMove(event);
-    
+
     document.addEventListener("pointermove", handlePointerMove);
     document.addEventListener("pointerup", stopDragging);
     document.addEventListener("pointercancel", stopDragging);
@@ -511,11 +511,11 @@ function initAirConditionerControl() {
 
   function stopDragging() {
     isDragging = false;
-    
+
     if (knob) {
       knob.classList.remove("is-active");
     }
-    
+
     document.removeEventListener("pointermove", handlePointerMove);
     document.removeEventListener("pointerup", stopDragging);
     document.removeEventListener("pointercancel", stopDragging);
@@ -537,54 +537,60 @@ function initAirConditionerControl() {
 
   function setMode(mode) {
     if (!modeConfig[mode]) return;
-    
+
     state.mode = mode;
     root.dataset.mode = mode;
-    
+
     // Atualiza os limites de temperatura conforme o modo
     const config = modeConfig[mode];
     state.minTemp = config.minTemp;
     state.maxTemp = config.maxTemp;
-    
+
     // Define a temperatura padrão do modo
     state.temperature = config.defaultTemp;
-    
+
     // Atualiza a cor do arco de progresso e knob
     updateModeColors(config.color);
-    
+
     // Atualiza os botões de modo
     modeButtons.forEach((button) => {
       const isActive = button.dataset.mode === mode;
       button.setAttribute("aria-pressed", isActive.toString());
     });
-    
+
     // Atualiza a temperatura com os novos limites
     updateTemperature(state.temperature);
   }
 
   function updateModeColors(color) {
     if (!progressArc) return;
-    
+
     // Atualiza a cor do arco de progresso
     progressArc.style.stroke = color;
-    
+
     // Atualiza a cor do glow do arco
-    if (color.includes('59, 130, 246')) {
+    if (color.includes("59, 130, 246")) {
       // Azul (cool)
-      progressArc.style.filter = 'drop-shadow(0 0 8px rgba(59, 130, 246, 0.5))';
-    } else if (color.includes('249, 115, 22')) {
+      progressArc.style.filter = "drop-shadow(0 0 8px rgba(59, 130, 246, 0.5))";
+    } else if (color.includes("249, 115, 22")) {
       // Laranja (heat)
-      progressArc.style.filter = 'drop-shadow(0 0 8px rgba(249, 115, 22, 0.5))';
+      progressArc.style.filter = "drop-shadow(0 0 8px rgba(249, 115, 22, 0.5))";
     } else {
       // Branco (auto)
-      progressArc.style.filter = 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.5))';
+      progressArc.style.filter =
+        "drop-shadow(0 0 8px rgba(255, 255, 255, 0.5))";
     }
   }
 
   function setPowerState(isOn) {
     state.powerOn = isOn;
-    console.log('setPowerState chamado:', isOn, 'temperatureSection:', temperatureSection);
-    
+    console.log(
+      "setPowerState chamado:",
+      isOn,
+      "temperatureSection:",
+      temperatureSection
+    );
+
     if (powerButton) {
       powerButton.setAttribute("aria-pressed", isOn.toString());
       powerButton.setAttribute(
@@ -601,16 +607,23 @@ function initAirConditionerControl() {
       button.toggleAttribute("disabled", !isOn);
     });
 
-    root.toggleAttribute("data-power-off", !isOn);
+    // Desabilita o botão de aleta quando o AC está desligado
+    const aletaMovingButton = root.querySelector('[data-role="aleta-moving"]');
     
+    if (aletaMovingButton) {
+      aletaMovingButton.toggleAttribute("disabled", !isOn);
+    }
+
+    root.toggleAttribute("data-power-off", !isOn);
+
     // Controla o fade in/out do seletor de temperatura
     if (temperatureSection) {
       if (isOn) {
-        console.log('Removendo power-off');
-        temperatureSection.classList.remove('power-off');
+        console.log("Removendo power-off");
+        temperatureSection.classList.remove("power-off");
       } else {
-        console.log('Adicionando power-off');
-        temperatureSection.classList.add('power-off');
+        console.log("Adicionando power-off");
+        temperatureSection.classList.add("power-off");
       }
     }
   }
@@ -646,6 +659,34 @@ function initAirConditionerControl() {
 
   if (powerButton) {
     powerButton.addEventListener("click", togglePower);
+  }
+
+  // Botão de aleta em movimento
+  const aletaMovingButton = root.querySelector('[data-role="aleta-moving"]');
+
+  // Estado das aletas
+  const aletaState = {
+    isMoving: false,
+  };
+
+  function setAletaMoving(isOn) {
+    if (!state.powerOn) return;
+
+    aletaState.isMoving = isOn;
+    if (aletaMovingButton) {
+      aletaMovingButton.setAttribute("aria-pressed", isOn.toString());
+    }
+
+    console.log(`Aleta moving: ${isOn ? "ON" : "OFF"}`);
+  }
+
+  function toggleAletaMoving() {
+    if (!state.powerOn) return;
+    setAletaMoving(!aletaState.isMoving);
+  }
+
+  if (aletaMovingButton) {
+    aletaMovingButton.addEventListener("click", toggleAletaMoving);
   }
 
   window.addEventListener("resize", () => {
