@@ -671,6 +671,160 @@ const decode = codec.init(cryptoEngine).decode;
 function init(staticryptConfig, templateConfig) {
     const exports = {};
 
+    const COOKIE_DEFAULT_DURATION_DAYS = 3650;
+    const rememberCookieConfig = {
+        passphrase: templateConfig.rememberPassphraseKey + "_cookie",
+        expiration: templateConfig.rememberExpirationKey + "_cookie",
+    };
+
+    function setCookie(name, value, days) {
+        if (!name) {
+            return;
+        }
+
+        try {
+            const duration =
+                typeof days === "number" && days > 0 ? days : COOKIE_DEFAULT_DURATION_DAYS;
+            let expires = "";
+            if (duration > 0) {
+                const date = new Date();
+                date.setTime(date.getTime() + duration * 24 * 60 * 60 * 1000);
+                expires = "; expires=" + date.toUTCString();
+            }
+            const secure =
+                window.location && window.location.protocol === "https:" ? "; Secure" : "";
+
+            document.cookie =
+                name +
+                "=" +
+                encodeURIComponent(value) +
+                expires +
+                "; path=/" +
+                "; SameSite=Lax" +
+                secure;
+        } catch (error) {
+            console.warn("Staticrypt: unable to set remember cookie", error);
+        }
+    }
+
+    function deleteCookie(name) {
+        if (!name) {
+            return;
+        }
+
+        try {
+            const secure =
+                window.location && window.location.protocol === "https:" ? "; Secure" : "";
+            document.cookie =
+                name +
+                "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/" +
+                "; SameSite=Lax" +
+                secure;
+        } catch (error) {
+            console.warn("Staticrypt: unable to delete remember cookie", error);
+        }
+    }
+
+    function getCookie(name) {
+        if (!name) {
+            return null;
+        }
+
+        try {
+            const nameEq = name + "=";
+            const cookies = document.cookie ? document.cookie.split(";") : [];
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.indexOf(nameEq) === 0) {
+                    return decodeURIComponent(cookie.substring(nameEq.length));
+                }
+            }
+        } catch (error) {
+            console.warn("Staticrypt: unable to read remember cookie", error);
+        }
+
+        return null;
+    }
+
+    function clearRememberCookies() {
+        deleteCookie(rememberCookieConfig.passphrase);
+        deleteCookie(rememberCookieConfig.expiration);
+    }
+
+    function persistRememberedPassword(hashedPassword, rememberDurationInDays) {
+        const { rememberExpirationKey, rememberPassphraseKey } = templateConfig;
+
+        try {
+            window.localStorage.setItem(rememberPassphraseKey, hashedPassword);
+        } catch (error) {
+            console.warn(
+                "Staticrypt: unable to store remember passphrase in localStorage",
+                error
+            );
+        }
+
+        if (rememberDurationInDays > 0) {
+            const expirationTimestamp = (
+                new Date().getTime() +
+                rememberDurationInDays * 24 * 60 * 60 * 1000
+            ).toString();
+
+            try {
+                window.localStorage.setItem(rememberExpirationKey, expirationTimestamp);
+            } catch (error) {
+                console.warn(
+                    "Staticrypt: unable to store remember expiration in localStorage",
+                    error
+                );
+            }
+
+            setCookie(
+                rememberCookieConfig.expiration,
+                expirationTimestamp,
+                rememberDurationInDays
+            );
+            setCookie(rememberCookieConfig.passphrase, hashedPassword, rememberDurationInDays);
+        } else {
+            setCookie(
+                rememberCookieConfig.passphrase,
+                hashedPassword,
+                COOKIE_DEFAULT_DURATION_DAYS
+            );
+            deleteCookie(rememberCookieConfig.expiration);
+
+            try {
+                window.localStorage.removeItem(rememberExpirationKey);
+            } catch (error) {
+                // ignore inability to remove old expiration
+            }
+        }
+    }
+
+    function restoreRememberedPasswordFromCookie() {
+        const { rememberDurationInDays } = staticryptConfig;
+        const { rememberExpirationKey, rememberPassphraseKey } = templateConfig;
+
+        try {
+            if (!window.localStorage.getItem(rememberPassphraseKey)) {
+                const cookiePassphrase = getCookie(rememberCookieConfig.passphrase);
+                if (cookiePassphrase) {
+                    window.localStorage.setItem(rememberPassphraseKey, cookiePassphrase);
+                }
+            }
+
+            if (rememberDurationInDays && rememberDurationInDays > 0) {
+                if (!window.localStorage.getItem(rememberExpirationKey)) {
+                    const cookieExpiration = getCookie(rememberCookieConfig.expiration);
+                    if (cookieExpiration) {
+                        window.localStorage.setItem(rememberExpirationKey, cookieExpiration);
+                    }
+                }
+            }
+        } catch (error) {
+            console.warn("Staticrypt: unable to restore remember data from cookies", error);
+        }
+    }
+
     /**
      * Decrypt our encrypted page, replace the whole HTML.
      *
@@ -722,7 +876,6 @@ function init(staticryptConfig, templateConfig) {
 
     async function handleDecryptionOfPageFromHash(hashedPassword, isRememberChecked) {
         const { isRememberEnabled, rememberDurationInDays } = staticryptConfig;
-        const { rememberExpirationKey, rememberPassphraseKey } = templateConfig;
 
         const isDecryptionSuccessful = await decryptAndReplaceHtml(hashedPassword);
 
@@ -735,15 +888,7 @@ function init(staticryptConfig, templateConfig) {
 
         // remember the hashedPassword and set its expiration if necessary
         if (isRememberEnabled && isRememberChecked) {
-            window.localStorage.setItem(rememberPassphraseKey, hashedPassword);
-
-            // set the expiration if the duration isn't 0 (meaning no expiration)
-            if (rememberDurationInDays > 0) {
-                window.localStorage.setItem(
-                    rememberExpirationKey,
-                    (new Date().getTime() + rememberDurationInDays * 24 * 60 * 60 * 1000).toString()
-                );
-            }
+            persistRememberedPassword(hashedPassword, rememberDurationInDays);
         }
 
         return {
@@ -762,12 +907,23 @@ function init(staticryptConfig, templateConfig) {
         if (typeof clearLocalStorageCallback === "function") {
             clearLocalStorageCallback();
         } else {
-            localStorage.removeItem(rememberPassphraseKey);
-            localStorage.removeItem(rememberExpirationKey);
+            try {
+                localStorage.removeItem(rememberPassphraseKey);
+                localStorage.removeItem(rememberExpirationKey);
+            } catch (error) {
+                console.warn(
+                    "Staticrypt: unable to clear remember data from localStorage",
+                    error
+                );
+            }
         }
+
+        clearRememberCookies();
     }
 
     async function handleDecryptOnLoad() {
+        restoreRememberedPasswordFromCookie();
+
         let isSuccessful = await decryptOnLoadFromUrl();
 
         if (!isSuccessful) {
